@@ -51,6 +51,7 @@ public class PassengerServiceImpl implements PassengerService {
         checkPassengerExists(passengerRequest);
         Passenger passenger = modelMapper.map(passengerRequest, Passenger.class);
         Passenger savedPassenger = passengerRepository.save(passenger);
+        log.info("Passenger created with id: {}", savedPassenger.getId());
         return modelMapper.map(savedPassenger, PassengerResponse.class);
     }
 
@@ -60,12 +61,14 @@ public class PassengerServiceImpl implements PassengerService {
         Passenger editingPassenger = getPassenger(id);
         modelMapper.map(passengerRequest, editingPassenger);
         passengerRepository.save(editingPassenger);
+        log.info("Passenger edited with id: {}", id);
         return modelMapper.map(editingPassenger, PassengerResponse.class);
     }
 
     @Override
     public void deletePassenger(Long id) {
         passengerRepository.delete(getPassenger(id));
+        log.info("Passenger deleted with id: {}", id);
     }
 
     @Override
@@ -79,12 +82,14 @@ public class PassengerServiceImpl implements PassengerService {
         modifiedRatingSet.add(addingRating);
 
         passenger.setRatingSet(modifiedRatingSet);
+        log.info("Review added to passenger with id: {}", id);
         return modelMapper.map(passengerRepository.save(passenger), PassengerResponse.class);
     }
 
     public Passenger getPassenger(Long id) {
         Optional<Passenger> optionalPassenger = passengerRepository.findById(id);
         if (optionalPassenger.isEmpty()) {
+            log.info("Passenger with id {} is not found!", id);
             throw new PassengerNotFoundException();
         }
         return optionalPassenger.get();
@@ -92,9 +97,11 @@ public class PassengerServiceImpl implements PassengerService {
 
     public void checkPassengerExists(PassengerRequest passengerRequest) {
         if (passengerRepository.existsByPhone(passengerRequest.getPhone())) {
+            log.info("Passenger with phone {} already exists!", passengerRequest.getPhone());
             throw new PhoneAlreadyExistsException();
         }
         if (passengerRepository.existsByUsername(passengerRequest.getUsername())) {
+            log.info("Passenger with username {} already exists!", passengerRequest.getUsername());
             throw new UsernameAlreadyExistsException();
         }
     }
