@@ -5,6 +5,7 @@
 
     <include file="01-changeset-drivers-table.xml" relativeToChangelogFile="true"/>
     <include file="10-changeset-rating-drivers-table.xml" relativeToChangelogFile="true"/>
+    <include file="20-changeset-cars-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
 

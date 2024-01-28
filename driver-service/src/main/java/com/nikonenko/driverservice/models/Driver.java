@@ -39,5 +39,9 @@ public class Driver {
 
     @OneToMany(mappedBy = "driver", cascade = {CascadeType.ALL})
     @JsonManagedReference
+    private Set<Car> cars;
+
+    @OneToMany(mappedBy = "driver", cascade = {CascadeType.ALL})
+    @JsonManagedReference
     private Set<RatingDriver> ratingSet;
 }
