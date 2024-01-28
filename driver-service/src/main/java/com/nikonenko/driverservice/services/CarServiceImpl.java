@@ -44,6 +44,7 @@ public class CarServiceImpl implements CarService{
         checkCarExists(carRequest);
         Car car = modelMapper.map(carRequest, Car.class);
         Car savedCar = carRepository.save(car);
+        log.info("Car created with id: {}", savedCar.getId());
         return modelMapper.map(savedCar, CarResponse.class);
     }
 
@@ -58,17 +59,20 @@ public class CarServiceImpl implements CarService{
         Car editingCar = getCar(id);
         modelMapper.map(carRequest, editingCar);
         carRepository.save(editingCar);
+        log.info("Car edited with id: {}", id);
         return modelMapper.map(editingCar, CarResponse.class);
     }
 
     @Override
     public void deleteCar(Long id) {
         carRepository.delete(getCar(id));
+        log.info("Car deleted with id: {}", id);
     }
 
     public Car getCar(Long id) {
         Optional<Car> optionalCar = carRepository.findById(id);
         if (optionalCar.isEmpty()) {
+            log.info("Car with id {} is not found!", id);
             throw new CarNotFoundException();
         }
         return optionalCar.get();
@@ -76,6 +80,7 @@ public class CarServiceImpl implements CarService{
 
     public void checkCarExists(CarRequest carRequest) {
         if (carRepository.existsByNumber(carRequest.getNumber())) {
+            log.info("Car with number {} already exists!", carRequest.getNumber());
             throw new PhoneAlreadyExistsException();
         }
     }

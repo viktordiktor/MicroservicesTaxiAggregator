@@ -55,6 +55,7 @@ public class DriverServiceImpl implements DriverService {
         checkDriverExists(driverRequest);
         Driver driver = modelMapper.map(driverRequest, Driver.class);
         Driver savedDriver = driverRepository.save(driver);
+        log.info("Driver created with id: {}", savedDriver.getId());
         return modelMapper.map(savedDriver, DriverResponse.class);
     }
 
@@ -64,12 +65,14 @@ public class DriverServiceImpl implements DriverService {
         Driver editingDriver = getDriver(id);
         modelMapper.map(driverRequest, editingDriver);
         driverRepository.save(editingDriver);
+        log.info("Driver edited with id: {}", id);
         return modelMapper.map(editingDriver, DriverResponse.class);
     }
 
     @Override
     public void deleteDriver(Long id) {
         driverRepository.delete(getDriver(id));
+        log.info("Driver deleted with id: {}", id);
     }
 
     @Override
@@ -102,6 +105,7 @@ public class DriverServiceImpl implements DriverService {
     public Driver getDriver(Long id) {
         Optional<Driver> optionalDriver = driverRepository.findById(id);
         if (optionalDriver.isEmpty()) {
+            log.info("Driver with id {} is not found!", id);
             throw new DriverNotFoundException();
         }
         return optionalDriver.get();
@@ -109,9 +113,11 @@ public class DriverServiceImpl implements DriverService {
 
     public void checkDriverExists(DriverRequest driverRequest) {
         if (driverRepository.existsByPhone(driverRequest.getPhone())) {
+            log.info("Driver with phone {} already exists!", driverRequest.getPhone());
             throw new PhoneAlreadyExistsException();
         }
         if (driverRepository.existsByUsername(driverRequest.getUsername())) {
+            log.info("Driver with username {} already exists!", driverRequest.getUsername());
             throw new UsernameAlreadyExistsException();
         }
     }
