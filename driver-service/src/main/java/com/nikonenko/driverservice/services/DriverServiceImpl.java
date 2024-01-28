@@ -1,5 +1,6 @@
 package com.nikonenko.driverservice.services;
 
+import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.RatingDriverRequest;
@@ -7,6 +8,7 @@ import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.driverservice.models.Car;
 import com.nikonenko.driverservice.models.Driver;
 import com.nikonenko.driverservice.models.RatingDriver;
 import com.nikonenko.driverservice.repositories.DriverRepository;
@@ -28,7 +30,11 @@ import java.util.Set;
 public class DriverServiceImpl implements DriverService {
 
     private final DriverRepository driverRepository;
+
     private final ModelMapper modelMapper;
+
+    private final CarServiceImpl carService;
+
     @Override
     public Page<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField) {
         if (pageNumber < 0 || pageSize < 1) {
@@ -77,6 +83,19 @@ public class DriverServiceImpl implements DriverService {
         modifiedRatingSet.add(addingRating);
 
         driver.setRatingSet(modifiedRatingSet);
+        return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
+    }
+
+    @Override
+    public DriverResponse addCarToDriver(Long id, CarRequest carRequest) {
+        Driver driver = getDriver(id);
+        Set<Car> driverCars = driver.getCars();
+
+        carService.createCar(carRequest);
+
+        driverCars.add(modelMapper.map(carRequest, Car.class));
+        driver.setCars(driverCars);
+
         return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
     }
 

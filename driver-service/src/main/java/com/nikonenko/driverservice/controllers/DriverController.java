@@ -1,5 +1,6 @@
 package com.nikonenko.driverservice.controllers;
 
+import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.RatingDriverRequest;
@@ -66,5 +67,12 @@ public class DriverController {
     public DriverResponse addRating(@PathVariable Long id,
                                        @Valid @RequestBody RatingDriverRequest ratingRequest) {
         return driverService.createReview(id, ratingRequest);
+    }
+
+    @PostMapping("/car/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public DriverResponse addCarToDriver(@PathVariable Long id,
+                                         @Valid @RequestBody CarRequest carRequest) {
+        return driverService.addCarToDriver(id, carRequest);
     }
 }
