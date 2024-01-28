@@ -6,6 +6,7 @@ import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
 import com.nikonenko.passengerservice.services.PassengerServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,7 @@ public class PassengerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PassengerResponse> getAllPassengers(@RequestParam(defaultValue = "0") int pageNumber,
+    public Page<PassengerResponse> getAllPassengers(@RequestParam(defaultValue = "0") int pageNumber,
                                                     @RequestParam(defaultValue = "5") int pageSize,
                                                     @RequestParam(defaultValue = "id") String sortField) {
         return passengerService.getAllPassengers(pageNumber, pageSize, sortField);

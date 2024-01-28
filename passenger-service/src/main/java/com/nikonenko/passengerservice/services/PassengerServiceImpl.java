@@ -6,6 +6,7 @@ import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
+import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.passengerservice.models.Passenger;
 import com.nikonenko.passengerservice.models.RatingPassenger;
 import com.nikonenko.passengerservice.repositories.PassengerRepository;
@@ -13,8 +14,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,9 +31,13 @@ public class PassengerServiceImpl implements PassengerService{
     private final ModelMapper modelMapper;
 
     @Override
-    public List<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField) {
-        List<Passenger> page = passengerRepository.findAll();
-        return modelMapper.map(page, new TypeToken<List<PassengerResponse>>() {}.getType());
+    public Page<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField) {
+        if (pageNumber < 0 || pageSize < 1) {
+            throw new WrongPageableParameterException();
+        }
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
+        Page<Passenger> page = passengerRepository.findAll(pageable);
+        return modelMapper.map(page, new TypeToken<Page<PassengerResponse>>() {}.getType());
     }
 
     @Override
