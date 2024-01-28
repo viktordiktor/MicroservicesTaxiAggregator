@@ -49,8 +49,7 @@ public class CarController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CarResponse editCar(@PathVariable Long id,
-                                     @Valid @RequestBody CarRequest carRequest) {
+    public CarResponse editCar(@PathVariable Long id, @Valid @RequestBody CarRequest carRequest) {
         return carService.editCar(id, carRequest);
     }
 

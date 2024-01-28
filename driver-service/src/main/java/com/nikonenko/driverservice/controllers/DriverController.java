@@ -32,8 +32,8 @@ public class DriverController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<DriverResponse> getAllDrivers(@RequestParam(defaultValue = "0") int pageNumber,
-                                                 @RequestParam(defaultValue = "5") int pageSize,
-                                                 @RequestParam(defaultValue = "id") String sortField) {
+                                              @RequestParam(defaultValue = "5") int pageSize,
+                                              @RequestParam(defaultValue = "id") String sortField) {
         return driverService.getAllDrivers(pageNumber, pageSize, sortField);
     }
 
@@ -51,8 +51,7 @@ public class DriverController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponse editDriver(@PathVariable Long id,
-                                           @Valid @RequestBody DriverRequest driverRequest) {
+    public DriverResponse editDriver(@PathVariable Long id, @Valid @RequestBody DriverRequest driverRequest) {
         return driverService.editDriver(id, driverRequest);
     }
 
@@ -64,15 +63,13 @@ public class DriverController {
 
     @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponse addRating(@PathVariable Long id,
-                                       @Valid @RequestBody RatingDriverRequest ratingRequest) {
+    public DriverResponse addRating(@PathVariable Long id, @Valid @RequestBody RatingDriverRequest ratingRequest) {
         return driverService.createReview(id, ratingRequest);
     }
 
     @PostMapping("/car/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponse addCarToDriver(@PathVariable Long id,
-                                         @Valid @RequestBody CarRequest carRequest) {
+    public DriverResponse addCarToDriver(@PathVariable Long id, @Valid @RequestBody CarRequest carRequest) {
         return driverService.addCarToDriver(id, carRequest);
     }
 }

@@ -92,6 +92,7 @@ public class RestExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
+
     @ExceptionHandler(CarNumberAlreadyExistsException.class)
     public ResponseEntity<String> handleCarNumberAlreadyExistsException(CarNumberAlreadyExistsException ex) {
         return ResponseEntity

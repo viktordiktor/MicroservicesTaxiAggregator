@@ -17,13 +17,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CarServiceImpl implements CarService{
+public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
 
