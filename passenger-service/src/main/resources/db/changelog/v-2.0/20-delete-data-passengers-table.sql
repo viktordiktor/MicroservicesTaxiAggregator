@@ -1,0 +1,2 @@
+DELETE FROM passengers
+WHERE username IN ('VIKTOR2003', 'BIG_ZHEKA2008', 'JONH_DOE_2024');
