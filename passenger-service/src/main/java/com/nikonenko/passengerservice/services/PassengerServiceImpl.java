@@ -2,10 +2,12 @@ package com.nikonenko.passengerservice.services;
 
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
+import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.passengerservice.models.Passenger;
+import com.nikonenko.passengerservice.models.RatingPassenger;
 import com.nikonenko.passengerservice.repositories.PassengerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +59,19 @@ public class PassengerServiceImpl implements PassengerService{
         passengerRepository.delete(getPassenger(id));
     }
 
+    @Override
+    public PassengerResponse createReview(Long id, RatingPassengerRequest ratingRequest) {
+        Passenger passenger = getPassenger(id);
+
+        RatingPassenger addingRating = modelMapper.map(ratingRequest, RatingPassenger.class);
+        addingRating.setPassenger(passenger);
+
+        Set<RatingPassenger> modifiedRatingSet = passenger.getRatingSet();
+        modifiedRatingSet.add(addingRating);
+
+        passenger.setRatingSet(modifiedRatingSet);
+        return modelMapper.map(passengerRepository.save(passenger), PassengerResponse.class);
+    }
 
     public Passenger getPassenger(Long id) {
         Optional<Passenger> optionalPassenger = passengerRepository.findById(id);

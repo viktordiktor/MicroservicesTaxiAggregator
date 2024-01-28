@@ -2,6 +2,7 @@ package com.nikonenko.passengerservice.controllers;
 
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
+import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
 import com.nikonenko.passengerservice.services.PassengerServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +60,12 @@ public class PassengerController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePassenger(@PathVariable Long id) {
         passengerService.deletePassenger(id);
+    }
+
+    @PostMapping("/rating/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PassengerResponse addRating(@PathVariable Long id,
+                                       @Valid @RequestBody RatingPassengerRequest ratingRequest) {
+        return passengerService.createReview(id, ratingRequest);
     }
 }
