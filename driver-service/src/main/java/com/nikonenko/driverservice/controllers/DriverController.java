@@ -38,8 +38,8 @@ public class DriverController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DriverResponse createDriver(@Valid @RequestBody DriverRequest DriverRequest) {
-        return driverService.createDriver(DriverRequest);
+    public DriverResponse createDriver(@Valid @RequestBody DriverRequest driverRequest) {
+        return driverService.createDriver(driverRequest);
     }
 
     @GetMapping("/{id}")

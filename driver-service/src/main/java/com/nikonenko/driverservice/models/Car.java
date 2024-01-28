@@ -31,7 +31,7 @@ public class Car {
     @JsonBackReference
     private Driver driver;
 
-    @Column(name = "number")
+    @Column(name = "number", unique = true)
     private String number;
 
     @Column(name = "model")

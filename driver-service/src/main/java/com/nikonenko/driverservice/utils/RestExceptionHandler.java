@@ -1,5 +1,7 @@
 package com.nikonenko.driverservice.utils;
 
+import com.nikonenko.driverservice.exceptions.CarNotFoundException;
+import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
@@ -79,6 +81,19 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CarNotFoundException.class)
+    public ResponseEntity<String> handleCarNotFoundException(CarNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+    @ExceptionHandler(CarNumberAlreadyExistsException.class)
+    public ResponseEntity<String> handleCarNumberAlreadyExistsException(CarNumberAlreadyExistsException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
