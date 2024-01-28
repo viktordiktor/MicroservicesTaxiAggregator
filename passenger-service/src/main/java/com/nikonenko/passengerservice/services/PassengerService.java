@@ -5,8 +5,6 @@ import com.nikonenko.passengerservice.dto.PassengerResponse;
 import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface PassengerService {
     Page<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField);
     PassengerResponse getPassengerById(Long id);
