@@ -4,7 +4,7 @@ spring:
     username: ${MYSQL_USERNAME:user}
     password: ${MYSQL_PASSWORD:pass}
   application:
-    name: passenger-service
+    name: driver-service
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true

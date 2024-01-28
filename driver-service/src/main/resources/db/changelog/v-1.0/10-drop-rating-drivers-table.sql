@@ -1,1 +1,1 @@
-DROP TABLE rating_passengers;
+DROP TABLE rating_drivers;
