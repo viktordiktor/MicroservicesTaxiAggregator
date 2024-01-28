@@ -7,9 +7,14 @@ import org.springframework.data.domain.Page;
 
 public interface PassengerService {
     Page<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField);
+
     PassengerResponse getPassengerById(Long id);
+
     PassengerResponse createPassenger(PassengerRequest passengerRequest);
+
     PassengerResponse editPassenger(Long id, PassengerRequest passengerRequest);
+
     void deletePassenger(Long id);
+
     PassengerResponse createReview(Long id, RatingPassengerRequest ratingRequest);
 }

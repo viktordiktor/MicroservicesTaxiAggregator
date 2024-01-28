@@ -19,13 +19,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PassengerServiceImpl implements PassengerService{
+public class PassengerServiceImpl implements PassengerService {
 
     private final PassengerRepository passengerRepository;
     private final ModelMapper modelMapper;
