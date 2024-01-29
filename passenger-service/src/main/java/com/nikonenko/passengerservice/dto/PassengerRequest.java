@@ -1,5 +1,6 @@
 package com.nikonenko.passengerservice.dto;
 
+import com.nikonenko.passengerservice.utils.ErrorList;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -13,12 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PassengerRequest {
-
-    @NotBlank(message = "Username is required")
-    @Size(max = 20, message = "Username must not exceed 20 characters")
+    @NotBlank(message = ErrorList.USERNAME_REQUIRED)
+    @Size(max = 20, message = ErrorList.WRONG_MAX_USERNAME_SIZE)
     private String username;
-
-    @NotBlank(message = "Phone is required")
-    @Pattern(regexp = "\\+375\\d{9}", message = "Phone must be in the format +375*********")
+    @NotBlank(message = ErrorList.PHONE_REQUIRED)
+    @Pattern(regexp = "\\+375\\d{9}", message = ErrorList.WRONG_PHONE_FORMAT)
     private String phone;
 }

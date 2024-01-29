@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequestMapping("/api/passenger")
 @RestControllerAdvice
 public class PassengerController {
-
     private final PassengerServiceImpl passengerService;
 
     @GetMapping

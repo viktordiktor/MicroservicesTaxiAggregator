@@ -15,10 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class PassengerResponse {
     private Long id;
-
     private String username;
-
     private String phone;
-
     private Set<RatingPassenger> ratingSet;
 }

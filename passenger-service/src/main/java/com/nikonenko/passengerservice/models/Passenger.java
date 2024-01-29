@@ -27,13 +27,10 @@ public class Passenger {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "username", unique = true)
     private String username;
-
     @Column(name = "phone", unique = true)
     private String phone;
-
     @OneToMany(mappedBy = "passenger", cascade = {CascadeType.ALL})
     @JsonManagedReference
     private Set<RatingPassenger> ratingSet;

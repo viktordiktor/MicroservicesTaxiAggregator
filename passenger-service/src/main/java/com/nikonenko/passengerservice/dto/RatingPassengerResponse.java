@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RatingPassengerResponse {
     private Long id;
-
     private int rating;
-
     private String comment;
 }

@@ -20,7 +20,6 @@ import java.util.List;
 
 @ControllerAdvice
 public class RestExceptionHandler {
-
     @ExceptionHandler(PassengerNotFoundException.class)
     public ResponseEntity<String> handlePassengerNotFoundException(PassengerNotFoundException ex) {
         return ResponseEntity

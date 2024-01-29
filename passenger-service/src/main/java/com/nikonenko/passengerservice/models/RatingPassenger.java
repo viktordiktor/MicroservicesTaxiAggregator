@@ -24,15 +24,12 @@ public class RatingPassenger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "passenger_id", nullable = false)
     @JsonBackReference
     private Passenger passenger;
-
     @Column(nullable = false)
     private int rating;
-
     @Column
     private String comment;
 }
