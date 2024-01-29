@@ -18,6 +18,6 @@ public class DriverResponse {
     private String username;
     private String phone;
     private String creditCard;
-    private Set<Car> cars;
-    private Set<RatingDriver> ratingSet;
+    private Set<CarResponse> cars;
+    private Set<RatingDriverResponse> ratingSet;
 }
