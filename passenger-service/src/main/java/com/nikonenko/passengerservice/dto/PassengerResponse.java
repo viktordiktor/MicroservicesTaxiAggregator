@@ -1,6 +1,5 @@
 package com.nikonenko.passengerservice.dto;
 
-import com.nikonenko.passengerservice.models.RatingPassenger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +16,5 @@ public class PassengerResponse {
     private Long id;
     private String username;
     private String phone;
-    private Set<RatingPassenger> ratingSet;
+    private Set<RatingPassengerResponse> ratingSet;
 }
