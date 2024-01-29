@@ -14,16 +14,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DriverResponse {
-
     private Long id;
-
     private String username;
-
     private String phone;
-
     private String creditCard;
-
     private Set<Car> cars;
-
     private Set<RatingDriver> ratingSet;
 }

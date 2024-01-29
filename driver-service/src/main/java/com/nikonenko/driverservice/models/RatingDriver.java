@@ -24,15 +24,12 @@ public class RatingDriver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "driver_id", nullable = false)
     @JsonBackReference
     private Driver driver;
-
     @Column(nullable = false)
     private int rating;
-
     @Column
     private String comment;
 }

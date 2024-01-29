@@ -22,7 +22,6 @@ import java.util.List;
 
 @ControllerAdvice
 public class RestExceptionHandler {
-
     @ExceptionHandler(DriverNotFoundException.class)
     public ResponseEntity<String> handleDriverNotFoundException(DriverNotFoundException ex) {
         return ResponseEntity

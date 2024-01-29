@@ -25,7 +25,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class CarServiceImpl implements CarService {
-
     private final CarRepository carRepository;
 
     private final ModelMapper modelMapper;

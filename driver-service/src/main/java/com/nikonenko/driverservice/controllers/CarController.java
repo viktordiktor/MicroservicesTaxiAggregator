@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequestMapping("/api/car")
 @RestControllerAdvice
 public class CarController {
-
     private final CarServiceImpl carService;
 
     @GetMapping

@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RatingDriverResponse {
-
     private Long id;
-
     private int rating;
-
     private String comment;
 }

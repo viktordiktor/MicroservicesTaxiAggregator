@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequestMapping("/api/driver")
 @RestControllerAdvice
 public class DriverController {
-
     private final DriverServiceImpl driverService;
 
     @GetMapping

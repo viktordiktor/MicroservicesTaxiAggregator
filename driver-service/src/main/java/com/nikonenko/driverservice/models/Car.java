@@ -25,18 +25,14 @@ public class Car {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "driver_id", nullable = false)
     @JsonBackReference
     private Driver driver;
-
     @Column(name = "number", unique = true)
     private String number;
-
     @Column(name = "model")
     private String model;
-
     @Column(name = "color")
     private String color;
 }

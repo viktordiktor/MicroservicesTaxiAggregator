@@ -29,11 +29,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 public class DriverServiceImpl implements DriverService {
-
     private final DriverRepository driverRepository;
-
     private final ModelMapper modelMapper;
-
     private final CarServiceImpl carService;
 
     @Override

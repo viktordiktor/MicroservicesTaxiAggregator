@@ -27,20 +27,15 @@ public class Driver {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "username", unique = true)
     private String username;
-
     @Column(name = "phone", unique = true)
     private String phone;
-
     @Column(name = "credit_card")
     private String creditCard;
-
     @OneToMany(mappedBy = "driver", cascade = {CascadeType.ALL})
     @JsonManagedReference
     private Set<Car> cars;
-
     @OneToMany(mappedBy = "driver", cascade = {CascadeType.ALL})
     @JsonManagedReference
     private Set<RatingDriver> ratingSet;

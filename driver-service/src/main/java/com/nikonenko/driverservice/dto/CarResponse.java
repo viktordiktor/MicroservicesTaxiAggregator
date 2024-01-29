@@ -11,14 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CarResponse {
-
     private Long id;
-
     private Driver driver;
-
     private String number;
-
     private String model;
-
     private String color;
 }
