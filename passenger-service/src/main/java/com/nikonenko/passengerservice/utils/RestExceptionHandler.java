@@ -41,29 +41,15 @@ public class RestExceptionHandler {
                 .body(errorMessages);
     }
 
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<String> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+    @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class})
+    public ResponseEntity<String> handleUsernameAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
     }
 
-    @ExceptionHandler(PhoneAlreadyExistsException.class)
-    public ResponseEntity<String> handlePhoneAlreadyExistsException(PhoneAlreadyExistsException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(PropertyReferenceException.class)
-    public ResponseEntity<String> handlePropertyReferenceException(PropertyReferenceException ex) {
+    @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class})
+    public ResponseEntity<String> handleNotReadableException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());

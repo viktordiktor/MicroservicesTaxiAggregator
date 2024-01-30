@@ -19,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 import java.util.Set;
 
@@ -88,11 +87,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     public Passenger getPassenger(Long id) {
         Optional<Passenger> optionalPassenger = passengerRepository.findById(id);
-        if (optionalPassenger.isEmpty()) {
-            log.info("Passenger with id {} is not found!", id);
-            throw new PassengerNotFoundException();
-        }
-        return optionalPassenger.get();
+        return optionalPassenger.orElseThrow(PassengerNotFoundException::new);
     }
 
     public void checkPassengerExists(PassengerRequest passengerRequest) {
