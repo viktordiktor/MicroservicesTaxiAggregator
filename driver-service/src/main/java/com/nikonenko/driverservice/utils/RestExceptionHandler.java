@@ -16,14 +16,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
 public class RestExceptionHandler {
-    @ExceptionHandler(DriverNotFoundException.class)
-    public ResponseEntity<String> handleDriverNotFoundException(DriverNotFoundException ex) {
+    @ExceptionHandler({DriverNotFoundException.class, CarNotFoundException.class})
+    public ResponseEntity<String> handleNotFoundException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
@@ -43,29 +42,16 @@ public class RestExceptionHandler {
                 .body(errorMessages);
     }
 
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<String> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+    @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class,
+            CarNumberAlreadyExistsException.class})
+    public ResponseEntity<String> handleAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
     }
 
-    @ExceptionHandler(PhoneAlreadyExistsException.class)
-    public ResponseEntity<String> handlePhoneAlreadyExistsException(PhoneAlreadyExistsException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(PropertyReferenceException.class)
-    public ResponseEntity<String> handlePropertyReferenceException(PropertyReferenceException ex) {
+    @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class})
+    public ResponseEntity<String> handleWrongBodyException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
@@ -80,20 +66,6 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(CarNotFoundException.class)
-    public ResponseEntity<String> handleCarNotFoundException(CarNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(CarNumberAlreadyExistsException.class)
-    public ResponseEntity<String> handleCarNumberAlreadyExistsException(CarNumberAlreadyExistsException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());

@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 
@@ -71,11 +70,7 @@ public class CarServiceImpl implements CarService {
 
     public Car getCar(Long id) {
         Optional<Car> optionalCar = carRepository.findById(id);
-        if (optionalCar.isEmpty()) {
-            log.info("Car with id {} is not found!", id);
-            throw new CarNotFoundException();
-        }
-        return optionalCar.get();
+        return optionalCar.orElseThrow(CarNotFoundException::new);
     }
 
     public void checkCarExists(CarRequest carRequest) {

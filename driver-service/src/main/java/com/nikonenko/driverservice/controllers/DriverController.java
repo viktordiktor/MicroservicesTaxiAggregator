@@ -66,9 +66,9 @@ public class DriverController {
         return driverService.createReview(id, ratingRequest);
     }
 
-    @PostMapping("/car/{id}")
+    @PostMapping("/car/{driverId}")
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponse addCarToDriver(@PathVariable Long id, @Valid @RequestBody CarRequest carRequest) {
-        return driverService.addCarToDriver(id, carRequest);
+    public DriverResponse addCarToDriver(@PathVariable Long driverId, @Valid @RequestBody CarRequest carRequest) {
+        return driverService.addCarToDriver(driverId, carRequest);
     }
 }

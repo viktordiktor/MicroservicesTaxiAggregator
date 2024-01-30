@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 import java.util.Set;
 
@@ -102,16 +101,12 @@ public class DriverServiceImpl implements DriverService {
 
     public Driver getDriver(Long id) {
         Optional<Driver> optionalDriver = driverRepository.findById(id);
-        if (optionalDriver.isEmpty()) {
-            log.info("Driver with id {} is not found!", id);
-            throw new DriverNotFoundException();
-        }
-        return optionalDriver.get();
+        return optionalDriver.orElseThrow(DriverNotFoundException::new);
     }
 
     public void checkDriverExists(DriverRequest driverRequest) {
         if (driverRepository.existsByPhone(driverRequest.getPhone())) {
-            log.info("Driver with phone {} already exists!", driverRequest.getPhone());
+            log.info("Driver with ph`one {} already exists!", driverRequest.getPhone());
             throw new PhoneAlreadyExistsException();
         }
         if (driverRepository.existsByUsername(driverRequest.getUsername())) {

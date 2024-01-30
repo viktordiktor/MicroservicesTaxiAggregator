@@ -1,12 +1,12 @@
 package com.nikonenko.driverservice.utils;
 
+
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration
 public class ModelMapperUtil {
     private final ModelMapper modelMapper;
 
@@ -19,7 +19,7 @@ public class ModelMapperUtil {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        modelMapper.getConfiguration().setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+        modelMapper.getConfiguration().setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
         modelMapper.getConfiguration().setFieldMatchingEnabled(true);
     }
 

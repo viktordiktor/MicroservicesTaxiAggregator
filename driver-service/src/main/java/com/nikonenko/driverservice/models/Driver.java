@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.Set;
 
 @AllArgsConstructor
@@ -31,9 +30,7 @@ public class Driver {
     private String username;
     @Column(name = "phone", unique = true)
     private String phone;
-    @Column(name = "credit_card")
-    private String creditCard;
-    @OneToMany(mappedBy = "driver", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "driver")
     @JsonManagedReference
     private Set<Car> cars;
     @OneToMany(mappedBy = "driver", cascade = {CascadeType.ALL})
