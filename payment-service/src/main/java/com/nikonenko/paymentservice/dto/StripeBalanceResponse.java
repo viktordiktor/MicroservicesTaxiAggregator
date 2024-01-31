@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BalanceResponse {
+public class StripeBalanceResponse {
     double amount;
     String currency;
 }

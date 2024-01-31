@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/stripe/customer")
+@RequestMapping("api/v1/stripe/customer")
 public class StripeCustomerController {
     private final StripeCustomerServiceImpl stripeCustomerService;
 

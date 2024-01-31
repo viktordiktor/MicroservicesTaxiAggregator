@@ -2,6 +2,7 @@ package com.nikonenko.paymentservice.utils;
 
 import com.nikonenko.paymentservice.exceptions.CustomerAlreadyExistsException;
 import com.nikonenko.paymentservice.exceptions.CustomerNotFoundException;
+import com.nikonenko.paymentservice.exceptions.ExpiredCouponException;
 import com.nikonenko.paymentservice.exceptions.InsufficientFundsException;
 import com.nikonenko.paymentservice.exceptions.StripeOperationFailedException;
 import org.springframework.data.mapping.PropertyReferenceException;
@@ -54,22 +55,10 @@ public class RestExceptionHandler {
                 .body(ex.getMessage());
     }
 
-    @ExceptionHandler(StripeOperationFailedException.class)
+    @ExceptionHandler({StripeOperationFailedException.class, HttpMessageNotReadableException.class,
+            PropertyReferenceException.class, MethodArgumentTypeMismatchException.class,
+            ExpiredCouponException.class})
     public ResponseEntity<String> handleStripeOperationException(StripeOperationFailedException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class})
-    public ResponseEntity<String> handleWrongBodyException(RuntimeException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());

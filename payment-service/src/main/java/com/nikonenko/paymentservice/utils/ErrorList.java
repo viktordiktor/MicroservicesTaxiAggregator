@@ -16,7 +16,11 @@ public class ErrorList {
     public final static String RETRIEVE_BALANCE_FAILED = "Exception during retrieving balance: ";
     public final static String RETRIEVE_CUSTOMER_FAILED = "Exception during retrieving customer: ";
     public final static String UPDATE_CUSTOMER_FAILED = "Exception during updating customer: ";
-    public final static String NEGATIVE_AMOUNT = "Amount should be positive!";
+    public final static String NEGATIVE_VALUE = "Value should be positive!";
     public final static String UNEXPECTED_MONTH_RANGE = "Month should be in range from 1 to 12!";
-    public final static String UNEXPECTED_YEAR_RANGE = "Month should be in range from 2000 to 2100!";
+    public final static String UNEXPECTED_YEAR_RANGE = "Year should be in range from 00 to 99!";
+    public static final String WRONG_CARD_FORMAT = "Card must be a 16-digit number!";
+    public static final String WRONG_PHONE_FORMAT = "Phone must be in the format +375*********";
+    public static final String WRONG_CVC_FORMAT = "CVC must be a 3-digit number!";
+    public static final String EXPIRED_COUPON = "This coupon is expired!";
 }

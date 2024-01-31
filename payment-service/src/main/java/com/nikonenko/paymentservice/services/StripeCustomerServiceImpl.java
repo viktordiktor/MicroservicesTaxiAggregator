@@ -19,7 +19,6 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
-import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
 import com.stripe.param.PaymentIntentConfirmParams;
@@ -37,13 +36,14 @@ public class StripeCustomerServiceImpl implements StripeCustomerService{
     @Value("${api.stripe.secret-key}")
     private String secretKey;
     private final CustomerUserRepository customerUserRepository;
+    private final StripeUtilityService utilityService;
 
     @Override
     public StripeCustomerResponse createCustomer(StripeCustomerRequest customerRequest){
         checkCustomerExists(customerRequest.getPassengerId());
-        Customer customer = createStripeCustomer(customerRequest);
+        Customer customer = stripeCustomerCreation(customerRequest);
 
-        createPayment(customer.getId());
+        stripePaymentCreating(customer.getId());
         saveCustomerUserToDatabase(customerRequest.getPassengerId(), customer.getId());
 
         return StripeCustomerResponse.builder()
@@ -59,33 +59,34 @@ public class StripeCustomerServiceImpl implements StripeCustomerService{
         }
     }
 
-    private Customer createStripeCustomer(StripeCustomerRequest customerRequest) {
+    private Customer stripeCustomerCreation(StripeCustomerRequest customerRequest) {
         try{
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setName(customerRequest.getUsername())
                     .setBalance(customerRequest.getAmount())
                     .build();
-            return Customer.create(customerCreateParams, getRequestOptions(secretKey));
+            return Customer.create(customerCreateParams, utilityService.getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new CreateCustomerException(ex.getMessage());
         }
     }
 
-    private void createPayment(String customerId)  {
+    private void stripePaymentCreating(String customerId)  {
         try{
             Map<String, Object> paymentParams = Map.of(
                     "type", "card",
                     "card", Map.of("token", "tok_visa")
             );
-            PaymentMethod paymentMethod = PaymentMethod.create(paymentParams, getRequestOptions(secretKey));
-            paymentMethod.attach(Map.of("customer", customerId));
+            PaymentMethod paymentMethod = PaymentMethod.create(paymentParams,
+                    utilityService.getRequestOptions(secretKey));
+            paymentMethod.attach(Map.of("customer", customerId), utilityService.getRequestOptions(secretKey));
         } catch (StripeException ex){
             throw new CreatePaymentFailedException(ex.getMessage());
         }
     }
 
-    private void saveCustomerUserToDatabase(Long passengerId, String customerId){
+    private void saveCustomerUserToDatabase(Long passengerId, String customerId) {
         CustomerUser user = CustomerUser.builder()
                 .customerId(customerId)
                 .passengerId(passengerId)
@@ -99,12 +100,14 @@ public class StripeCustomerServiceImpl implements StripeCustomerService{
         CustomerUser user = getCustomerUser(passengerId);
         String customerId = user.getCustomerId();
         checkBalanceEnough(customerId, customerChargeRequest.getAmount());
-        PaymentIntent intent = confirmIntent(customerChargeRequest, customerId);
+        PaymentIntent intent = stripeIntentConfirming(customerChargeRequest, customerId);
         updateBalance(customerId, customerChargeRequest.getAmount());
         return StripeCustomerChargeResponse.builder().id(intent.getId())
                 .passengerId(customerChargeRequest.getPassengerId())
-                .amount(intent.getAmount() / 100)
-                .currency(intent.getCurrency()).build();
+                .amount(customerChargeRequest.getAmount())
+                .currency(customerChargeRequest.getCurrency())
+                .success(true)
+                .build();
     }
 
     private CustomerUser getCustomerUser(Long id){
@@ -112,42 +115,40 @@ public class StripeCustomerServiceImpl implements StripeCustomerService{
                 .orElseThrow(CustomerNotFoundException::new);
     }
 
-    private void checkBalanceEnough(String customerId, long amount) {
-        Customer customer = retrieveCustomer(customerId);
+    private void checkBalanceEnough(String customerId, Double amount) {
+        Customer customer = stripeCustomerRetrieving(customerId);
         if (customer.getBalance() < amount) {
             throw new InsufficientFundsException();
         }
     }
 
-    private Customer retrieveCustomer(String customerId) {
+    private Customer stripeCustomerRetrieving(String customerId) {
         try {
-            return Customer.retrieve(customerId, getRequestOptions(secretKey));
+            return Customer.retrieve(customerId, utilityService.getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new RetrieveCustomerFailedException(ex.getMessage());
         }
     }
 
-    private PaymentIntent confirmIntent(StripeCustomerChargeRequest request, String customerId) {
-        PaymentIntent intent = createIntent(request, customerId);
+    private PaymentIntent stripeIntentConfirming(StripeCustomerChargeRequest request, String customerId) {
+        PaymentIntent intent = stripeIntentCreation(request, customerId);
         PaymentIntentConfirmParams params = PaymentIntentConfirmParams.builder()
                         .setPaymentMethod("pm_card_visa")
                         .build();
         try {
-            RequestOptions requestOptions = RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
-            return intent.confirm(params, requestOptions);
+            return intent.confirm(params, utilityService.getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new ConfirmIntentFailedException(ex.getMessage());
         }
     }
 
-    private PaymentIntent createIntent(StripeCustomerChargeRequest request, String customerId) {
+    private PaymentIntent stripeIntentCreation(StripeCustomerChargeRequest request, String customerId) {
         try {
-            PaymentIntent intent = PaymentIntent.create(Map.of("amount", request.getAmount() * 100,
+            PaymentIntent intent = PaymentIntent.create(Map.of("amount", (int)(request.getAmount() * 100),
                     "currency", request.getCurrency(),
                     "customer", customerId,
-                    "automatic_payment_methods", createAutomaticPaymentMethods()));
+                    "automatic_payment_methods", createAutomaticPaymentMethods()),
+                    utilityService.getRequestOptions(secretKey));
             intent.setPaymentMethod(customerId);
             return intent;
         } catch (StripeException ex) {
@@ -162,26 +163,20 @@ public class StripeCustomerServiceImpl implements StripeCustomerService{
         return automaticPaymentMethods;
     }
 
-    private void updateBalance(String customerId, long amount) {
-        Customer customer = retrieveCustomer(customerId);
+    private void updateBalance(String customerId, Double amount) {
+        Customer customer = stripeCustomerRetrieving(customerId);
         CustomerUpdateParams params =
                 CustomerUpdateParams.builder()
-                        .setBalance(customer.getBalance() - amount * 100)
+                        .setBalance((long)(customer.getBalance() - amount))
                         .build();
-        updateCustomer(customer, params);
+        stripeCustomerUpdating(customer, params);
     }
 
-    private void updateCustomer(Customer customer, CustomerUpdateParams params) {
+    private void stripeCustomerUpdating(Customer customer, CustomerUpdateParams params) {
         try {
-            customer.update(params, getRequestOptions(secretKey));
+            customer.update(params, utilityService.getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new UpdateCustomerFailedException(ex.getMessage());
         }
-    }
-
-    private RequestOptions getRequestOptions(String key){
-        return RequestOptions.builder()
-                .setApiKey(key)
-                .build();
     }
 }

@@ -13,6 +13,7 @@ public class StripeCustomerChargeResponse {
     private String id;
     private Long passengerId;
     private String currency;
-    private Long amount;
+    private Double amount;
+    private String coupon;
     private boolean success;
 }

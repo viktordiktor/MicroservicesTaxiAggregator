@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StripeCustomerRequest {
     private String username;
-    @Pattern(regexp = PatternList.PHONE_PATTERN)
+    @Pattern(regexp = PatternList.PHONE_PATTERN, message = ErrorList.WRONG_PHONE_FORMAT)
     private String phone;
     private Long passengerId;
-    @Positive(message = ErrorList.NEGATIVE_AMOUNT)
+    @Positive(message = ErrorList.NEGATIVE_VALUE)
     private Long amount;
 }

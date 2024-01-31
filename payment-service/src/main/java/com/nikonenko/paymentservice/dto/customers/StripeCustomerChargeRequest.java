@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class StripeCustomerChargeRequest {
     private Long passengerId;
     private String currency;
-    @Positive(message = ErrorList.NEGATIVE_AMOUNT)
-    private Long amount;
+    @Positive(message = ErrorList.NEGATIVE_VALUE)
+    private Double amount;
 }

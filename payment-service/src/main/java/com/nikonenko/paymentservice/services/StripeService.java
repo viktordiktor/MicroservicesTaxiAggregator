@@ -1,9 +1,11 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.BalanceResponse;
+import com.nikonenko.paymentservice.dto.StripeBalanceResponse;
 import com.nikonenko.paymentservice.dto.StripeCardRequest;
 import com.nikonenko.paymentservice.dto.StripeChargeRequest;
 import com.nikonenko.paymentservice.dto.StripeChargeResponse;
+import com.nikonenko.paymentservice.dto.StripeCouponRequest;
+import com.nikonenko.paymentservice.dto.StripeCouponResponse;
 import com.nikonenko.paymentservice.dto.StripeTokenResponse;
 
 public interface StripeService {
@@ -11,5 +13,7 @@ public interface StripeService {
 
     StripeChargeResponse charge(StripeChargeRequest stripeChargeRequest);
 
-    BalanceResponse getBalance();
+    StripeCouponResponse createCoupon(StripeCouponRequest stripeCouponRequest);
+
+    StripeBalanceResponse getBalance();
 }

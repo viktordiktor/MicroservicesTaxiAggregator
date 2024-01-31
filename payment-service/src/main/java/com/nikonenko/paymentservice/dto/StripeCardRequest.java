@@ -14,12 +14,12 @@ import org.hibernate.validator.constraints.Range;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StripeCardRequest {
-    @Pattern(regexp = PatternList.CARD_PATTERN)
+    @Pattern(regexp = PatternList.CARD_PATTERN, message = ErrorList.WRONG_CARD_FORMAT)
     private String cardNumber;
     @Range(min = 1, max = 12, message = ErrorList.UNEXPECTED_MONTH_RANGE)
     private String expirationMonth;
-    @Range(min = 2000, max = 2100, message = ErrorList.UNEXPECTED_YEAR_RANGE)
+    @Range(min = 0, max = 99, message = ErrorList.UNEXPECTED_YEAR_RANGE)
     private Integer expirationYear;
-    @Pattern(regexp = PatternList.CVC_PATTERN)
+    @Range(min = 100, max = 999, message = ErrorList.WRONG_CVC_FORMAT)
     private Integer cvc;
 }
