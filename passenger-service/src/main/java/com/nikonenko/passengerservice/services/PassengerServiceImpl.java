@@ -1,5 +1,6 @@
 package com.nikonenko.passengerservice.services;
 
+import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
 import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
@@ -13,12 +14,13 @@ import com.nikonenko.passengerservice.repositories.PassengerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,13 +33,20 @@ public class PassengerServiceImpl implements PassengerService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Page<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField) {
+    public PageResponse<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField) {
         if (pageNumber < 0 || pageSize < 1) {
             throw new WrongPageableParameterException();
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
         Page<Passenger> page = passengerRepository.findAll(pageable);
-        return modelMapper.map(page, new TypeToken<Page<PassengerResponse>>() {}.getType());
+        List<PassengerResponse> passengerResponses = page.getContent().stream()
+                .map(passenger -> modelMapper.map(passenger, PassengerResponse.class))
+                .toList();
+        return PageResponse.<PassengerResponse>builder()
+                .objectList(passengerResponses)
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
     }
 
     @Override
@@ -75,7 +84,7 @@ public class PassengerServiceImpl implements PassengerService {
         Passenger passenger = getPassenger(id);
 
         RatingPassenger addingRating = modelMapper.map(ratingRequest, RatingPassenger.class);
-        addingRating.setPassenger(passenger);
+        addingRating.setPassengerId(id);
 
         Set<RatingPassenger> modifiedRatingSet = passenger.getRatingSet();
         modifiedRatingSet.add(addingRating);

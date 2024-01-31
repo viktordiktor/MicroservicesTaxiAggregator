@@ -1,12 +1,12 @@
 package com.nikonenko.passengerservice.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ public class Passenger {
     private String username;
     @Column(name = "phone", unique = true)
     private String phone;
-    @OneToMany(mappedBy = "passenger", cascade = {CascadeType.ALL})
-    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "passenger_id")
     private Set<RatingPassenger> ratingSet;
 }

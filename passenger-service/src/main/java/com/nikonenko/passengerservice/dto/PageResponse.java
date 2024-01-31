@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassengerResponse {
-    private Long id;
-    private String username;
-    private String phone;
-    private Set<RatingPassengerResponse> ratingSet;
+public class PageResponse<T> {
+    private List<T> objectList;
+    private long totalElements;
+    private int totalPages;
 }
