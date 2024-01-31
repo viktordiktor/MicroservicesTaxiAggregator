@@ -2,7 +2,7 @@ package com.nikonenko.driverservice.services;
 
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
-import com.nikonenko.driverservice.dto.DriverResponse;
+import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.exceptions.CarNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
@@ -11,14 +11,14 @@ import com.nikonenko.driverservice.repositories.CarRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,13 +29,20 @@ public class CarServiceImpl implements CarService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Page<CarResponse> getAllCars(int pageNumber, int pageSize, String sortField) {
+    public PageResponse<CarResponse> getAllCars(int pageNumber, int pageSize, String sortField) {
         if (pageNumber < 0 || pageSize < 1) {
             throw new WrongPageableParameterException();
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
         Page<Car> page = carRepository.findAll(pageable);
-        return modelMapper.map(page, new TypeToken<Page<DriverResponse>>() {}.getType());
+        List<CarResponse> cars = page.getContent().stream()
+                .map(car -> modelMapper.map(car, CarResponse.class))
+                .toList();
+        return PageResponse.<CarResponse>builder()
+                .objectList(cars)
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
     }
 
     @Override

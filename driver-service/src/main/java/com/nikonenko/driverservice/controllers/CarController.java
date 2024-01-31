@@ -2,10 +2,10 @@ package com.nikonenko.driverservice.controllers;
 
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
+import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.services.CarServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,16 +21,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/car")
+@RequestMapping("/api/cars")
 @RestControllerAdvice
 public class CarController {
     private final CarServiceImpl carService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<CarResponse> getAllCars(@RequestParam(defaultValue = "0") int pageNumber,
-                                        @RequestParam(defaultValue = "5") int pageSize,
-                                        @RequestParam(defaultValue = "id") String sortField) {
+    public PageResponse<CarResponse> getAllCars(@RequestParam(defaultValue = "0") int pageNumber,
+                                                @RequestParam(defaultValue = "5") int pageSize,
+                                                @RequestParam(defaultValue = "id") String sortField) {
         return carService.getAllCars(pageNumber, pageSize, sortField);
     }
 

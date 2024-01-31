@@ -43,29 +43,10 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class,
-            CarNumberAlreadyExistsException.class})
+            CarNumberAlreadyExistsException.class, HttpMessageNotReadableException.class,
+            PropertyReferenceException.class, WrongPageableParameterException.class,
+            MethodArgumentTypeMismatchException.class})
     public ResponseEntity<String> handleAlreadyExistsException(RuntimeException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class})
-    public ResponseEntity<String> handleWrongBodyException(RuntimeException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(WrongPageableParameterException.class)
-    public ResponseEntity<String> handleWrongPageableParameterException(WrongPageableParameterException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());

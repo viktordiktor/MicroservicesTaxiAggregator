@@ -3,6 +3,7 @@ package com.nikonenko.driverservice.services;
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
+import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.RatingDriverRequest;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
@@ -15,12 +16,13 @@ import com.nikonenko.driverservice.repositories.DriverRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,13 +35,20 @@ public class DriverServiceImpl implements DriverService {
     private final CarServiceImpl carService;
 
     @Override
-    public Page<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField) {
+    public PageResponse<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField) {
         if (pageNumber < 0 || pageSize < 1) {
             throw new WrongPageableParameterException();
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
         Page<Driver> page = driverRepository.findAll(pageable);
-        return modelMapper.map(page, new TypeToken<Page<DriverResponse>>() {}.getType());
+        List<DriverResponse> drivers = page.getContent().stream()
+                .map(driver -> modelMapper.map(driver, DriverResponse.class))
+                .toList();
+        return PageResponse.<DriverResponse>builder()
+                .objectList(drivers)
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
     }
 
     @Override
@@ -77,7 +86,7 @@ public class DriverServiceImpl implements DriverService {
         Driver driver = getDriver(id);
 
         RatingDriver addingRating = modelMapper.map(ratingRequest, RatingDriver.class);
-        addingRating.setDriver(driver);
+        addingRating.setDriverId(driver.getId());
 
         Set<RatingDriver> modifiedRatingSet = driver.getRatingSet();
         modifiedRatingSet.add(addingRating);
