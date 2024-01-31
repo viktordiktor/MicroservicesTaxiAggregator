@@ -1,12 +1,11 @@
 package com.nikonenko.paymentservice.dto;
 
+import com.nikonenko.paymentservice.utils.ErrorList;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @Builder
@@ -15,6 +14,6 @@ import java.util.Map;
 public class StripeChargeRequest {
     private String stripeToken;
     private String currency;
+    @Positive(message = ErrorList.NEGATIVE_AMOUNT)
     private Double amount;
-    private Map<String,Object> additionalInfo = new HashMap<>();
 }

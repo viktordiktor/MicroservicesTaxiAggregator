@@ -4,5 +4,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class PatternList {
-
+    public static final String PHONE_PATTERN = "\\+375\\d{9}";
+    public static final String CARD_PATTERN = "\\d{9}";
+    public static final String CVC_PATTERN = "\\d{3}";
 }

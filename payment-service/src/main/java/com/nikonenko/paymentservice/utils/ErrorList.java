@@ -16,4 +16,7 @@ public class ErrorList {
     public final static String RETRIEVE_BALANCE_FAILED = "Exception during retrieving balance: ";
     public final static String RETRIEVE_CUSTOMER_FAILED = "Exception during retrieving customer: ";
     public final static String UPDATE_CUSTOMER_FAILED = "Exception during updating customer: ";
+    public final static String NEGATIVE_AMOUNT = "Amount should be positive!";
+    public final static String UNEXPECTED_MONTH_RANGE = "Month should be in range from 1 to 12!";
+    public final static String UNEXPECTED_YEAR_RANGE = "Month should be in range from 2000 to 2100!";
 }

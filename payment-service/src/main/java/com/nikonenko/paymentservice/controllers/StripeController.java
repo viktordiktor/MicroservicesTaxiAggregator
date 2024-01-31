@@ -6,6 +6,7 @@ import com.nikonenko.paymentservice.dto.StripeChargeRequest;
 import com.nikonenko.paymentservice.dto.StripeChargeResponse;
 import com.nikonenko.paymentservice.dto.StripeTokenResponse;
 import com.nikonenko.paymentservice.services.StripeServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,13 @@ public class StripeController {
 
     @PostMapping("/token")
     @ResponseStatus(HttpStatus.CREATED)
-    public StripeTokenResponse generateTokenByCard(@RequestBody StripeCardRequest stripeCardRequest) {
+    public StripeTokenResponse generateTokenByCard(@RequestBody @Valid StripeCardRequest stripeCardRequest) {
         return stripeService.generateTokenByCard(stripeCardRequest);
     }
 
     @PostMapping("/charge")
     @ResponseStatus(HttpStatus.OK)
-    public StripeChargeResponse charge(@RequestBody StripeChargeRequest stripeChargeRequest) {
+    public StripeChargeResponse charge(@RequestBody @Valid StripeChargeRequest stripeChargeRequest) {
         return stripeService.charge(stripeChargeRequest);
     }
 
