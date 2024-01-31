@@ -1,0 +1,10 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <include file="30-changeset-drivers-table.xml" relativeToChangelogFile="true"/>
+    <include file="40-changeset-review-drivers-table.xml" relativeToChangelogFile="true"/>
+    <include file="50-changeset-cars-table.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>
