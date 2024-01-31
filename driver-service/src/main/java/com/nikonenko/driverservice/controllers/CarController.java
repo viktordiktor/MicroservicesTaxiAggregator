@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/cars")
+@RequestMapping("/api/v1/cars")
 @RestControllerAdvice
 public class CarController {
     private final CarServiceImpl carService;

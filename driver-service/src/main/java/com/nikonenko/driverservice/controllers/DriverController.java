@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/drivers")
+@RequestMapping("/api/v1/drivers")
 @RestControllerAdvice
 public class DriverController {
     private final DriverServiceImpl driverService;
