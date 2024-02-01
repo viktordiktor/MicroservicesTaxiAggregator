@@ -18,6 +18,7 @@
         <modelmapper.version>3.2.0</modelmapper.version>
         <stripe.version>24.13.0</stripe.version>
         <dotenv.version>4.0.0</dotenv.version>
+        <liquibase.version>4.24.0</liquibase.version>
     </properties>
     <dependencies>
         <dependency>
@@ -62,7 +63,11 @@
             <artifactId>spring-dotenv</artifactId>
             <version>${dotenv.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -77,6 +82,14 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase.version}</version>
+                <configuration>
+                    <propertyFile>${project.basedir}/src/main/java/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
         </plugins>

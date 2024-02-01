@@ -12,8 +12,11 @@ spring:
       hibernate:
         '[format_sql]': true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     generate-ddl: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
 
 api:
   stripe:
