@@ -109,9 +109,11 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
         LocalDateTime dateTime = customerRideRequest.getRideDate();
         Double length = customerRideRequest.getRideLength();
         double price = 1.0;
-        Coupon coupon = utilityService.retrieveCoupon(customerRideRequest.getCoupon());
         price *= calculateWithRideLength(length) * getDayCoefficient(dateTime) * getTimeCoefficient(dateTime);
-        price -= price * coupon.getAmountOff();
+        if (customerRideRequest.getCoupon() != null) {
+            Coupon coupon = utilityService.retrieveCoupon(customerRideRequest.getCoupon());
+            price -= price * coupon.getPercentOff().doubleValue() / 100;
+        }
         return price;
     }
 

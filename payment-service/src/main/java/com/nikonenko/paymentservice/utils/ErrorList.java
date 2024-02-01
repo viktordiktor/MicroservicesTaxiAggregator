@@ -24,5 +24,6 @@ public class ErrorList {
     public static final String WRONG_CARD_FORMAT = "Card must be a 16-digit number!";
     public static final String WRONG_PHONE_FORMAT = "Phone must be in the format +375*********";
     public static final String WRONG_CVC_FORMAT = "CVC must be a 3-digit number!";
+    public static final String WRONG_DATETIME_FORMAT = "DateTime format should be yyyy-MM-dd'T'HH:mm:ss.SSS";
     public static final String EXPIRED_COUPON = "This coupon is expired!";
 }
