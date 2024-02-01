@@ -7,7 +7,7 @@ import com.nikonenko.paymentservice.dto.StripeChargeResponse;
 import com.nikonenko.paymentservice.dto.StripeCouponRequest;
 import com.nikonenko.paymentservice.dto.StripeCouponResponse;
 import com.nikonenko.paymentservice.dto.StripeTokenResponse;
-import com.nikonenko.paymentservice.services.StripeServiceImpl;
+import com.nikonenko.paymentservice.services.PaymentGeneralService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,31 +23,31 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/stripe")
 @RestControllerAdvice
-public class StripeController {
-    private final StripeServiceImpl stripeService;
+public class PaymentGeneralController {
+    private final PaymentGeneralService paymentGeneralService;
 
     @PostMapping("/token")
     @ResponseStatus(HttpStatus.CREATED)
     public StripeTokenResponse generateTokenByCard(@RequestBody @Valid StripeCardRequest stripeCardRequest) {
-        return stripeService.generateTokenByCard(stripeCardRequest);
+        return paymentGeneralService.generateTokenByCard(stripeCardRequest);
     }
 
     @PostMapping("/charge")
     @ResponseStatus(HttpStatus.OK)
     public StripeChargeResponse charge(@RequestBody @Valid StripeChargeRequest stripeChargeRequest) {
-        return stripeService.charge(stripeChargeRequest);
+        return paymentGeneralService.charge(stripeChargeRequest);
     }
 
     @PostMapping("/coupon")
     @ResponseStatus(HttpStatus.OK)
     public StripeCouponResponse createCoupon(@RequestBody @Valid StripeCouponRequest stripeCouponRequest) {
-        return stripeService.createCoupon(stripeCouponRequest);
+        return paymentGeneralService.createCoupon(stripeCouponRequest);
     }
 
     @GetMapping("/balance")
     @ResponseStatus(HttpStatus.OK)
     public StripeBalanceResponse getBalance() {
-        return stripeService.getBalance();
+        return paymentGeneralService.getBalance();
     }
 
 }

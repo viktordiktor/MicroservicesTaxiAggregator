@@ -8,7 +8,7 @@ import com.nikonenko.paymentservice.dto.StripeCouponRequest;
 import com.nikonenko.paymentservice.dto.StripeCouponResponse;
 import com.nikonenko.paymentservice.dto.StripeTokenResponse;
 
-public interface StripeService {
+public interface PaymentGeneralService {
     StripeTokenResponse generateTokenByCard(StripeCardRequest stripeCardRequest);
 
     StripeChargeResponse charge(StripeChargeRequest stripeChargeRequest);
