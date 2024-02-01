@@ -14,6 +14,5 @@ public class StripeCustomerChargeResponse {
     private Long passengerId;
     private String currency;
     private Double amount;
-    private String coupon;
     private boolean success;
 }

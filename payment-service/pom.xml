@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <modelmapper.version>3.2.0</modelmapper.version>
         <stripe.version>24.13.0</stripe.version>
+        <dotenv.version>4.0.0</dotenv.version>
     </properties>
     <dependencies>
         <dependency>
@@ -55,6 +56,11 @@
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
             <version>${stripe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>spring-dotenv</artifactId>
+            <version>${dotenv.version}</version>
         </dependency>
 
     </dependencies>

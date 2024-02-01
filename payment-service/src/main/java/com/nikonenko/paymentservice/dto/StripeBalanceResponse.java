@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StripeBalanceResponse {
-    double amount;
-    String currency;
+    private double amount;
+    private String currency;
 }

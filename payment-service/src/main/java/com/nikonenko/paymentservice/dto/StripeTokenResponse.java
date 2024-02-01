@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StripeTokenResponse {
     private String cardNumber;
-    String token;
+    private String token;
 }

@@ -14,5 +14,4 @@ public class StripeChargeResponse {
     private Boolean success;
     private String message;
     private String chargeId;
-    private String coupon;
 }
