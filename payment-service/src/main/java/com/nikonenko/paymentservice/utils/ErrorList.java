@@ -26,4 +26,18 @@ public class ErrorList {
     public static final String WRONG_CVC_FORMAT = "CVC must be a 3-digit number!";
     public static final String WRONG_DATETIME_FORMAT = "DateTime format should be yyyy-MM-dd'T'HH:mm:ss.SSS";
     public static final String EXPIRED_COUPON = "This coupon is expired!";
+    public static final String LENGTH_REQUIRED = "Ride length is required!";
+    public static final String DATETIME_REQUIRED = "Ride date time is required!";
+    public static final String PASSENGER_ID_REQUIRED = "Passenger ID is required!";
+    public static final String CURRENCY_REQUIRED = "Currency is required!";
+    public static final String AMOUNT_REQUIRED = "Amount is required!";
+    public static final String USERNAME_REQUIRED = "Username is required!";
+    public static final String PHONE_REQUIRED = "Phone is required!";
+    public static final String CARD_REQUIRED = "Card is required!";
+    public static final String EXP_MONTH_REQUIRED = "Expiration month is required!";
+    public static final String EXP_YEAR_REQUIRED = "Expiration year is required!";
+    public static final String CVC_REQUIRED = "CVC is required!";
+    public static final String TOKEN_REQUIRED = "Token is required!";
+    public static final String DURATION_REQUIRED = "Coupon duration is required!";
+    public static final String PERCENT_REQUIRED = "Coupon percent off is required!";
 }

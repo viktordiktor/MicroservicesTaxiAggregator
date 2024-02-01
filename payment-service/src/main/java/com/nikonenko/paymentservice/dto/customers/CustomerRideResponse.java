@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class CustomerRideResponse {
     private Double price;
     private Double rideLength;
-    private LocalDateTime rideDate;
+    private LocalDateTime rideDateTime;
     private String coupon;
 }

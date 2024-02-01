@@ -1,6 +1,7 @@
 package com.nikonenko.paymentservice.dto;
 
 import com.nikonenko.paymentservice.utils.ErrorList;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +14,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StripeCouponRequest {
+    @NotNull(message = ErrorList.DURATION_REQUIRED)
     @Positive(message = ErrorList.NEGATIVE_VALUE)
     private Long monthDuration;
+    @NotNull(message = ErrorList.PERCENT_REQUIRED)
     @Positive(message = ErrorList.NEGATIVE_VALUE)
     private BigDecimal percent;
 }

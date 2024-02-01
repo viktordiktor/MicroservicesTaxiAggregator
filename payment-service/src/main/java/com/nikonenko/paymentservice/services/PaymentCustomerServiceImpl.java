@@ -106,7 +106,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     private Double calculatePrice(CustomerRideRequest customerRideRequest) {
-        LocalDateTime dateTime = customerRideRequest.getRideDate();
+        LocalDateTime dateTime = customerRideRequest.getRideDateTime();
         Double length = customerRideRequest.getRideLength();
         double price = 1.0;
         price *= calculateWithRideLength(length) * getDayCoefficient(dateTime) * getTimeCoefficient(dateTime);
