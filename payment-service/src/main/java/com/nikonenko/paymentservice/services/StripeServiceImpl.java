@@ -9,7 +9,7 @@ import com.nikonenko.paymentservice.dto.StripeCouponResponse;
 import com.nikonenko.paymentservice.dto.StripeTokenResponse;
 import com.nikonenko.paymentservice.exceptions.CreateChargeFailedException;
 import com.nikonenko.paymentservice.exceptions.CreateCouponFailedException;
-import com.nikonenko.paymentservice.exceptions.GenerateTokenFailedException;
+import com.nikonenko.paymentservice.exceptions.CreateTokenFailedException;
 import com.nikonenko.paymentservice.exceptions.RetrieveBalanceFailedException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Balance;
@@ -38,17 +38,12 @@ public class StripeServiceImpl implements StripeService{
 
     @Override
     public StripeTokenResponse generateTokenByCard(StripeCardRequest stripeCardRequest) {
-        try {
-            Map<String, Object> cardParams = createCardParams(stripeCardRequest);
-            Token token = Token.create(Map.of("card", cardParams),
-                    utilityService.getRequestOptions(publicKey));
-            return StripeTokenResponse.builder()
-                    .token(token.getId())
-                    .cardNumber(stripeCardRequest.getCardNumber())
-                    .build();
-        } catch (StripeException ex) {
-            throw new GenerateTokenFailedException(ex.getMessage());
-        }
+        Map<String, Object> cardParams = createCardParams(stripeCardRequest);
+        Token token = stripeCreateToken(cardParams);
+        return StripeTokenResponse.builder()
+                .token(token.getId())
+                .cardNumber(stripeCardRequest.getCardNumber())
+                .build();
     }
 
     private Map<String, Object> createCardParams(StripeCardRequest stripeCardRequest) {
@@ -58,6 +53,15 @@ public class StripeServiceImpl implements StripeService{
                 "exp_year" , stripeCardRequest.getExpirationYear(),
                 "cvc", stripeCardRequest.getCvc()
         );
+    }
+
+    private Token stripeCreateToken(Map<String, Object> cardParams) {
+        try {
+            return Token.create(Map.of("card", cardParams),
+                    utilityService.getRequestOptions(publicKey));
+        } catch (StripeException ex) {
+            throw new CreateTokenFailedException(ex.getMessage());
+        }
     }
 
     @Override
@@ -120,7 +124,7 @@ public class StripeServiceImpl implements StripeService{
 
     @Override
     public StripeBalanceResponse getBalance() {
-        Balance balance = retrieveBalance();
+        Balance balance = stripeRetrieveBalance();
         return StripeBalanceResponse
                 .builder()
                 .amount((double)balance.getPending().get(0).getAmount() / 100)
@@ -128,7 +132,7 @@ public class StripeServiceImpl implements StripeService{
                 .build();
     }
 
-    private Balance retrieveBalance() {
+    private Balance stripeRetrieveBalance() {
         try {
             return Balance.retrieve(utilityService.getRequestOptions(secretKey));
         } catch (StripeException e) {

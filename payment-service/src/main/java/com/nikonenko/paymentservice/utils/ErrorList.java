@@ -12,9 +12,11 @@ public class ErrorList {
     public final static String CREATE_CUSTOMER_FAILED = "Exception during creating customer: ";
     public final static String CREATE_INTENT_FAILED = "Exception during creating intent: ";
     public final static String CREATE_PAYMENT_FAILED = "Exception during creating payment: ";
-    public final static String GENERATE_TOKEN_FAILED = "Exception during generating token: ";
+    public final static String CREATE_TOKEN_FAILED = "Exception during creating token: ";
+    public final static String CREATE_COUPON_FAILED = "Exception during creating coupon: ";
     public final static String RETRIEVE_BALANCE_FAILED = "Exception during retrieving balance: ";
     public final static String RETRIEVE_CUSTOMER_FAILED = "Exception during retrieving customer: ";
+    public final static String RETRIEVE_COUPON_FAILED = "Exception during retrieving coupon: ";
     public final static String UPDATE_CUSTOMER_FAILED = "Exception during updating customer: ";
     public final static String NEGATIVE_VALUE = "Value should be positive!";
     public final static String UNEXPECTED_MONTH_RANGE = "Month should be in range from 1 to 12!";
