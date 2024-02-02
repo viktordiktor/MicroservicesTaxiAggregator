@@ -2,10 +2,10 @@ package com.nikonenko.paymentservice.services;
 
 import com.nikonenko.paymentservice.dto.customers.CustomerRideRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerRideResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
 import com.nikonenko.paymentservice.exceptions.CustomerAlreadyExistsException;
 import com.nikonenko.paymentservice.exceptions.CustomerNotFoundException;
 import com.nikonenko.paymentservice.exceptions.InsufficientFundsException;
@@ -33,14 +33,14 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     private final ModelMapper modelMapper;
 
     @Override
-    public StripeCustomerResponse createCustomer(StripeCustomerRequest customerRequest){
+    public CustomerCreationResponse createCustomer(CustomerCreationRequest customerRequest){
         checkCustomerExists(customerRequest.getPassengerId());
         Customer customer = utilityService.stripeCustomerCreation(customerRequest);
 
         utilityService.stripePaymentCreating(customer.getId());
         saveCustomerUserToDatabase(customerRequest.getPassengerId(), customer.getId());
 
-        return StripeCustomerResponse.builder()
+        return CustomerCreationResponse.builder()
                 .id(customer.getId())
                 .phone(customer.getPhone())
                 .username(customer.getName())
@@ -62,14 +62,14 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     @Override
-    public StripeCustomerChargeResponse customerCharge(StripeCustomerChargeRequest customerChargeRequest) {
+    public CustomerChargeResponse customerCharge(CustomerChargeRequest customerChargeRequest) {
         Long passengerId = customerChargeRequest.getPassengerId();
         CustomerUser user = getCustomerUser(passengerId);
         String customerId = user.getCustomerId();
         checkBalanceEnough(customerId, customerChargeRequest.getAmount());
         PaymentIntent intent = utilityService.stripeIntentConfirming(customerChargeRequest, customerId);
         updateBalance(customerId, customerChargeRequest.getAmount());
-        return StripeCustomerChargeResponse.builder().id(intent.getId())
+        return CustomerChargeResponse.builder().id(intent.getId())
                 .passengerId(customerChargeRequest.getPassengerId())
                 .amount(customerChargeRequest.getAmount())
                 .currency(customerChargeRequest.getCurrency())

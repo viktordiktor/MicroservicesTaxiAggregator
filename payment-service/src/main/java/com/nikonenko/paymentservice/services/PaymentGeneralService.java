@@ -1,19 +1,19 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.StripeBalanceResponse;
-import com.nikonenko.paymentservice.dto.StripeCardRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeResponse;
-import com.nikonenko.paymentservice.dto.StripeCouponRequest;
-import com.nikonenko.paymentservice.dto.StripeCouponResponse;
-import com.nikonenko.paymentservice.dto.StripeTokenResponse;
+import com.nikonenko.paymentservice.dto.BalanceResponse;
+import com.nikonenko.paymentservice.dto.CardRequest;
+import com.nikonenko.paymentservice.dto.ChargeRequest;
+import com.nikonenko.paymentservice.dto.ChargeResponse;
+import com.nikonenko.paymentservice.dto.CouponRequest;
+import com.nikonenko.paymentservice.dto.CouponResponse;
+import com.nikonenko.paymentservice.dto.TokenResponse;
 
 public interface PaymentGeneralService {
-    StripeTokenResponse generateTokenByCard(StripeCardRequest stripeCardRequest);
+    TokenResponse generateTokenByCard(CardRequest cardRequest);
 
-    StripeChargeResponse charge(StripeChargeRequest stripeChargeRequest);
+    ChargeResponse charge(ChargeRequest chargeRequest);
 
-    StripeCouponResponse createCoupon(StripeCouponRequest stripeCouponRequest);
+    CouponResponse createCoupon(CouponRequest couponRequest);
 
-    StripeBalanceResponse getBalance();
+    BalanceResponse getBalance();
 }

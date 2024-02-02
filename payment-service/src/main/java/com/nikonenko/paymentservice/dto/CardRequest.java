@@ -15,7 +15,7 @@ import org.hibernate.validator.constraints.Range;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StripeCardRequest {
+public class CardRequest {
     @NotBlank(message = ErrorList.CARD_REQUIRED)
     @Pattern(regexp = PatternList.CARD_PATTERN, message = ErrorList.WRONG_CARD_FORMAT)
     private String cardNumber;

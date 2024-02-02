@@ -1,12 +1,12 @@
 package com.nikonenko.paymentservice.controllers;
 
-import com.nikonenko.paymentservice.dto.StripeBalanceResponse;
-import com.nikonenko.paymentservice.dto.StripeCardRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeResponse;
-import com.nikonenko.paymentservice.dto.StripeCouponRequest;
-import com.nikonenko.paymentservice.dto.StripeCouponResponse;
-import com.nikonenko.paymentservice.dto.StripeTokenResponse;
+import com.nikonenko.paymentservice.dto.BalanceResponse;
+import com.nikonenko.paymentservice.dto.CardRequest;
+import com.nikonenko.paymentservice.dto.ChargeRequest;
+import com.nikonenko.paymentservice.dto.ChargeResponse;
+import com.nikonenko.paymentservice.dto.CouponRequest;
+import com.nikonenko.paymentservice.dto.CouponResponse;
+import com.nikonenko.paymentservice.dto.TokenResponse;
 import com.nikonenko.paymentservice.services.PaymentGeneralService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,33 +21,32 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/stripe")
+@RequestMapping("/api/v1/payments/general")
 @RestControllerAdvice
 public class PaymentGeneralController {
     private final PaymentGeneralService paymentGeneralService;
 
     @PostMapping("/token")
     @ResponseStatus(HttpStatus.CREATED)
-    public StripeTokenResponse generateTokenByCard(@RequestBody @Valid StripeCardRequest stripeCardRequest) {
-        return paymentGeneralService.generateTokenByCard(stripeCardRequest);
+    public TokenResponse generateTokenByCard(@RequestBody @Valid CardRequest cardRequest) {
+        return paymentGeneralService.generateTokenByCard(cardRequest);
     }
 
     @PostMapping("/charge")
     @ResponseStatus(HttpStatus.OK)
-    public StripeChargeResponse charge(@RequestBody @Valid StripeChargeRequest stripeChargeRequest) {
-        return paymentGeneralService.charge(stripeChargeRequest);
+    public ChargeResponse charge(@RequestBody @Valid ChargeRequest chargeRequest) {
+        return paymentGeneralService.charge(chargeRequest);
     }
 
     @PostMapping("/coupon")
     @ResponseStatus(HttpStatus.OK)
-    public StripeCouponResponse createCoupon(@RequestBody @Valid StripeCouponRequest stripeCouponRequest) {
-        return paymentGeneralService.createCoupon(stripeCouponRequest);
+    public CouponResponse createCoupon(@RequestBody @Valid CouponRequest couponRequest) {
+        return paymentGeneralService.createCoupon(couponRequest);
     }
 
     @GetMapping("/balance")
     @ResponseStatus(HttpStatus.OK)
-    public StripeBalanceResponse getBalance() {
+    public BalanceResponse getBalance() {
         return paymentGeneralService.getBalance();
     }
-
 }

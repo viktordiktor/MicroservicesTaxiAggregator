@@ -2,15 +2,15 @@ package com.nikonenko.paymentservice.services;
 
 import com.nikonenko.paymentservice.dto.customers.CustomerRideRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerRideResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
 
 public interface PaymentCustomerService {
-    StripeCustomerResponse createCustomer(StripeCustomerRequest customerRequest);
+    CustomerCreationResponse createCustomer(CustomerCreationRequest customerRequest);
 
-    StripeCustomerChargeResponse customerCharge(StripeCustomerChargeRequest request);
+    CustomerChargeResponse customerCharge(CustomerChargeRequest request);
 
     CustomerRideResponse calculateRidePrice(CustomerRideRequest customerRideRequest);
 }

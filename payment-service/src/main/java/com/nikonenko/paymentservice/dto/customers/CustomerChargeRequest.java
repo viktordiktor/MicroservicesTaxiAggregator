@@ -1,10 +1,8 @@
 package com.nikonenko.paymentservice.dto.customers;
 
 import com.nikonenko.paymentservice.utils.ErrorList;
-import com.nikonenko.paymentservice.utils.PatternList;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,15 +13,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StripeCustomerRequest {
-    @NotBlank(message = ErrorList.USERNAME_REQUIRED)
-    private String username;
-    @NotBlank(message = ErrorList.PHONE_REQUIRED)
-    @Pattern(regexp = PatternList.PHONE_PATTERN, message = ErrorList.WRONG_PHONE_FORMAT)
-    private String phone;
+public class CustomerChargeRequest {
     @NotNull(message = ErrorList.PASSENGER_ID_REQUIRED)
     private Long passengerId;
+    @NotBlank(message = ErrorList.CURRENCY_REQUIRED)
+    private String currency;
     @NotNull(message = ErrorList.AMOUNT_REQUIRED)
     @Positive(message = ErrorList.NEGATIVE_VALUE)
-    private Long amount;
+    private Double amount;
 }

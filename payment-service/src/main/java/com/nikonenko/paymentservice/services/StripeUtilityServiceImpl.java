@@ -1,10 +1,10 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.StripeCardRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerRequest;
+import com.nikonenko.paymentservice.dto.CardRequest;
+import com.nikonenko.paymentservice.dto.ChargeRequest;
+import com.nikonenko.paymentservice.dto.ChargeResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
 import com.nikonenko.paymentservice.exceptions.ConfirmIntentFailedException;
 import com.nikonenko.paymentservice.exceptions.CreateChargeFailedException;
 import com.nikonenko.paymentservice.exceptions.CreateCouponFailedException;
@@ -49,12 +49,12 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     private String publicKey;
 
     @Override
-    public Map<String, Object> createCardParams(StripeCardRequest stripeCardRequest) {
+    public Map<String, Object> createCardParams(CardRequest cardRequest) {
         return  Map.of(
-                "number", stripeCardRequest.getCardNumber(),
-                "exp_month", stripeCardRequest.getExpirationMonth(),
-                "exp_year" , stripeCardRequest.getExpirationYear(),
-                "cvc", stripeCardRequest.getCvc()
+                "number", cardRequest.getCardNumber(),
+                "exp_month", cardRequest.getExpirationMonth(),
+                "exp_year" , cardRequest.getExpirationYear(),
+                "cvc", cardRequest.getCvc()
         );
     }
 
@@ -69,7 +69,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     }
 
     @Override
-    public Map<String, Object> createChargeParams(StripeChargeRequest chargeRequest) {
+    public Map<String, Object> createChargeParams(ChargeRequest chargeRequest) {
         Map<String, Object> chargeParams = new HashMap<>();
         chargeParams.put("amount", (long) (chargeRequest.getAmount() * 100));
         chargeParams.put("currency", chargeRequest.getCurrency());
@@ -87,7 +87,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     }
 
     @Override
-    public void setChargeResponse(Charge charge, StripeChargeResponse chargeResponse) {
+    public void setChargeResponse(Charge charge, ChargeResponse chargeResponse) {
         chargeResponse.setMessage(charge.getOutcome().getSellerMessage());
         if (charge.getPaid()) {
             chargeResponse.setChargeId(charge.getId());
@@ -132,7 +132,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     }
 
     @Override
-    public Customer stripeCustomerCreation(StripeCustomerRequest customerRequest) {
+    public Customer stripeCustomerCreation(CustomerCreationRequest customerRequest) {
         try{
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
@@ -170,7 +170,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     }
 
     @Override
-    public PaymentIntent stripeIntentConfirming(StripeCustomerChargeRequest request, String customerId) {
+    public PaymentIntent stripeIntentConfirming(CustomerChargeRequest request, String customerId) {
         PaymentIntent intent = stripeIntentCreation(request, customerId);
         PaymentIntentConfirmParams params = PaymentIntentConfirmParams.builder()
                 .setPaymentMethod("pm_card_visa")
@@ -183,7 +183,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     }
 
     @Override
-    public PaymentIntent stripeIntentCreation(StripeCustomerChargeRequest request, String customerId) {
+    public PaymentIntent stripeIntentCreation(CustomerChargeRequest request, String customerId) {
         try {
             PaymentIntent intent = PaymentIntent.create(Map.of("amount", (int)(request.getAmount() * 100),
                             "currency", request.getCurrency(),

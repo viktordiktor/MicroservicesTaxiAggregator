@@ -1,12 +1,12 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.StripeBalanceResponse;
-import com.nikonenko.paymentservice.dto.StripeCardRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeResponse;
-import com.nikonenko.paymentservice.dto.StripeCouponRequest;
-import com.nikonenko.paymentservice.dto.StripeCouponResponse;
-import com.nikonenko.paymentservice.dto.StripeTokenResponse;
+import com.nikonenko.paymentservice.dto.BalanceResponse;
+import com.nikonenko.paymentservice.dto.CardRequest;
+import com.nikonenko.paymentservice.dto.ChargeRequest;
+import com.nikonenko.paymentservice.dto.ChargeResponse;
+import com.nikonenko.paymentservice.dto.CouponRequest;
+import com.nikonenko.paymentservice.dto.CouponResponse;
+import com.nikonenko.paymentservice.dto.TokenResponse;
 import com.stripe.model.Balance;
 import com.stripe.model.Charge;
 import com.stripe.model.Coupon;
@@ -26,18 +26,18 @@ public class PaymentGeneralServiceImpl implements PaymentGeneralService {
     private final StripeUtilityService utilityService;
 
     @Override
-    public StripeTokenResponse generateTokenByCard(StripeCardRequest stripeCardRequest) {
-        Map<String, Object> cardParams = utilityService.createCardParams(stripeCardRequest);
+    public TokenResponse generateTokenByCard(CardRequest cardRequest) {
+        Map<String, Object> cardParams = utilityService.createCardParams(cardRequest);
         Token token = utilityService.stripeCreateToken(cardParams);
-        return StripeTokenResponse.builder()
+        return TokenResponse.builder()
                 .token(token.getId())
-                .cardNumber(stripeCardRequest.getCardNumber())
+                .cardNumber(cardRequest.getCardNumber())
                 .build();
     }
 
     @Override
-    public StripeChargeResponse charge(StripeChargeRequest chargeRequest) {
-        StripeChargeResponse chargeResponse = modelMapper.map(chargeRequest, StripeChargeResponse.class);
+    public ChargeResponse charge(ChargeRequest chargeRequest) {
+        ChargeResponse chargeResponse = modelMapper.map(chargeRequest, ChargeResponse.class);
         chargeResponse.setSuccess(false);
         Map<String, Object> chargeParams = utilityService.createChargeParams(chargeRequest);
         Charge charge = utilityService.stripeChargeCreation(chargeParams);
@@ -46,15 +46,15 @@ public class PaymentGeneralServiceImpl implements PaymentGeneralService {
     }
 
     @Override
-    public StripeCouponResponse createCoupon(StripeCouponRequest stripeCouponRequest) {
+    public CouponResponse createCoupon(CouponRequest couponRequest) {
         CouponCreateParams params =
                 CouponCreateParams.builder()
                         .setDuration(CouponCreateParams.Duration.REPEATING)
-                        .setDurationInMonths(stripeCouponRequest.getMonthDuration())
-                        .setPercentOff(stripeCouponRequest.getPercent())
+                        .setDurationInMonths(couponRequest.getMonthDuration())
+                        .setPercentOff(couponRequest.getPercent())
                         .build();
         Coupon coupon = utilityService.stripeCouponCreation(params);
-        return StripeCouponResponse.builder()
+        return CouponResponse.builder()
                 .id(coupon.getId())
                 .monthDuration(coupon.getDurationInMonths())
                 .percent(coupon.getPercentOff())
@@ -62,9 +62,9 @@ public class PaymentGeneralServiceImpl implements PaymentGeneralService {
     }
 
     @Override
-    public StripeBalanceResponse getBalance() {
+    public BalanceResponse getBalance() {
         Balance balance = utilityService.stripeRetrieveBalance();
-        return StripeBalanceResponse
+        return BalanceResponse
                 .builder()
                 .amount((double)balance.getPending().get(0).getAmount() / 100)
                 .currency(balance.getPending().get(0).getCurrency())

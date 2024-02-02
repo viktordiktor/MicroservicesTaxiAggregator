@@ -1,10 +1,10 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.StripeCardRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeRequest;
-import com.nikonenko.paymentservice.dto.StripeChargeResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerRequest;
+import com.nikonenko.paymentservice.dto.CardRequest;
+import com.nikonenko.paymentservice.dto.ChargeRequest;
+import com.nikonenko.paymentservice.dto.ChargeResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
 import com.stripe.model.Balance;
 import com.stripe.model.Charge;
 import com.stripe.model.Coupon;
@@ -18,15 +18,15 @@ import com.stripe.param.CustomerUpdateParams;
 import java.util.Map;
 
 public interface StripeUtilityService {
-    Map<String, Object> createCardParams(StripeCardRequest stripeCardRequest);
+    Map<String, Object> createCardParams(CardRequest cardRequest);
 
     Token stripeCreateToken(Map<String, Object> cardParams);
 
-    Map<String, Object> createChargeParams(StripeChargeRequest chargeRequest);
+    Map<String, Object> createChargeParams(ChargeRequest chargeRequest);
 
     Charge stripeChargeCreation(Map<String, Object> chargeParams);
 
-    void setChargeResponse(Charge charge, StripeChargeResponse chargeResponse);
+    void setChargeResponse(Charge charge, ChargeResponse chargeResponse);
 
     Coupon stripeCouponCreation(CouponCreateParams params);
 
@@ -34,17 +34,17 @@ public interface StripeUtilityService {
 
     RequestOptions getRequestOptions(String key);
 
-    Coupon retrieveCoupon(String couponId); //using in feature in ride price calc
+    Coupon retrieveCoupon(String couponId);
 
-    Customer stripeCustomerCreation(StripeCustomerRequest customerRequest);
+    Customer stripeCustomerCreation(CustomerCreationRequest customerRequest);
 
     void stripePaymentCreating(String customerId);
 
     Customer stripeCustomerRetrieving(String customerId);
 
-    PaymentIntent stripeIntentConfirming(StripeCustomerChargeRequest request, String customerId);
+    PaymentIntent stripeIntentConfirming(CustomerChargeRequest request, String customerId);
 
-    PaymentIntent stripeIntentCreation(StripeCustomerChargeRequest request, String customerId);
+    PaymentIntent stripeIntentCreation(CustomerChargeRequest request, String customerId);
 
     void stripeCustomerUpdating(Customer customer, CustomerUpdateParams params);
 }

@@ -2,10 +2,10 @@ package com.nikonenko.paymentservice.controllers;
 
 import com.nikonenko.paymentservice.dto.customers.CustomerRideRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerRideResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerChargeResponse;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerRequest;
-import com.nikonenko.paymentservice.dto.customers.StripeCustomerResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
 import com.nikonenko.paymentservice.services.PaymentCustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/stripe/customer")
+@RequestMapping("api/v1/payments/customers")
 public class PaymentCustomerController {
     private final PaymentCustomerService paymentCustomerService;
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public StripeCustomerResponse createCustomer(@RequestBody @Valid StripeCustomerRequest customerRequest) {
+    public CustomerCreationResponse createCustomer(@RequestBody @Valid CustomerCreationRequest customerRequest) {
         return paymentCustomerService.createCustomer(customerRequest);
     }
 
@@ -37,7 +37,7 @@ public class PaymentCustomerController {
 
     @PostMapping("/charge")
     @ResponseStatus(HttpStatus.OK)
-    public StripeCustomerChargeResponse customerCharge(@RequestBody @Valid StripeCustomerChargeRequest request) {
-        return paymentCustomerService.customerCharge(request);
+    public CustomerChargeResponse customerCharge(@RequestBody @Valid CustomerChargeRequest customerChargeRequest) {
+        return paymentCustomerService.customerCharge(customerChargeRequest);
     }
 }

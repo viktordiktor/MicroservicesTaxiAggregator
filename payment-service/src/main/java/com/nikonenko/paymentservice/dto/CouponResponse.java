@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StripeCouponResponse {
+public class CouponResponse {
     private String id;
     private Long monthDuration;
     private BigDecimal percent;
