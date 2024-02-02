@@ -34,10 +34,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 @Service
 @Slf4j
@@ -121,10 +122,10 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     }
 
     @Override
-    public Coupon retrieveCoupon(String couponId) {
+    public Coupon retrieveCoupon(String couponId, LocalDateTime localDateTime) {
         try {
             Coupon coupon = Coupon.retrieve(couponId, getRequestOptions(secretKey));
-            checkCouponActive(coupon);
+            checkCouponActive(coupon, localDateTime);
             return coupon;
         } catch (StripeException ex) {
             throw new RetrieveCouponFailedException(ex.getMessage());
@@ -185,7 +186,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public PaymentIntent stripeIntentCreation(CustomerChargeRequest request, String customerId) {
         try {
-            PaymentIntent intent = PaymentIntent.create(Map.of("amount", (int)(request.getAmount() * 100),
+            PaymentIntent intent = PaymentIntent.create(Map.of("amount", (int) (request.getAmount() * 100),
                             "currency", request.getCurrency(),
                             "customer", customerId,
                             "automatic_payment_methods", createAutomaticPaymentMethods()),
@@ -213,13 +214,12 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    private void checkCouponActive(Coupon coupon) {
-        Date couponExpiration = new Date((coupon.getCreated() + coupon.getDurationInMonths()) * 1000);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(couponExpiration);
-        calendar.add(Calendar.MONTH, 4);
-        couponExpiration = calendar.getTime();
-        if (couponExpiration.before(new Date())) {
+    private void checkCouponActive(Coupon coupon, LocalDateTime localDateTime) {
+        LocalDateTime couponExpiration =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(coupon.getCreated()),
+                        TimeZone.getDefault().toZoneId())
+                        .plusMonths(coupon.getDurationInMonths());
+        if (couponExpiration.isBefore(localDateTime)) {
             throw new ExpiredCouponException();
         }
     }

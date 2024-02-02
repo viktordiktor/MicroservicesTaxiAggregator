@@ -29,11 +29,10 @@ import java.time.LocalTime;
 public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     private final CustomerUserRepository customerUserRepository;
     private final StripeUtilityService utilityService;
-
     private final ModelMapper modelMapper;
 
     @Override
-    public CustomerCreationResponse createCustomer(CustomerCreationRequest customerRequest){
+    public CustomerCreationResponse createCustomer(CustomerCreationRequest customerRequest) {
         checkCustomerExists(customerRequest.getPassengerId());
         Customer customer = utilityService.stripeCustomerCreation(customerRequest);
 
@@ -47,7 +46,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                 .build();
     }
 
-    private void checkCustomerExists(Long passengerId){
+    private void checkCustomerExists(Long passengerId) {
         if (customerUserRepository.existsByPassengerId(passengerId)) {
             throw new CustomerAlreadyExistsException();
         }
@@ -77,7 +76,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                 .build();
     }
 
-    private CustomerUser getCustomerUser(Long id){
+    private CustomerUser getCustomerUser(Long id) {
         return customerUserRepository.findById(id)
                 .orElseThrow(CustomerNotFoundException::new);
     }
@@ -93,7 +92,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
         Customer customer = utilityService.stripeCustomerRetrieving(customerId);
         CustomerUpdateParams params =
                 CustomerUpdateParams.builder()
-                        .setBalance((long)(customer.getBalance() - amount))
+                        .setBalance((long) (customer.getBalance() - amount))
                         .build();
         utilityService.stripeCustomerUpdating(customer, params);
     }
@@ -111,18 +110,34 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
         double price = 1.0;
         price *= calculateWithRideLength(length) * getDayCoefficient(dateTime) * getTimeCoefficient(dateTime);
         if (customerRideRequest.getCoupon() != null) {
-            Coupon coupon = utilityService.retrieveCoupon(customerRideRequest.getCoupon());
+            Coupon coupon = utilityService.retrieveCoupon(customerRideRequest.getCoupon(), dateTime);
             price -= price * coupon.getPercentOff().doubleValue() / 100;
         }
         return price;
     }
 
+    /**
+     * The method returns ride-cost based on the ride length
+     *
+     * @param length Ride Length
+     * @return Price without coefficients
+     */
     private Double calculateWithRideLength(Double length) {
         return length / 2;
     }
 
-    private static double getDayCoefficient(LocalDateTime dateTime) {
-        DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
+    /**
+     * The method returns a coefficient, depending on the time of ordering
+     * MONDAY-THURSDAY -- 1
+     * FRIDAY -- 1.6
+     * SATURDAY -- 1.4
+     * SUNDAY -- 1.2
+     *
+     * @param localDateTime DateTime of ordering
+     * @return Day Coefficient
+     */
+    private static double getDayCoefficient(LocalDateTime localDateTime) {
+        DayOfWeek dayOfWeek = localDateTime.getDayOfWeek();
         switch (dayOfWeek) {
             case MONDAY, TUESDAY, WEDNESDAY, THURSDAY -> {
                 return 1;
@@ -134,12 +149,23 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                 return 1.4;
             }
             case SUNDAY -> {
-                return 1.3;
+                return 1.2;
             }
         }
         return 1;
     }
 
+    /**
+     * The method returns a coefficient, depending on the time of ordering
+     * 07:00-10:00 -- 1.4
+     * 10:00-16:00 -- 1.0
+     * 16:00-19:00 -- 1.5
+     * 19:00-22:00 -- 1.2
+     * 22:00-07:00 -- 1.3
+     *
+     * @param localDateTime DateTime of ordering
+     * @return Time Coefficient
+     */
     private static Double getTimeCoefficient(LocalDateTime localDateTime) {
         LocalTime time = localDateTime.toLocalTime();
         if (time.isAfter(LocalTime.of(7, 0)) && time.isBefore(LocalTime.of(10, 0))) {

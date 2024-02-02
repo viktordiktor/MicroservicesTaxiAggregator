@@ -66,7 +66,7 @@ public class PaymentGeneralServiceImpl implements PaymentGeneralService {
         Balance balance = utilityService.stripeRetrieveBalance();
         return BalanceResponse
                 .builder()
-                .amount((double)balance.getPending().get(0).getAmount() / 100)
+                .amount((double) balance.getPending().get(0).getAmount() / 100)
                 .currency(balance.getPending().get(0).getCurrency())
                 .build();
     }

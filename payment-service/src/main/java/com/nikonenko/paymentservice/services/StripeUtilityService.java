@@ -15,6 +15,7 @@ import com.stripe.net.RequestOptions;
 import com.stripe.param.CouponCreateParams;
 import com.stripe.param.CustomerUpdateParams;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public interface StripeUtilityService {
@@ -34,7 +35,7 @@ public interface StripeUtilityService {
 
     RequestOptions getRequestOptions(String key);
 
-    Coupon retrieveCoupon(String couponId);
+    Coupon retrieveCoupon(String couponId, LocalDateTime localDateTime);
 
     Customer stripeCustomerCreation(CustomerCreationRequest customerRequest);
 
