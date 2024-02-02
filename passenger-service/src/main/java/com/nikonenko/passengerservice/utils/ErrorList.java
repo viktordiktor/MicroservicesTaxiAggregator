@@ -10,7 +10,7 @@ public enum ErrorList {
     NOT_FOUND("passenger.notfound"),
     WRONG_PARAMETER("wrong.parameter");
 
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exception-messages");
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
     private final String key;
 
     public String getValue() {
