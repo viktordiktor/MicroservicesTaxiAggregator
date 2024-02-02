@@ -4,6 +4,6 @@ import com.nikonenko.passengerservice.utils.ErrorList;
 
 public class PhoneAlreadyExistsException extends RuntimeException {
     public PhoneAlreadyExistsException() {
-        super(ErrorList.PHONE_EXISTS);
+        super(ErrorList.PHONE_EXISTS.getValue());
     }
 }
