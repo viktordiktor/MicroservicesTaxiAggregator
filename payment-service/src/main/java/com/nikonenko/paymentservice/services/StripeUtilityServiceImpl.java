@@ -214,12 +214,13 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    private void checkCouponActive(Coupon coupon, LocalDateTime localDateTime) {
+    private void checkCouponActive(Coupon coupon, LocalDateTime requestDateTime) {
         LocalDateTime couponExpiration =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(coupon.getCreated()),
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(coupon.getCreated()),
                         TimeZone.getDefault().toZoneId())
                         .plusMonths(coupon.getDurationInMonths());
-        if (couponExpiration.isBefore(localDateTime)) {
+        log.info("{} - {}", couponExpiration, requestDateTime);
+        if (couponExpiration.isBefore(requestDateTime)) {
             throw new ExpiredCouponException();
         }
     }
