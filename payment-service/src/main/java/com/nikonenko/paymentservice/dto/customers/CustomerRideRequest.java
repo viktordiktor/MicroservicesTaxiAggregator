@@ -1,6 +1,6 @@
 package com.nikonenko.paymentservice.dto.customers;
 
-import com.nikonenko.paymentservice.utils.ErrorList;
+import com.nikonenko.paymentservice.utils.ValidationList;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerRideRequest {
-    @Positive(message = ErrorList.NEGATIVE_VALUE)
-    @NotNull(message = ErrorList.LENGTH_REQUIRED)
+    @Positive(message = ValidationList.NEGATIVE_VALUE)
+    @NotNull(message = ValidationList.LENGTH_REQUIRED)
     private Double rideLength;
-    @PastOrPresent(message = ErrorList.WRONG_DATETIME_FORMAT)
-    @NotNull(message = ErrorList.DATETIME_REQUIRED)
+    @PastOrPresent(message = ValidationList.WRONG_DATETIME_FORMAT)
+    @NotNull(message = ValidationList.DATETIME_REQUIRED)
     private LocalDateTime rideDateTime;
     private String coupon;
 }

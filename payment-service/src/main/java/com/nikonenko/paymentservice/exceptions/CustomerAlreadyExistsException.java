@@ -4,6 +4,6 @@ import com.nikonenko.paymentservice.utils.ErrorList;
 
 public class CustomerAlreadyExistsException extends RuntimeException {
     public CustomerAlreadyExistsException() {
-        super(ErrorList.CUSTOMER_ALREADY_EXISTS);
+        super(ErrorList.CUSTOMER_ALREADY_EXISTS.getValue());
     }
 }
