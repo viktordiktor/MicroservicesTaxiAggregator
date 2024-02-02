@@ -16,7 +16,6 @@ import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.CustomerUpdateParams;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
@@ -24,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     private final CustomerUserRepository customerUserRepository;
@@ -120,7 +118,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
      * The method returns ride-cost based on the ride length
      *
      * @param length Ride Length
-     * @return Price without coefficients
+     * @return Price without coefficients and discounts
      */
     private Double calculateWithRideLength(Double length) {
         return length / 2;

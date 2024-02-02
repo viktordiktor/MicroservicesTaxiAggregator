@@ -62,6 +62,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public Token stripeCreateToken(Map<String, Object> cardParams) {
         try {
+            log.info("Creating new token..");
             return Token.create(Map.of("card", cardParams),
                     getRequestOptions(publicKey));
         } catch (StripeException ex) {
@@ -81,6 +82,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public Charge stripeChargeCreation(Map<String, Object> chargeParams) {
         try {
+            log.info("Creating new charge..");
             return Charge.create(chargeParams, getRequestOptions(secretKey));
         } catch (StripeException e) {
             throw new CreateChargeFailedException(e.getMessage());
@@ -99,6 +101,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public Coupon stripeCouponCreation(CouponCreateParams params) {
         try {
+            log.info("Creating coupon..");
             return Coupon.create(params, getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new CreateCouponFailedException(ex.getMessage());
@@ -108,6 +111,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public Balance stripeRetrieveBalance() {
         try {
+            log.info("Retrieving balance..");
             return Balance.retrieve(getRequestOptions(secretKey));
         } catch (StripeException e) {
             throw new RetrieveBalanceFailedException(e.getMessage());
@@ -124,6 +128,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public Coupon retrieveCoupon(String couponId, LocalDateTime localDateTime) {
         try {
+            log.info("Retrieving coupon with id: {}", couponId);
             Coupon coupon = Coupon.retrieve(couponId, getRequestOptions(secretKey));
             checkCouponActive(coupon, localDateTime);
             return coupon;
@@ -140,6 +145,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
                     .setName(customerRequest.getUsername())
                     .setBalance(customerRequest.getAmount())
                     .build();
+            log.info("Creating new customer..");
             return Customer.create(customerCreateParams, getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new CreateCustomerException(ex.getMessage());
@@ -153,8 +159,10 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
                     "type", "card",
                     "card", Map.of("token", "tok_visa")
             );
+            log.info("Creating new payment..");
             PaymentMethod paymentMethod = PaymentMethod.create(paymentParams,
                     getRequestOptions(secretKey));
+            log.info("Attaching customer to payment with id: {}", paymentMethod.getId());
             paymentMethod.attach(Map.of("customer", customerId), getRequestOptions(secretKey));
         } catch (StripeException ex){
             throw new CreatePaymentFailedException(ex.getMessage());
@@ -164,6 +172,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public Customer stripeCustomerRetrieving(String customerId) {
         try {
+            log.info("Retrieving customer with id: {}", customerId);
             return Customer.retrieve(customerId, getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new RetrieveCustomerFailedException(ex.getMessage());
@@ -177,6 +186,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
                 .setPaymentMethod("pm_card_visa")
                 .build();
         try {
+            log.info("Confirming intent with id: {}", intent.getId());
             return intent.confirm(params, getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new ConfirmIntentFailedException(ex.getMessage());
@@ -186,6 +196,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public PaymentIntent stripeIntentCreation(CustomerChargeRequest request, String customerId) {
         try {
+            log.info("Creating new intent..");
             PaymentIntent intent = PaymentIntent.create(Map.of("amount", (int) (request.getAmount() * 100),
                             "currency", request.getCurrency(),
                             "customer", customerId,
@@ -208,6 +219,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
     @Override
     public void stripeCustomerUpdating(Customer customer, CustomerUpdateParams params) {
         try {
+            log.info("Updating customer with id: {}", customer.getId());
             customer.update(params, getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new UpdateCustomerFailedException(ex.getMessage());
@@ -219,7 +231,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
                 LocalDateTime.ofInstant(Instant.ofEpochSecond(coupon.getCreated()),
                         TimeZone.getDefault().toZoneId())
                         .plusMonths(coupon.getDurationInMonths());
-        log.info("{} - {}", couponExpiration, requestDateTime);
+        log.info("Coupon expiration date: {}\nRequest date: {}", couponExpiration, requestDateTime);
         if (couponExpiration.isBefore(requestDateTime)) {
             throw new ExpiredCouponException();
         }

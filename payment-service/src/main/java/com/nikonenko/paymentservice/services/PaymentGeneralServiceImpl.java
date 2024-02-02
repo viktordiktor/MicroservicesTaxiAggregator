@@ -13,13 +13,11 @@ import com.stripe.model.Coupon;
 import com.stripe.model.Token;
 import com.stripe.param.CouponCreateParams;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class PaymentGeneralServiceImpl implements PaymentGeneralService {
     private final ModelMapper modelMapper;
