@@ -1,6 +1,7 @@
 package com.nikonenko.rideservice.dto;
 
 import com.nikonenko.rideservice.utils.ValidationList;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +15,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateRideRequest {
-    @NotNull(message = ValidationList.DRIVER_ID_REQUIRED)
-    private Long driverId;
     @NotNull(message = ValidationList.PASSENGER_ID_REQUIRED)
     private Long passengerId;
-    @NotNull(message = ValidationList.START_ADDRESS_REQUIRED)
+    @NotBlank(message = ValidationList.START_ADDRESS_REQUIRED)
     private String startAddress;
-    @NotNull(message = ValidationList.END_ADDRESS_REQUIRED)
+    @NotBlank(message = ValidationList.END_ADDRESS_REQUIRED)
     private String endAddress;
     @NotNull(message = ValidationList.START_DATE_REQUIRED)
     private LocalDateTime startDate;

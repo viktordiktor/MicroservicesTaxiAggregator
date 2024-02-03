@@ -9,6 +9,6 @@ CREATE TABLE rides
     end_date      DATETIME,
     price         DOUBLE,
     distance      DOUBLE,
-    is_active     BOOLEAN,
+    status        enum ('CREATED','STARTED','FINISHED'),
     PRIMARY KEY (id)
 ) engine = InnoDB;

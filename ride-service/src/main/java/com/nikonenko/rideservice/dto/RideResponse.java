@@ -1,5 +1,6 @@
 package com.nikonenko.rideservice.dto;
 
+import com.nikonenko.rideservice.models.RideStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateRideResponse {
+public class RideResponse {
     private Long id;
     private Long driverId;
     private Long passengerId;
@@ -21,5 +22,5 @@ public class CreateRideResponse {
     private LocalDateTime endDate;
     private Double price;
     private Double distance;
-    private Boolean isActive;
+    private RideStatus status;
 }
