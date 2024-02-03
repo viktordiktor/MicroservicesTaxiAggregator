@@ -3,7 +3,7 @@ package com.nikonenko.driverservice.controllers;
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
-import com.nikonenko.driverservice.services.CarServiceImpl;
+import com.nikonenko.driverservice.services.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequestMapping("/api/v1/cars")
 @RestControllerAdvice
 public class CarController {
-    private final CarServiceImpl carService;
+    private final CarService carService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
