@@ -42,6 +42,12 @@ public class PaymentGeneralServiceImpl implements PaymentGeneralService {
     }
 
     @Override
+    public ChargeResponse getChargeById(String chargeId) {
+        Charge charge = utilityService.stripeReceivingCharge(chargeId);
+        return modelMapper.map(charge, ChargeResponse.class);
+    }
+
+    @Override
     public CouponResponse createCoupon(CouponRequest couponRequest) {
         CouponCreateParams params =
                 CouponCreateParams.builder()

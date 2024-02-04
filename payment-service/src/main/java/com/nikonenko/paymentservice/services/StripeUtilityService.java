@@ -5,7 +5,6 @@ import com.nikonenko.paymentservice.dto.ChargeRequest;
 import com.nikonenko.paymentservice.dto.ChargeResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
-import com.stripe.model.Balance;
 import com.stripe.model.Charge;
 import com.stripe.model.Coupon;
 import com.stripe.model.Customer;
@@ -26,12 +25,11 @@ public interface StripeUtilityService {
     Map<String, Object> createChargeParams(ChargeRequest chargeRequest);
 
     Charge stripeChargeCreation(Map<String, Object> chargeParams);
+    Charge stripeReceivingCharge(String chargeId);
 
     void setChargeResponse(Charge charge, ChargeResponse chargeResponse);
 
     Coupon stripeCouponCreation(CouponCreateParams params);
-
-    Balance stripeRetrieveBalance();
 
     RequestOptions getRequestOptions(String key);
 

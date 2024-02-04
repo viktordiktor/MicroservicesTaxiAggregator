@@ -10,6 +10,8 @@ import com.nikonenko.paymentservice.services.PaymentGeneralService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +36,12 @@ public class PaymentGeneralController {
     @ResponseStatus(HttpStatus.OK)
     public ChargeResponse charge(@RequestBody @Valid ChargeRequest chargeRequest) {
         return paymentGeneralService.charge(chargeRequest);
+    }
+
+    @GetMapping("/charge/{chargeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ChargeResponse getChargeById(@PathVariable String chargeId) {
+        return paymentGeneralService.getChargeById(chargeId);
     }
 
     @PostMapping("/coupon")

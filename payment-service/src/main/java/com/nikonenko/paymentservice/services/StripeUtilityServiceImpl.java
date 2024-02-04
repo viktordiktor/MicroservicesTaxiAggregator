@@ -5,6 +5,7 @@ import com.nikonenko.paymentservice.dto.ChargeRequest;
 import com.nikonenko.paymentservice.dto.ChargeResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
+import com.nikonenko.paymentservice.exceptions.RetrieveChargeFailedException;
 import com.nikonenko.paymentservice.exceptions.ConfirmIntentFailedException;
 import com.nikonenko.paymentservice.exceptions.CreateChargeFailedException;
 import com.nikonenko.paymentservice.exceptions.CreateCouponFailedException;
@@ -13,12 +14,10 @@ import com.nikonenko.paymentservice.exceptions.CreateIntentFailedException;
 import com.nikonenko.paymentservice.exceptions.CreatePaymentFailedException;
 import com.nikonenko.paymentservice.exceptions.CreateTokenFailedException;
 import com.nikonenko.paymentservice.exceptions.ExpiredCouponException;
-import com.nikonenko.paymentservice.exceptions.RetrieveBalanceFailedException;
 import com.nikonenko.paymentservice.exceptions.RetrieveCouponFailedException;
 import com.nikonenko.paymentservice.exceptions.RetrieveCustomerFailedException;
 import com.nikonenko.paymentservice.exceptions.UpdateCustomerFailedException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Balance;
 import com.stripe.model.Charge;
 import com.stripe.model.Coupon;
 import com.stripe.model.Customer;
@@ -84,8 +83,18 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         try {
             log.info("Creating new charge..");
             return Charge.create(chargeParams, getRequestOptions(secretKey));
-        } catch (StripeException e) {
-            throw new CreateChargeFailedException(e.getMessage());
+        } catch (StripeException ex) {
+            throw new CreateChargeFailedException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public Charge stripeReceivingCharge(String chargeId) {
+        try {
+            log.info("Retrieving charge..");
+            return Charge.retrieve(chargeId, getRequestOptions(secretKey));
+        } catch (StripeException ex) {
+            throw new RetrieveChargeFailedException(ex.getMessage());
         }
     }
 
@@ -105,16 +114,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
             return Coupon.create(params, getRequestOptions(secretKey));
         } catch (StripeException ex) {
             throw new CreateCouponFailedException(ex.getMessage());
-        }
-    }
-
-    @Override
-    public Balance stripeRetrieveBalance() {
-        try {
-            log.info("Retrieving balance..");
-            return Balance.retrieve(getRequestOptions(secretKey));
-        } catch (StripeException e) {
-            throw new RetrieveBalanceFailedException(e.getMessage());
         }
     }
 
