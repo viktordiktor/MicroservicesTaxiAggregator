@@ -1,13 +1,11 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.BalanceResponse;
 import com.nikonenko.paymentservice.dto.CardRequest;
 import com.nikonenko.paymentservice.dto.ChargeRequest;
 import com.nikonenko.paymentservice.dto.ChargeResponse;
 import com.nikonenko.paymentservice.dto.CouponRequest;
 import com.nikonenko.paymentservice.dto.CouponResponse;
 import com.nikonenko.paymentservice.dto.TokenResponse;
-import com.stripe.model.Balance;
 import com.stripe.model.Charge;
 import com.stripe.model.Coupon;
 import com.stripe.model.Token;
@@ -56,16 +54,6 @@ public class PaymentGeneralServiceImpl implements PaymentGeneralService {
                 .id(coupon.getId())
                 .monthDuration(coupon.getDurationInMonths())
                 .percent(coupon.getPercentOff())
-                .build();
-    }
-
-    @Override
-    public BalanceResponse getBalance() {
-        Balance balance = utilityService.stripeRetrieveBalance();
-        return BalanceResponse
-                .builder()
-                .amount((double) balance.getPending().get(0).getAmount() / 100)
-                .currency(balance.getPending().get(0).getCurrency())
                 .build();
     }
 }

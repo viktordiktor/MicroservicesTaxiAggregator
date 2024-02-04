@@ -1,6 +1,5 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.BalanceResponse;
 import com.nikonenko.paymentservice.dto.CardRequest;
 import com.nikonenko.paymentservice.dto.ChargeRequest;
 import com.nikonenko.paymentservice.dto.ChargeResponse;
@@ -14,6 +13,4 @@ public interface PaymentGeneralService {
     ChargeResponse charge(ChargeRequest chargeRequest);
 
     CouponResponse createCoupon(CouponRequest couponRequest);
-
-    BalanceResponse getBalance();
 }

@@ -1,6 +1,5 @@
 package com.nikonenko.paymentservice.controllers;
 
-import com.nikonenko.paymentservice.dto.BalanceResponse;
 import com.nikonenko.paymentservice.dto.CardRequest;
 import com.nikonenko.paymentservice.dto.ChargeRequest;
 import com.nikonenko.paymentservice.dto.ChargeResponse;
@@ -11,7 +10,6 @@ import com.nikonenko.paymentservice.services.PaymentGeneralService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,11 +40,5 @@ public class PaymentGeneralController {
     @ResponseStatus(HttpStatus.OK)
     public CouponResponse createCoupon(@RequestBody @Valid CouponRequest couponRequest) {
         return paymentGeneralService.createCoupon(couponRequest);
-    }
-
-    @GetMapping("/balance")
-    @ResponseStatus(HttpStatus.OK)
-    public BalanceResponse getBalance() {
-        return paymentGeneralService.getBalance();
     }
 }
