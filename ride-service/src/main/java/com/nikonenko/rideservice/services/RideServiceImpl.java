@@ -6,9 +6,11 @@ import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.RideResponse;
-import com.nikonenko.rideservice.exceptions.RideIsAlreadyStartedException;
+import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
+import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
+import com.nikonenko.rideservice.exceptions.UnknownDriverException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.rideservice.models.Ride;
 import com.nikonenko.rideservice.models.RideStatus;
@@ -22,9 +24,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public PageResponse<RideResponse> getAvailableRides(int pageNumber, int pageSize, String sortField) {
         Pageable pageable = createPageable(pageNumber, pageSize, sortField);
-        Page<Ride> page = rideRepository.findAllByStartDateIsNull(pageable);
+        Page<Ride> page = rideRepository.findAllByStatusIs(RideStatus.OPENED, pageable);
         return getPageRides(page);
     }
 
@@ -95,32 +97,62 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponse createRide(CreateRideRequest createRideRequest) {
         Ride ride = modelMapper.map(createRideRequest, Ride.class);
-        ride.setStatus(RideStatus.CREATED);
+        ride.setStatus(RideStatus.OPENED);
         Ride savedRide = rideRepository.save(ride);
         log.info("Created ride with id: {}", savedRide.getId());
         return modelMapper.map(savedRide, RideResponse.class);
     }
 
     @Override
-    public RideResponse closeRide(Long rideId) {
+    public RideResponse acceptRide(Long rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
-        if (!ride.getStatus().equals(RideStatus.STARTED)) {
-            throw new RideIsNotStartedException();
+        if (ride.getStatus() != RideStatus.OPENED) {
+            throw new RideIsNotOpenedException();
         }
-        ride.setEndDate(LocalDateTime.now());
-        ride.setStatus(RideStatus.FINISHED);
+        ride.setDriverId(driverId);
+        ride.setStatus(RideStatus.ACCEPTED);
+        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
+    }
+
+    @Override
+    public RideResponse rejectRide(Long rideId, Long driverId) {
+        Ride ride = getOrThrow(rideId);
+        if (ride.getStatus() != RideStatus.ACCEPTED) {
+            throw new RideIsNotAcceptedException();
+        }
+        if (!Objects.equals(ride.getDriverId(), driverId)) {
+            throw new UnknownDriverException();
+        }
+        ride.setDriverId(null);
+        ride.setStatus(RideStatus.OPENED);
         return modelMapper.map(rideRepository.save(ride), RideResponse.class);
     }
 
     @Override
     public RideResponse startRide(Long rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
-        if (!ride.getStatus().equals(RideStatus.CREATED)) {
-            throw new RideIsAlreadyStartedException();
+        if (ride.getStatus() != RideStatus.ACCEPTED) {
+            throw new RideIsNotAcceptedException();
         }
-        ride.setDriverId(driverId);
+        if (!Objects.equals(ride.getDriverId(), driverId)) {
+            throw new UnknownDriverException();
+        }
         ride.setStartDate(LocalDateTime.now());
         ride.setStatus(RideStatus.STARTED);
+        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
+    }
+
+    @Override
+    public RideResponse finishRide(Long rideId, Long driverId) {
+        Ride ride = getOrThrow(rideId);
+        if (ride.getStatus() != RideStatus.STARTED) {
+            throw new RideIsNotStartedException();
+        }
+        if (!Objects.equals(ride.getDriverId(), driverId)) {
+            throw new UnknownDriverException();
+        }
+        ride.setEndDate(LocalDateTime.now());
+        ride.setStatus(RideStatus.FINISHED);
         return modelMapper.map(rideRepository.save(ride), RideResponse.class);
     }
 

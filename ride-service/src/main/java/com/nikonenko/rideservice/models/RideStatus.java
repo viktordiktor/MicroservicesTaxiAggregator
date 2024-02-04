@@ -1,7 +1,8 @@
 package com.nikonenko.rideservice.models;
 
 public enum RideStatus {
-    CREATED,
+    OPENED,
+    ACCEPTED,
     STARTED,
     FINISHED
 }

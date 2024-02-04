@@ -8,8 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -21,8 +19,6 @@ public class CreateRideRequest {
     private String startAddress;
     @NotBlank(message = ValidationList.END_ADDRESS_REQUIRED)
     private String endAddress;
-    @NotNull(message = ValidationList.START_DATE_REQUIRED)
-    private LocalDateTime startDate;
     @NotNull(message = ValidationList.DISTANCE_REQUIRED)
     private Double distance;
     @NotNull(message = ValidationList.PRICE_REQUIRED)

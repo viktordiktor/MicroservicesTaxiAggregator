@@ -1,0 +1,3 @@
+DELETE
+FROM rides
+WHERE id IN (1, 2);
