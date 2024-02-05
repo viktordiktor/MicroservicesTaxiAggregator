@@ -35,12 +35,12 @@ public class RideController {
         return rideService.calculateDistance(calculateDistanceRequest);
     }
 
-    @GetMapping("/available")
+    @GetMapping("/open")
     @ResponseStatus(HttpStatus.OK)
     public PageResponse<RideResponse> getAvailableRides(@RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
                                                         @RequestParam(defaultValue = "id") String sortField) {
-        return rideService.getAvailableRides(pageNumber, pageSize, sortField);
+        return rideService.getOpenRides(pageNumber, pageSize, sortField);
     }
 
     @GetMapping("/by-passenger/{passengerId}")

@@ -6,6 +6,7 @@ import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.RideResponse;
+import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
@@ -36,7 +37,7 @@ public class RideServiceImpl implements RideService {
     private final ModelMapper modelMapper;
 
     @Override
-    public PageResponse<RideResponse> getAvailableRides(int pageNumber, int pageSize, String sortField) {
+    public PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField) {
         Pageable pageable = createPageable(pageNumber, pageSize, sortField);
         Page<Ride> page = rideRepository.findAllByStatusIs(RideStatus.OPENED, pageable);
         return getPageRides(page);
@@ -80,7 +81,7 @@ public class RideServiceImpl implements RideService {
     public CalculateDistanceResponse calculateDistance(CalculateDistanceRequest calculateDistanceRequest) {
         LatLng startGeo = calculateDistanceRequest.getStartGeo();
         LatLng endGeo = calculateDistanceRequest.getEndGeo();
-        
+
         GeodeticCalculator geoCalc = new GeodeticCalculator();
         geoCalc.setStartingGeographicPoint(startGeo.lng, startGeo.lat);
         geoCalc.setDestinationGeographicPoint(endGeo.lng, endGeo.lat);
@@ -97,10 +98,18 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponse createRide(CreateRideRequest createRideRequest) {
         Ride ride = modelMapper.map(createRideRequest, Ride.class);
+        if (!checkIfChargeSuccess(createRideRequest.getChargeId())) {
+            throw new ChargeIsNotSuccessException();
+        }
         ride.setStatus(RideStatus.OPENED);
         Ride savedRide = rideRepository.save(ride);
         log.info("Created ride with id: {}", savedRide.getId());
         return modelMapper.map(savedRide, RideResponse.class);
+    }
+
+    private boolean checkIfChargeSuccess(String chargeId) {
+        //TODO communication with payment-service
+        return true;
     }
 
     @Override

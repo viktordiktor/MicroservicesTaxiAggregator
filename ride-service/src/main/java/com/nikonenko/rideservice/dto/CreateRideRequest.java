@@ -21,6 +21,6 @@ public class CreateRideRequest {
     private String endAddress;
     @NotNull(message = ValidationList.DISTANCE_REQUIRED)
     private Double distance;
-    @NotNull(message = ValidationList.PRICE_REQUIRED)
-    private Double price;
+    @NotBlank(message = ValidationList.CHARGE_ID_REQUIRED)
+    private String chargeId;
 }

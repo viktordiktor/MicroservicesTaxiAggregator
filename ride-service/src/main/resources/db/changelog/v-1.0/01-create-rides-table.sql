@@ -7,7 +7,7 @@ CREATE TABLE rides
     end_address   VARCHAR(255),
     start_date    DATETIME,
     end_date      DATETIME,
-    price         DOUBLE,
+    charge_id     VARCHAR(255),
     distance      DOUBLE,
     status        enum ('OPENED','ACCEPTED','STARTED','FINISHED'),
     PRIMARY KEY (id)

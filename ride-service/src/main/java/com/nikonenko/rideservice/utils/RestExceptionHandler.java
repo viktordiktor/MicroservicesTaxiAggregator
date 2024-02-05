@@ -1,11 +1,13 @@
 package com.nikonenko.rideservice.utils;
 
+import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsAlreadyStartedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
+import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,6 @@ public class RestExceptionHandler {
                 .body(ex.getMessage());
     }
 
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
@@ -45,8 +46,9 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class,
             MethodArgumentTypeMismatchException.class, RideIsAlreadyStartedException.class,
-            RideIsNotOpenedException.class, RideIsNotStartedException.class, RideIsNotAcceptedException.class,
-            UnknownDriverException.class})
+            RideIsNotOpenedException.class, RideIsNotStartedException.class,
+            RideIsNotAcceptedException.class, UnknownDriverException.class,
+            ChargeIsNotSuccessException.class, WrongPageableParameterException.class})
     public ResponseEntity<String> handleBadRequestsExceptions(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

@@ -13,6 +13,7 @@ public enum ErrorList {
     RIDE_IS_NOT_ACCEPTED("ride.is-not-accepted"),
     RIDE_IS_NOT_STARTED("ride.is-not-started"),
     WRONG_PAGEABLE_PARAMETER("wrong-pageable-parameter"),
+    CHARGE_IS_NOT_SUCCESS("charge-is-not-success"),
     RIDE_IS_ALREADY_STARTED("ride.is-already-started");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");

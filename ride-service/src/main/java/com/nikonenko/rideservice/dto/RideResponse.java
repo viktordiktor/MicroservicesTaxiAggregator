@@ -20,7 +20,7 @@ public class RideResponse {
     private String endAddress;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private Double price;
+    private String chargeId;
     private Double distance;
     private RideStatus status;
 }

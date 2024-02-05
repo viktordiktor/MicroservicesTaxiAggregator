@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RideRepository extends JpaRepository<Ride, Long> {
     Page<Ride> findAllByStatusIs(RideStatus rideStatus, Pageable pageable);
+
     Page<Ride> findAllByPassengerIdIs(Long passengerId, Pageable pageable);
+
     Page<Ride> findAllByDriverIdIs(Long driverId, Pageable pageable);
 }

@@ -37,8 +37,8 @@ public class Ride {
     private LocalDateTime startDate;
     @Column(name = "end_date")
     private LocalDateTime endDate;
-    @Column(name = "price")
-    private Double price;
+    @Column(name = "charge_id")
+    private String chargeId;
     @Column(name = "distance")
     private Double distance;
     @Column(name = "status")
