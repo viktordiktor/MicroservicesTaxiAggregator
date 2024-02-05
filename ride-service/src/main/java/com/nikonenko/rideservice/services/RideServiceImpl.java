@@ -113,7 +113,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void closeRide(Long rideId) {
+    public void closeRide(String rideId) {
         Ride ride = getOrThrow(rideId);
         if (ride.getStatus() != RideStatus.OPENED) {
             throw new RideIsNotOpenedException();
@@ -122,7 +122,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public RideResponse acceptRide(Long rideId, Long driverId) {
+    public RideResponse acceptRide(String rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
         if (ride.getStatus() != RideStatus.OPENED) {
             throw new RideIsNotOpenedException();
@@ -133,7 +133,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public RideResponse rejectRide(Long rideId, Long driverId) {
+    public RideResponse rejectRide(String rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
         if (ride.getStatus() != RideStatus.ACCEPTED) {
             throw new RideIsNotAcceptedException();
@@ -147,7 +147,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public RideResponse startRide(Long rideId, Long driverId) {
+    public RideResponse startRide(String rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
         if (ride.getStatus() != RideStatus.ACCEPTED) {
             throw new RideIsNotAcceptedException();
@@ -161,7 +161,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public RideResponse finishRide(Long rideId, Long driverId) {
+    public RideResponse finishRide(String rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
         if (ride.getStatus() != RideStatus.STARTED) {
             throw new RideIsNotStartedException();
@@ -174,7 +174,7 @@ public class RideServiceImpl implements RideService {
         return modelMapper.map(rideRepository.save(ride), RideResponse.class);
     }
 
-    public Ride getOrThrow(Long rideId) {
+    public Ride getOrThrow(String rideId) {
         return rideRepository.findById(rideId).orElseThrow(RideNotFoundException::new);
     }
 }

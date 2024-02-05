@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RideResponse {
-    private Long id;
+    private String id;
     private Long driverId;
     private Long passengerId;
     private String startAddress;

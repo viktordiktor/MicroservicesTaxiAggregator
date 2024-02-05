@@ -11,7 +11,7 @@ public interface RideService {
 
     RideResponse createRide(CreateRideRequest createRideRequest);
 
-    RideResponse finishRide(Long rideId, Long driverId);
+    RideResponse finishRide(String rideId, Long driverId);
 
     PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField);
 
@@ -19,11 +19,11 @@ public interface RideService {
 
     PageResponse<RideResponse> getRidesByDriver(Long driverId, int pageNumber, int pageSize, String sortField);
 
-    RideResponse startRide(Long rideId, Long driverId);
+    RideResponse startRide(String rideId, Long driverId);
 
-    RideResponse acceptRide(Long rideId, Long driverId);
+    RideResponse acceptRide(String rideId, Long driverId);
 
-    RideResponse rejectRide(Long rideId, Long driverId);
+    RideResponse rejectRide(String rideId, Long driverId);
 
-    void closeRide(Long rideId);
+    void closeRide(String rideId);
 }

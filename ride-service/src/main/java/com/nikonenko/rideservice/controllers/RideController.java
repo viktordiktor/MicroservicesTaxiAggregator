@@ -69,31 +69,31 @@ public class RideController {
 
     @DeleteMapping("/{rideId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void closeRide(@PathVariable Long rideId) {
+    public void closeRide(@PathVariable String rideId) {
         rideService.closeRide(rideId);
     }
 
     @PatchMapping("/accept/{rideId}/{driverId}")
     @ResponseStatus(HttpStatus.OK)
-    public RideResponse acceptRide(@PathVariable Long rideId, @PathVariable Long driverId) {
+    public RideResponse acceptRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.acceptRide(rideId, driverId);
     }
 
     @PatchMapping("/reject/{rideId}/{driverId}")
     @ResponseStatus(HttpStatus.OK)
-    public RideResponse rejectRide(@PathVariable Long rideId, @PathVariable Long driverId) {
+    public RideResponse rejectRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.rejectRide(rideId, driverId);
     }
 
     @PatchMapping("/start/{rideId}/{driverId}")
     @ResponseStatus(HttpStatus.OK)
-    public RideResponse startRide(@PathVariable Long rideId, @PathVariable Long driverId) {
+    public RideResponse startRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.startRide(rideId, driverId);
     }
 
     @PatchMapping("/finish/{rideId}/{driverId}")
     @ResponseStatus(HttpStatus.OK)
-    public RideResponse finishRide(@PathVariable Long rideId, @PathVariable Long driverId) {
+    public RideResponse finishRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.finishRide(rideId, driverId);
     }
 }

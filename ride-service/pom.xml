@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <modelmapper.version>3.2.0</modelmapper.version>
         <liquibase.version>4.24.0</liquibase.version>
+        <mongodb.version>4.11.1</mongodb.version>
         <google-maps.version>2.2.0</google-maps.version>
         <geotools.version>29.1</geotools.version>
     </properties>
@@ -30,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -39,12 +40,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -61,11 +56,6 @@
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.geotools/gt-main -->
         <dependency>
             <groupId>org.geotools</groupId>
@@ -77,6 +67,25 @@
             <artifactId>google-maps-services</artifactId>
             <version>${google-maps.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.mongock/mongock-springboot -->
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongock-springboot</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.mongock/mongock-springboot-v3 -->
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongock-springboot-v3</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongodb-springdata-v4-driver</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -91,14 +100,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${liquibase.version}</version>
-                <configuration>
-                    <propertyFile>${project.basedir}/src/main/java/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
         </plugins>
