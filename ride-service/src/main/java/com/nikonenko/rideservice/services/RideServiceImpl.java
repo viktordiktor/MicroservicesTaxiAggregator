@@ -104,6 +104,15 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    public void closeRide(Long rideId) {
+        Ride ride = getOrThrow(rideId);
+        if (ride.getStatus() != RideStatus.OPENED) {
+            throw new RideIsNotOpenedException();
+        }
+        rideRepository.delete(ride);
+    }
+
+    @Override
     public RideResponse acceptRide(Long rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
         if (ride.getStatus() != RideStatus.OPENED) {

@@ -6,8 +6,10 @@ import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.services.RideService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +30,8 @@ public class RideController {
 
     @GetMapping("/distance")
     @ResponseStatus(HttpStatus.OK)
-    public CalculateDistanceResponse calculateDistance(@RequestBody CalculateDistanceRequest calculateDistanceRequest) {
+    public CalculateDistanceResponse calculateDistance(@Valid @RequestBody
+                                                           CalculateDistanceRequest calculateDistanceRequest) {
         return rideService.calculateDistance(calculateDistanceRequest);
     }
 
@@ -60,8 +63,14 @@ public class RideController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RideResponse createRideRequest(@RequestBody CreateRideRequest createRideRequest) {
+    public RideResponse createRideRequest(@Valid @RequestBody CreateRideRequest createRideRequest) {
         return rideService.createRide(createRideRequest);
+    }
+
+    @DeleteMapping("/{rideId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void closeRide(@PathVariable Long rideId) {
+        rideService.closeRide(rideId);
     }
 
     @PatchMapping("/accept/{rideId}/{driverId}")

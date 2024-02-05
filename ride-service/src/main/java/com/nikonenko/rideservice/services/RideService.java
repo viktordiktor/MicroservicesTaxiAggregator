@@ -16,4 +16,5 @@ public interface RideService {
     RideResponse startRide(Long rideId, Long driverId);
     RideResponse acceptRide(Long rideId, Long driverId);
     RideResponse rejectRide(Long rideId, Long driverId);
+    void closeRide(Long rideId);
 }
