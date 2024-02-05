@@ -13,4 +13,6 @@ public interface PaymentCustomerService {
     CustomerChargeResponse customerCharge(CustomerChargeRequest request);
 
     CustomerRideResponse calculateRidePrice(CustomerRideRequest customerRideRequest);
+
+    void returnCustomerCharge(String chargeId);
 }

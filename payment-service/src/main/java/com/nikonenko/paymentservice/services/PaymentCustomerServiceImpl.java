@@ -75,24 +75,34 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     private CustomerUser getCustomerUser(Long id) {
-        return customerUserRepository.findById(id)
+        return customerUserRepository.findByPassengerId(id)
                 .orElseThrow(CustomerNotFoundException::new);
     }
 
     private void checkBalanceEnough(String customerId, Double amount) {
+        System.out.println(amount);
         Customer customer = utilityService.stripeCustomerRetrieving(customerId);
-        if (customer.getBalance() < amount) {
+        System.out.println(customer.getBalance());
+        if (customer.getBalance() < amount * 100) {
             throw new InsufficientFundsException();
         }
     }
 
     private void updateBalance(String customerId, Double amount) {
         Customer customer = utilityService.stripeCustomerRetrieving(customerId);
+        System.out.println(customer.getBalance());
+        System.out.println(amount);
         CustomerUpdateParams params =
                 CustomerUpdateParams.builder()
-                        .setBalance((long) (customer.getBalance() - amount))
+                        .setBalance((long) (customer.getBalance() - amount * 100))
                         .build();
         utilityService.stripeCustomerUpdating(customer, params);
+    }
+
+    @Override
+    public void returnCustomerCharge(String chargeId) {
+        PaymentIntent paymentIntent = utilityService.stripeIntentRetrieving(chargeId);
+        updateBalance(paymentIntent.getCustomer(), (double) -paymentIntent.getAmount() / 100);
     }
 
     @Override

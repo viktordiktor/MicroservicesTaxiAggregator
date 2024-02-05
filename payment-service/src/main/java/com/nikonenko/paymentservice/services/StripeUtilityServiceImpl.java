@@ -16,6 +16,7 @@ import com.nikonenko.paymentservice.exceptions.CreateTokenFailedException;
 import com.nikonenko.paymentservice.exceptions.ExpiredCouponException;
 import com.nikonenko.paymentservice.exceptions.RetrieveCouponFailedException;
 import com.nikonenko.paymentservice.exceptions.RetrieveCustomerFailedException;
+import com.nikonenko.paymentservice.exceptions.RetrieveIntentFailedException;
 import com.nikonenko.paymentservice.exceptions.UpdateCustomerFailedException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
@@ -142,7 +143,7 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setName(customerRequest.getUsername())
-                    .setBalance(customerRequest.getAmount())
+                    .setBalance(customerRequest.getAmount() * 100)
                     .build();
             log.info("Creating new customer..");
             return Customer.create(customerCreateParams, getRequestOptions(secretKey));
@@ -205,6 +206,16 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
             return intent;
         } catch (StripeException ex) {
             throw new CreateIntentFailedException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public PaymentIntent stripeIntentRetrieving(String intentId) {
+        try {
+            log.info("Retrieving intent...");
+            return PaymentIntent.retrieve(intentId, getRequestOptions(secretKey));
+        } catch (StripeException ex) {
+            throw new RetrieveIntentFailedException(ex.getMessage());
         }
     }
 

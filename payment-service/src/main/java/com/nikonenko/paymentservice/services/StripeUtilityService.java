@@ -44,6 +44,7 @@ public interface StripeUtilityService {
     PaymentIntent stripeIntentConfirming(CustomerChargeRequest request, String customerId);
 
     PaymentIntent stripeIntentCreation(CustomerChargeRequest request, String customerId);
+    PaymentIntent stripeIntentRetrieving(String intentId);
 
     void stripeCustomerUpdating(Customer customer, CustomerUpdateParams params);
 }

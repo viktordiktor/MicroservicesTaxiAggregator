@@ -20,6 +20,7 @@ public enum ErrorList {
     RETRIEVE_CUSTOMER_FAILED("retrieve.customer.failed"),
     RETRIEVE_CHARGE_FAILED("retrieve.charge.failed"),
     RETRIEVE_COUPON_FAILED("retrieve.coupon.failed"),
+    RETRIEVE_INTENT_FAILED("retrieve.intent.failed"),
     UPDATE_CUSTOMER_FAILED("update.customer.failed");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
