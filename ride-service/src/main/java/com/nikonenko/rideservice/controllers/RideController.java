@@ -43,6 +43,12 @@ public class RideController {
         return rideService.getOpenRides(pageNumber, pageSize, sortField);
     }
 
+    @GetMapping("/{rideId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RideResponse getRideById(@PathVariable String rideId) {
+        return rideService.getRideById(rideId);
+    }
+
     @GetMapping("/by-passenger/{passengerId}")
     @ResponseStatus(HttpStatus.OK)
     public PageResponse<RideResponse> getRidersByPassenger(@PathVariable Long passengerId,

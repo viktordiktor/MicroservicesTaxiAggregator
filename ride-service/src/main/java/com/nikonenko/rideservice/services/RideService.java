@@ -15,6 +15,8 @@ public interface RideService {
 
     PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField);
 
+    RideResponse getRideById(String rideId);
+
     PageResponse<RideResponse> getRidesByPassenger(Long passengerId, int pageNumber, int pageSize, String sortField);
 
     PageResponse<RideResponse> getRidesByDriver(Long driverId, int pageNumber, int pageSize, String sortField);

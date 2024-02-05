@@ -44,6 +44,11 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    public RideResponse getRideById(String rideId) {
+        return modelMapper.map(getOrThrow(rideId), RideResponse.class);
+    }
+
+    @Override
     public PageResponse<RideResponse> getRidesByPassenger(Long passengerId,
                                                           int pageNumber, int pageSize, String sortField) {
         Pageable pageable = createPageable(pageNumber, pageSize, sortField);
