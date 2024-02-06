@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -20,5 +22,5 @@ public class CustomerChargeRequest {
     private String currency;
     @NotNull(message = ValidationList.AMOUNT_REQUIRED)
     @Positive(message = ValidationList.NEGATIVE_VALUE)
-    private Double amount;
+    private BigDecimal amount;
 }

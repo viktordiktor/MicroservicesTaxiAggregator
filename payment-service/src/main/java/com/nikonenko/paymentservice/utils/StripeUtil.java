@@ -1,4 +1,4 @@
-package com.nikonenko.paymentservice.services;
+package com.nikonenko.paymentservice.utils;
 
 import com.nikonenko.paymentservice.dto.CardRequest;
 import com.nikonenko.paymentservice.dto.ChargeRequest;
@@ -33,23 +33,20 @@ import com.stripe.param.PaymentIntentConfirmParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-@Service
 @Slf4j
 @RequiredArgsConstructor
-public class StripeUtilityServiceImpl implements StripeUtilityService {
+public class StripeUtil {
     @Value("${api.stripe.secret-key}")
     private String secretKey;
     @Value("${api.stripe.public-key}")
     private String publicKey;
 
-    @Override
     public Map<String, Object> createCardParams(CardRequest cardRequest) {
         return  Map.of(
                 "number", cardRequest.getCardNumber(),
@@ -59,7 +56,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         );
     }
 
-    @Override
     public Token stripeCreateToken(Map<String, Object> cardParams) {
         try {
             log.info("Creating new token..");
@@ -70,16 +66,14 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public Map<String, Object> createChargeParams(ChargeRequest chargeRequest) {
         Map<String, Object> chargeParams = new HashMap<>();
-        chargeParams.put("amount", (long) (chargeRequest.getAmount() * 100));
+        chargeParams.put("amount", (long) (chargeRequest.getAmount().doubleValue() * 100));
         chargeParams.put("currency", chargeRequest.getCurrency());
         chargeParams.put("source", chargeRequest.getStripeToken());
         return chargeParams;
     }
 
-    @Override
     public Charge stripeChargeCreation(Map<String, Object> chargeParams) {
         try {
             log.info("Creating new charge..");
@@ -89,7 +83,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public Charge stripeReceivingCharge(String chargeId) {
         try {
             log.info("Retrieving charge..");
@@ -99,7 +92,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public void setChargeResponse(Charge charge, ChargeResponse chargeResponse) {
         chargeResponse.setMessage(charge.getOutcome().getSellerMessage());
         if (charge.getPaid()) {
@@ -108,7 +100,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public Coupon stripeCouponCreation(CouponCreateParams params) {
         try {
             log.info("Creating coupon..");
@@ -118,14 +109,12 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public RequestOptions getRequestOptions(String key) {
         return RequestOptions.builder()
                 .setApiKey(key)
                 .build();
     }
 
-    @Override
     public Coupon retrieveCoupon(String couponId, LocalDateTime localDateTime) {
         try {
             log.info("Retrieving coupon with id: {}", couponId);
@@ -137,13 +126,12 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public Customer stripeCustomerCreation(CustomerCreationRequest customerRequest) {
         try{
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setName(customerRequest.getUsername())
-                    .setBalance(customerRequest.getAmount() * 100)
+                    .setBalance((long) customerRequest.getAmount().doubleValue() * 100)
                     .build();
             log.info("Creating new customer..");
             return Customer.create(customerCreateParams, getRequestOptions(secretKey));
@@ -152,7 +140,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public void stripePaymentCreating(String customerId)  {
         try{
             Map<String, Object> paymentParams = Map.of(
@@ -169,7 +156,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public Customer stripeCustomerRetrieving(String customerId) {
         try {
             log.info("Retrieving customer with id: {}", customerId);
@@ -179,7 +165,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public PaymentIntent stripeIntentConfirming(CustomerChargeRequest request, String customerId) {
         PaymentIntent intent = stripeIntentCreation(request, customerId);
         PaymentIntentConfirmParams params = PaymentIntentConfirmParams.builder()
@@ -193,11 +178,11 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public PaymentIntent stripeIntentCreation(CustomerChargeRequest request, String customerId) {
         try {
             log.info("Creating new intent..");
-            PaymentIntent intent = PaymentIntent.create(Map.of("amount", (int) (request.getAmount() * 100),
+            PaymentIntent intent = PaymentIntent.create(Map.of("amount",
+                            (long) (request.getAmount().doubleValue() * 100),
                             "currency", request.getCurrency(),
                             "customer", customerId,
                             "automatic_payment_methods", createAutomaticPaymentMethods()),
@@ -209,7 +194,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         }
     }
 
-    @Override
     public PaymentIntent stripeIntentRetrieving(String intentId) {
         try {
             log.info("Retrieving intent...");
@@ -226,7 +210,6 @@ public class StripeUtilityServiceImpl implements StripeUtilityService {
         return automaticPaymentMethods;
     }
 
-    @Override
     public void stripeCustomerUpdating(Customer customer, CustomerUpdateParams params) {
         try {
             log.info("Updating customer with id: {}", customer.getId());

@@ -1,7 +1,7 @@
 package com.nikonenko.paymentservice.controllers;
 
-import com.nikonenko.paymentservice.dto.customers.CustomerRideRequest;
-import com.nikonenko.paymentservice.dto.customers.CustomerRideResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
@@ -31,19 +31,16 @@ public class PaymentCustomerController {
     }
 
     @GetMapping("/ride-price")
-    @ResponseStatus(HttpStatus.OK)
-    public CustomerRideResponse calculateRidePrice(@RequestBody @Valid CustomerRideRequest customerRideRequest) {
-        return paymentCustomerService.calculateRidePrice(customerRideRequest);
+    public CustomerCalculateRideResponse calculateRidePrice(@RequestBody @Valid CustomerCalculateRideRequest customerCalculateRideRequest) {
+        return paymentCustomerService.calculateRidePrice(customerCalculateRideRequest);
     }
 
     @PostMapping("/charge")
-    @ResponseStatus(HttpStatus.OK)
     public CustomerChargeResponse customerCharge(@RequestBody @Valid CustomerChargeRequest customerChargeRequest) {
         return paymentCustomerService.customerCharge(customerChargeRequest);
     }
 
-    @PostMapping("/return-charge/{chargeId}")
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/charge/{chargeId}/return")
     public void returnCustomerCharge(@PathVariable String chargeId) {
         paymentCustomerService.returnCustomerCharge(chargeId);
     }

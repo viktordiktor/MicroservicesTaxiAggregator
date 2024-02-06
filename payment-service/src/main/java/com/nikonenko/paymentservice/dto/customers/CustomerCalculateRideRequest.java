@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerRideRequest {
+public class CustomerCalculateRideRequest {
     @Positive(message = ValidationList.NEGATIVE_VALUE)
     @NotNull(message = ValidationList.LENGTH_REQUIRED)
     private Double rideLength;

@@ -33,19 +33,17 @@ public class PaymentGeneralController {
     }
 
     @PostMapping("/charge")
-    @ResponseStatus(HttpStatus.OK)
     public ChargeResponse charge(@RequestBody @Valid ChargeRequest chargeRequest) {
         return paymentGeneralService.charge(chargeRequest);
     }
 
     @GetMapping("/charge/{chargeId}")
-    @ResponseStatus(HttpStatus.OK)
     public ChargeResponse getChargeById(@PathVariable String chargeId) {
         return paymentGeneralService.getChargeById(chargeId);
     }
 
     @PostMapping("/coupon")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public CouponResponse createCoupon(@RequestBody @Valid CouponRequest couponRequest) {
         return paymentGeneralService.createCoupon(couponRequest);
     }

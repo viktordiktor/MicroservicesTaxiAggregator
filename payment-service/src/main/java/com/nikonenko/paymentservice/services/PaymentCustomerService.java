@@ -1,7 +1,7 @@
 package com.nikonenko.paymentservice.services;
 
-import com.nikonenko.paymentservice.dto.customers.CustomerRideRequest;
-import com.nikonenko.paymentservice.dto.customers.CustomerRideResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideRequest;
+import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
@@ -12,7 +12,7 @@ public interface PaymentCustomerService {
 
     CustomerChargeResponse customerCharge(CustomerChargeRequest request);
 
-    CustomerRideResponse calculateRidePrice(CustomerRideRequest customerRideRequest);
+    CustomerCalculateRideResponse calculateRidePrice(CustomerCalculateRideRequest customerCalculateRideRequest);
 
     void returnCustomerCharge(String chargeId);
 }

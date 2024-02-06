@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -25,5 +27,5 @@ public class CustomerCreationRequest {
     private Long passengerId;
     @NotNull(message = ValidationList.AMOUNT_REQUIRED)
     @Positive(message = ValidationList.NEGATIVE_VALUE)
-    private Long amount;
+    private BigDecimal amount;
 }

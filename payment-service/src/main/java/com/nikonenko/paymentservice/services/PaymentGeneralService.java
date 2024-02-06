@@ -11,6 +11,7 @@ public interface PaymentGeneralService {
     TokenResponse generateTokenByCard(CardRequest cardRequest);
 
     ChargeResponse charge(ChargeRequest chargeRequest);
+
     ChargeResponse getChargeById(String chargeId);
 
     CouponResponse createCoupon(CouponRequest couponRequest);
