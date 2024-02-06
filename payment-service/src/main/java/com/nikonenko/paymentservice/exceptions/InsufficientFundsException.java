@@ -1,9 +1,9 @@
 package com.nikonenko.paymentservice.exceptions;
 
-import com.nikonenko.paymentservice.utils.ErrorList;
+import com.nikonenko.paymentservice.utils.ExceptionList;
 
 public class InsufficientFundsException extends RuntimeException {
     public InsufficientFundsException() {
-        super(ErrorList.INSUFFICIENT_FUNDS.getValue());
+        super(ExceptionList.INSUFFICIENT_FUNDS.getValue());
     }
 }

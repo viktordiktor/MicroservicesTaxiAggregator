@@ -33,6 +33,8 @@ import com.stripe.param.PaymentIntentConfirmParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class StripeUtil {
     @Value("${api.stripe.secret-key}")

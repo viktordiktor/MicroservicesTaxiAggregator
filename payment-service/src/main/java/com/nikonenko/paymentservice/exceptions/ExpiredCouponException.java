@@ -1,9 +1,9 @@
 package com.nikonenko.paymentservice.exceptions;
 
-import com.nikonenko.paymentservice.utils.ErrorList;
+import com.nikonenko.paymentservice.utils.ExceptionList;
 
 public class ExpiredCouponException extends RuntimeException {
     public ExpiredCouponException() {
-        super(ErrorList.EXPIRED_COUPON.getValue());
+        super(ExceptionList.EXPIRED_COUPON.getValue());
     }
 }

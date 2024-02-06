@@ -1,4 +1,6 @@
 spring:
+  messages:
+    basename: validation
   datasource:
     url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/cabDB?createDatabaseIfNotExist=true}
     username: ${MYSQL_USERNAME:user}

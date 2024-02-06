@@ -1,9 +1,12 @@
 package com.nikonenko.paymentservice.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Component
 public class PaymentCoefficientUtil {
     private final double DEFAULT_COEFFICIENT = 1;
     private final double FRIDAY_COEFFICIENT = 1.6;
