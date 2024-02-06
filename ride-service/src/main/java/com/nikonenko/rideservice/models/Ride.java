@@ -28,4 +28,5 @@ public class Ride {
     private String chargeId;
     private Double distance;
     private RideStatus status;
+    private RidePaymentMethod paymentMethod;
 }

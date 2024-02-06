@@ -1,4 +1,6 @@
 spring:
+  messages:
+    basename: validation
   data:
     mongodb:
       database: rides-db

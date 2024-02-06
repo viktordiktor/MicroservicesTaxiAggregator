@@ -1,4 +1,4 @@
-package com.nikonenko.rideservice.services;
+package com.nikonenko.rideservice.services.impl;
 
 import com.google.maps.model.LatLng;
 import com.nikonenko.rideservice.dto.CalculateDistanceRequest;
@@ -14,8 +14,10 @@ import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.rideservice.models.Ride;
+import com.nikonenko.rideservice.models.RidePaymentMethod;
 import com.nikonenko.rideservice.models.RideStatus;
 import com.nikonenko.rideservice.repositories.RideRepository;
+import com.nikonenko.rideservice.services.RideService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.referencing.GeodeticCalculator;
@@ -106,7 +108,11 @@ public class RideServiceImpl implements RideService {
         if (!checkIfChargeSuccess(createRideRequest.getChargeId())) {
             throw new ChargeIsNotSuccessException();
         }
+
         ride.setStatus(RideStatus.OPENED);
+        ride.setPaymentMethod(createRideRequest.getChargeId() == null || createRideRequest.getChargeId().isEmpty() ?
+                RidePaymentMethod.BY_CASH : RidePaymentMethod.BY_CARD);
+
         Ride savedRide = rideRepository.save(ride);
         log.info("Created ride with id: {}", savedRide.getId());
         return modelMapper.map(savedRide, RideResponse.class);

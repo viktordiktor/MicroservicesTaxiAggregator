@@ -29,14 +29,18 @@ public class RideController {
     private final RideService rideService;
 
     @GetMapping("/distance")
-    @ResponseStatus(HttpStatus.OK)
     public CalculateDistanceResponse calculateDistance(@Valid @RequestBody
-                                                           CalculateDistanceRequest calculateDistanceRequest) {
+                                                       CalculateDistanceRequest calculateDistanceRequest) {
         return rideService.calculateDistance(calculateDistanceRequest);
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public RideResponse createRideRequest(@Valid @RequestBody CreateRideRequest createRideRequest) {
+        return rideService.createRide(createRideRequest);
+    }
+
     @GetMapping("/open")
-    @ResponseStatus(HttpStatus.OK)
     public PageResponse<RideResponse> getAvailableRides(@RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
                                                         @RequestParam(defaultValue = "id") String sortField) {
@@ -44,33 +48,24 @@ public class RideController {
     }
 
     @GetMapping("/{rideId}")
-    @ResponseStatus(HttpStatus.OK)
     public RideResponse getRideById(@PathVariable String rideId) {
         return rideService.getRideById(rideId);
     }
 
     @GetMapping("/by-passenger/{passengerId}")
-    @ResponseStatus(HttpStatus.OK)
     public PageResponse<RideResponse> getRidersByPassenger(@PathVariable Long passengerId,
-                                                             @RequestParam(defaultValue = "0") int pageNumber,
-                                                             @RequestParam(defaultValue = "5") int pageSize,
-                                                             @RequestParam(defaultValue = "id") String sortField) {
+                                                           @RequestParam(defaultValue = "0") int pageNumber,
+                                                           @RequestParam(defaultValue = "5") int pageSize,
+                                                           @RequestParam(defaultValue = "id") String sortField) {
         return rideService.getRidesByPassenger(passengerId, pageNumber, pageSize, sortField);
     }
 
     @GetMapping("/by-driver/{driverId}")
-    @ResponseStatus(HttpStatus.OK)
     public PageResponse<RideResponse> getRidersByDriver(@PathVariable Long driverId,
-                                                           @RequestParam(defaultValue = "0") int pageNumber,
-                                                           @RequestParam(defaultValue = "5") int pageSize,
-                                                           @RequestParam(defaultValue = "id") String sortField) {
+                                                        @RequestParam(defaultValue = "0") int pageNumber,
+                                                        @RequestParam(defaultValue = "5") int pageSize,
+                                                        @RequestParam(defaultValue = "id") String sortField) {
         return rideService.getRidesByDriver(driverId, pageNumber, pageSize, sortField);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public RideResponse createRideRequest(@Valid @RequestBody CreateRideRequest createRideRequest) {
-        return rideService.createRide(createRideRequest);
     }
 
     @DeleteMapping("/{rideId}")
@@ -80,25 +75,21 @@ public class RideController {
     }
 
     @PatchMapping("/accept/{rideId}/{driverId}")
-    @ResponseStatus(HttpStatus.OK)
     public RideResponse acceptRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.acceptRide(rideId, driverId);
     }
 
     @PatchMapping("/reject/{rideId}/{driverId}")
-    @ResponseStatus(HttpStatus.OK)
     public RideResponse rejectRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.rejectRide(rideId, driverId);
     }
 
     @PatchMapping("/start/{rideId}/{driverId}")
-    @ResponseStatus(HttpStatus.OK)
     public RideResponse startRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.startRide(rideId, driverId);
     }
 
     @PatchMapping("/finish/{rideId}/{driverId}")
-    @ResponseStatus(HttpStatus.OK)
     public RideResponse finishRide(@PathVariable String rideId, @PathVariable Long driverId) {
         return rideService.finishRide(rideId, driverId);
     }

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import java.util.ResourceBundle;
 
 @AllArgsConstructor
-public enum ErrorList {
+public enum ExceptionList {
     DRIVER_NOT_AVAILABLE("driver.not-available"),
     DRIVER_UNKNOWN("driver.unknown"),
     RIDE_NOT_FOUND("ride.not-found"),

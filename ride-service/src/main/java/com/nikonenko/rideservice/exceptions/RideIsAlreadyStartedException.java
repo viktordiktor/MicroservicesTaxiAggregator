@@ -1,9 +1,9 @@
 package com.nikonenko.rideservice.exceptions;
 
-import com.nikonenko.rideservice.utils.ErrorList;
+import com.nikonenko.rideservice.utils.ExceptionList;
 
 public class RideIsAlreadyStartedException extends RuntimeException{
     public RideIsAlreadyStartedException() {
-        super(ErrorList.RIDE_IS_ALREADY_STARTED.getValue());
+        super(ExceptionList.RIDE_IS_ALREADY_STARTED.getValue());
     }
 }
