@@ -130,6 +130,7 @@ public class RideServiceImpl implements RideService {
             throw new RideIsNotOpenedException();
         }
         rideRepository.delete(ride);
+        log.info("Deleted ride with id: {}", rideId);
     }
 
     @Override
@@ -140,49 +141,47 @@ public class RideServiceImpl implements RideService {
         }
         ride.setDriverId(driverId);
         ride.setStatus(RideStatus.ACCEPTED);
+        log.info("Accepting ride with id: {}...", rideId);
         return modelMapper.map(rideRepository.save(ride), RideResponse.class);
     }
 
     @Override
     public RideResponse rejectRide(String rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
-        if (ride.getStatus() != RideStatus.ACCEPTED) {
-            throw new RideIsNotAcceptedException();
-        }
-        if (!Objects.equals(ride.getDriverId(), driverId)) {
-            throw new UnknownDriverException();
-        }
+        checkRideAttributes(ride, driverId, RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setDriverId(null);
         ride.setStatus(RideStatus.OPENED);
+        log.info("Rejecting ride with id: {}...", rideId);
         return modelMapper.map(rideRepository.save(ride), RideResponse.class);
     }
 
     @Override
     public RideResponse startRide(String rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
-        if (ride.getStatus() != RideStatus.ACCEPTED) {
-            throw new RideIsNotAcceptedException();
-        }
-        if (!Objects.equals(ride.getDriverId(), driverId)) {
-            throw new UnknownDriverException();
-        }
+        checkRideAttributes(ride, driverId, RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setStartDate(LocalDateTime.now());
         ride.setStatus(RideStatus.STARTED);
+        log.info("Starting ride with id: {}...", rideId);
         return modelMapper.map(rideRepository.save(ride), RideResponse.class);
     }
 
     @Override
     public RideResponse finishRide(String rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
-        if (ride.getStatus() != RideStatus.STARTED) {
-            throw new RideIsNotStartedException();
+        checkRideAttributes(ride, driverId, RideStatus.STARTED, new RideIsNotStartedException());
+        ride.setEndDate(LocalDateTime.now());
+        ride.setStatus(RideStatus.FINISHED);
+        log.info("Finishing ride with id: {}...", rideId);
+        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
+    }
+
+    public void checkRideAttributes(Ride ride, Long driverId, RideStatus rideStatus, RuntimeException ex) {
+        if (ride.getStatus() != rideStatus) {
+            throw ex;
         }
         if (!Objects.equals(ride.getDriverId(), driverId)) {
             throw new UnknownDriverException();
         }
-        ride.setEndDate(LocalDateTime.now());
-        ride.setStatus(RideStatus.FINISHED);
-        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
     }
 
     public Ride getOrThrow(String rideId) {

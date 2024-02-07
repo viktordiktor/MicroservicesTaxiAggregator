@@ -24,10 +24,10 @@ public class CreateRidesCollectionChangeUnit {
                 .append("endAddress", "456 Elm St")
                 .append("startDate", LocalDateTime.parse("2024-01-01T10:00:00"))
                 .append("endDate", LocalDateTime.parse("2024-01-01T11:30:00"))
-                .append("chargeId", "pi_3OgOzSEBrxpniCwT1WTRYChF")
+                .append("chargeId", null)
                 .append("distance", 10.5)
                 .append("status", RideStatus.FINISHED.name())
-                .append("ridePaymentMethod", RidePaymentMethod.BY_CARD.name());
+                .append("ridePaymentMethod", RidePaymentMethod.BY_CASH.name());
         mongoTemplate.createCollection("rides")
                 .insertOne(rideDocument);
     }
