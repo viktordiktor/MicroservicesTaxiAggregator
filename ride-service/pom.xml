@@ -20,6 +20,7 @@
         <mongodb.version>4.11.1</mongodb.version>
         <google-maps.version>2.2.0</google-maps.version>
         <geotools.version>29.1</geotools.version>
+        <mongock.version>5.4.0</mongock.version>
     </properties>
     <repositories>
         <repository>
@@ -77,12 +78,12 @@
         <dependency>
             <groupId>io.mongock</groupId>
             <artifactId>mongock-springboot-v3</artifactId>
-            <version>5.4.0</version>
+            <version>${mongock.version}</version>
         </dependency>
         <dependency>
             <groupId>io.mongock</groupId>
             <artifactId>mongodb-springdata-v4-driver</artifactId>
-            <version>5.4.0</version>
+            <version>${mongock.version}</version>
         </dependency>
 
 
