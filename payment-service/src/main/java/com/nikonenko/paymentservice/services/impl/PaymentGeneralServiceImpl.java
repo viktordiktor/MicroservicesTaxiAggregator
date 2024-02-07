@@ -15,6 +15,8 @@ import com.stripe.param.CouponCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Service
@@ -46,7 +48,12 @@ public class PaymentGeneralServiceImpl implements PaymentGeneralService {
     @Override
     public ChargeResponse getChargeById(String chargeId) {
         Charge charge = stripeUtil.stripeReceivingCharge(chargeId);
-        return modelMapper.map(charge, ChargeResponse.class);
+        return ChargeResponse.builder()
+                .chargeId(chargeId)
+                .amount(BigDecimal.valueOf(charge.getAmount() / 100))
+                .success(charge.getStatus().equals("succeeded"))
+                .message(charge.getStatus())
+                .build();
     }
 
     @Override
