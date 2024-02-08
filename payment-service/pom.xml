@@ -19,6 +19,7 @@
         <stripe.version>24.13.0</stripe.version>
         <dotenv.version>4.0.0</dotenv.version>
         <liquibase.version>4.24.0</liquibase.version>
+        <eureka.version>4.1.0</eureka.version>
     </properties>
     <dependencies>
         <dependency>
@@ -28,6 +29,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${eureka.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -21,6 +21,7 @@
         <google-maps.version>2.2.0</google-maps.version>
         <geotools.version>29.1</geotools.version>
         <mongock.version>5.4.0</mongock.version>
+        <eureka.version>4.1.0</eureka.version>
     </properties>
     <repositories>
         <repository>
@@ -51,6 +52,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${eureka.version}</version>
         </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>

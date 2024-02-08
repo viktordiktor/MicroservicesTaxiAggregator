@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <modelmapper.version>3.2.0</modelmapper.version>
         <liquibase.version>4.24.0</liquibase.version>
+        <eureka.version>4.1.0</eureka.version>
     </properties>
     <dependencies>
         <dependency>
@@ -30,6 +31,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${eureka.version}</version>
         </dependency>
 
         <dependency>
@@ -71,14 +77,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${liquibase.version}</version>
-                <configuration>
-                    <propertyFile>${project.basedir}/src/main/java/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
         </plugins>

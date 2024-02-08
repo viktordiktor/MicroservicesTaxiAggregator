@@ -1,4 +1,7 @@
 spring:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
   messages:
     basename: validation
   datasource:
@@ -6,7 +9,7 @@ spring:
     username: ${MYSQL_USERNAME:user}
     password: ${MYSQL_PASSWORD:pass}
   application:
-    name: payment-service
+    name: PAYMENT-SERVICE
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
@@ -24,3 +27,6 @@ api:
   stripe:
     secret-key: ${STRIPE_SECRET_KEY}
     public-key: ${STRIPE_PUBLIC_KEY}
+
+server:
+  port: 0

@@ -1,4 +1,7 @@
 spring:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
   messages:
     basename: validation
   data:
@@ -10,7 +13,9 @@ spring:
       password: pass
       authentication-database: admin
   application:
-    name: driver-service
+    name: RIDE-SERVICE
 mongock:
   migration-scan-package:
     - com.nikonenko.rideservice.migrations
+server:
+  port: 0
