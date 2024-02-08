@@ -10,7 +10,7 @@
                  relativeToChangelogFile="true"
                  splitStatements="true"
                  stripComments="true"
-                 path="01-create-drivers-table.sql"/>
+                 path="10-insert-data-rides-table.sql"/>
         <rollback>
             <sqlFile dbms="mysql"
                      encoding="UTF-8"
@@ -18,7 +18,7 @@
                      relativeToChangelogFile="true"
                      splitStatements="true"
                      stripComments="true"
-                     path="01-drop-drivers-table.sql"/>
+                     path="10-delete-data-rides-table.sql"/>
         </rollback>
     </changeSet>
 

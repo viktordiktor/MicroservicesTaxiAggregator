@@ -1,0 +1,16 @@
+spring:
+  messages:
+    basename: validation
+  data:
+    mongodb:
+      database: rides-db
+      host: localhost
+      port: 27017
+      username: user
+      password: pass
+      authentication-database: admin
+  application:
+    name: driver-service
+mongock:
+  migration-scan-package:
+    - com.nikonenko.rideservice.migrations
