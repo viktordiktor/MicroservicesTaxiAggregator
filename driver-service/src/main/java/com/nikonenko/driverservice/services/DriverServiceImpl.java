@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,7 +31,7 @@ import java.util.Set;
 public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepository;
     private final ModelMapper modelMapper;
-    private final CarServiceImpl carService;
+    private final CarService carService;
 
     @Override
     public PageResponse<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField) {
