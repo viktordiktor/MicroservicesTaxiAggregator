@@ -39,15 +39,15 @@ public class RideServiceImpl implements RideService {
     private final ModelMapper modelMapper;
 
     @Override
+    public RideResponse getRideById(String rideId) {
+        return modelMapper.map(getOrThrow(rideId), RideResponse.class);
+    }
+
+    @Override
     public PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField) {
         Pageable pageable = createPageable(pageNumber, pageSize, sortField);
         Page<Ride> page = rideRepository.findAllByStatusIs(RideStatus.OPENED, pageable);
         return getPageRides(page);
-    }
-
-    @Override
-    public RideResponse getRideById(String rideId) {
-        return modelMapper.map(getOrThrow(rideId), RideResponse.class);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponse createRide(CreateRideRequest createRideRequest) {
         Ride ride = modelMapper.map(createRideRequest, Ride.class);
-        if (!checkIfChargeSuccess(createRideRequest.getChargeId())) {
+        if (!isChargeSuccess(createRideRequest.getChargeId())) {
             throw new ChargeIsNotSuccessException();
         }
 
@@ -118,7 +118,7 @@ public class RideServiceImpl implements RideService {
         return modelMapper.map(savedRide, RideResponse.class);
     }
 
-    private boolean checkIfChargeSuccess(String chargeId) {
+    private boolean isChargeSuccess(String chargeId) {
         //TODO communication with payment-service
         return true;
     }
