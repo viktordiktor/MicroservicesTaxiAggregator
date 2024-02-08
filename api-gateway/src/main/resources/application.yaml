@@ -1,0 +1,38 @@
+spring:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: driver-service
+          uri: lb://DRIVER-SERVICE
+          predicates:
+            - Path=/api/v1/drivers/**
+        - id: passenger-service
+          uri: lb://PASSENGER-SERVICE
+          predicates:
+            - Path=/api/v1/passengers/**
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/v1/payments/**
+        - id: ride-service
+          uri: lb://RIDE-SERVICE
+          predicates:
+            - Path=/api/v1/rides/**
+        - id: eureka-server
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-server-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+      discovery:
+        locator:
+          enabled: true
