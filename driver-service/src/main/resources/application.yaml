@@ -1,9 +1,6 @@
 spring:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
   datasource:
-    url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/cabDB?createDatabaseIfNotExist=true}
+    url: ${MYSQL_JDBC_URL:jdbc:mysql://mysqldb:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false}
     username: ${MYSQL_USERNAME:user}
     password: ${MYSQL_PASSWORD:pass}
   application:
@@ -20,5 +17,9 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
 server:
   port: 0

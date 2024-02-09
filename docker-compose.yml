@@ -1,0 +1,100 @@
+version: '3.7'
+services:
+  mysqldb:
+    image: mysql:latest
+    container_name: mysqldb
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_DATABASE=cabDB
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+    volumes:
+      - mysqldb:/var/lib/mysql
+    restart: always
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - ./mongo-data:/data/db
+    restart: always
+
+  discovery-server:
+    image: discovery-server:latest
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    restart: always
+
+  api-gateway:
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+    depends_on:
+      - discovery-server
+    links:
+      - discovery-server
+    restart: always
+
+  payment-service:
+    container_name: payment-service
+    image: payment-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+      - api-gateway
+      - mysqldb
+    links:
+      - discovery-server
+    restart: always
+
+  passenger-service:
+    container_name: passenger-service
+    image: passenger-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+      - api-gateway
+      - mysqldb
+    links:
+      - discovery-server
+    restart: always
+
+  driver-service:
+    container_name: driver-service
+    image: driver-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+      - api-gateway
+      - mysqldb
+    links:
+      - discovery-server
+    restart: always
+
+  ride-service:
+    container_name: ride-service
+    image: ride-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+      - api-gateway
+      - mongodb
+    links:
+      - discovery-server
+    restart: always
+
+volumes:
+  mysqldb:

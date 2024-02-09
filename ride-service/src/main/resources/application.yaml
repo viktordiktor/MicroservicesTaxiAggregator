@@ -1,21 +1,20 @@
 spring:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
   messages:
     basename: validation
   data:
     mongodb:
       database: rides-db
-      host: localhost
+      host: mongodb
       port: 27017
-      username: user
-      password: pass
       authentication-database: admin
   application:
     name: RIDE-SERVICE
 mongock:
   migration-scan-package:
     - com.nikonenko.rideservice.migrations
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
 server:
   port: 0

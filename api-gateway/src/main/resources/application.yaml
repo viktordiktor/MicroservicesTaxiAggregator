@@ -1,7 +1,4 @@
 spring:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
   application:
     name: API-GATEWAY
   cloud:
@@ -24,15 +21,20 @@ spring:
           predicates:
             - Path=/api/v1/rides/**
         - id: eureka-server
-          uri: http://localhost:8761
+          uri: http://eureka@discovery-server:8761
           predicates:
             - Path=/eureka/web
           filters:
             - SetPath=/
         - id: eureka-server-static
-          uri: http://localhost:8761
+          uri: http://eureka@discovery-server:8761
           predicates:
             - Path=/eureka/**
       discovery:
         locator:
           enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
