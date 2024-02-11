@@ -4,7 +4,7 @@ import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
 import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
-import com.nikonenko.passengerservice.services.PassengerServiceImpl;
+import com.nikonenko.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequestMapping("/api/v1/passengers")
 @RestControllerAdvice
 public class PassengerController {
-    private final PassengerServiceImpl passengerService;
+    private final PassengerService passengerService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -60,10 +60,10 @@ public class PassengerController {
         passengerService.deletePassenger(id);
     }
 
-    @PostMapping("/rating/{id}")
+    @PostMapping("/rating/{rideId}")
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponse addRating(@PathVariable Long id,
+    public void addRating(@PathVariable String rideId,
                                        @Valid @RequestBody RatingPassengerRequest ratingRequest) {
-        return passengerService.createReview(id, ratingRequest);
+        passengerService.createReview(rideId, ratingRequest);
     }
 }

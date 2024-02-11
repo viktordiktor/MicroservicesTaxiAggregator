@@ -2,6 +2,8 @@ package com.nikonenko.driverservice.utils;
 
 import com.nikonenko.driverservice.exceptions.CarNotFoundException;
 import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
+import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
+import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
@@ -45,7 +47,8 @@ public class RestExceptionHandler {
     @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class,
             CarNumberAlreadyExistsException.class, HttpMessageNotReadableException.class,
             PropertyReferenceException.class, WrongPageableParameterException.class,
-            MethodArgumentTypeMismatchException.class})
+            MethodArgumentTypeMismatchException.class, DriverIsNotAvailableException.class,
+            DriverNoRidesException.class})
     public ResponseEntity<String> handleAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

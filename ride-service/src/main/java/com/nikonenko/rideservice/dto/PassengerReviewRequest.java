@@ -1,4 +1,4 @@
-package com.nikonenko.driverservice.dto;
+package com.nikonenko.rideservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RatingDriverRequest {
-    private Long driverId;
+public class PassengerReviewRequest {
+    private String rideId;
     private int rating;
     private String comment;
 }

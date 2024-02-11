@@ -1,17 +1,23 @@
 package com.nikonenko.driverservice.services;
 
 import com.nikonenko.driverservice.dto.CarRequest;
+import com.nikonenko.driverservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.RatingDriverRequest;
+import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
+import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.driverservice.kafka.producer.DriverReviewRequestProducer;
+import com.nikonenko.driverservice.kafka.producer.RideStatusRequestProducer;
 import com.nikonenko.driverservice.models.Car;
 import com.nikonenko.driverservice.models.Driver;
 import com.nikonenko.driverservice.models.RatingDriver;
+import com.nikonenko.driverservice.models.RideAction;
 import com.nikonenko.driverservice.repositories.DriverRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +38,8 @@ public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepository;
     private final ModelMapper modelMapper;
     private final CarService carService;
+    private final RideStatusRequestProducer rideStatusRequestProducer;
+    private final DriverReviewRequestProducer driverReviewRequestProducer;
 
     @Override
     public PageResponse<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField) {
@@ -52,7 +60,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public DriverResponse getDriverById(Long id) {
-        return modelMapper.map(getDriver(id), DriverResponse.class);
+        return modelMapper.map(getOrThrow(id), DriverResponse.class);
     }
 
     @Override
@@ -67,7 +75,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponse editDriver(Long id, DriverRequest driverRequest) {
         checkDriverExists(driverRequest);
-        Driver editingDriver = getDriver(id);
+        Driver editingDriver = getOrThrow(id);
         modelMapper.map(driverRequest, editingDriver);
         driverRepository.save(editingDriver);
         log.info("Driver edited with id: {}", id);
@@ -76,27 +84,84 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public void deleteDriver(Long id) {
-        driverRepository.delete(getDriver(id));
+        driverRepository.delete(getOrThrow(id));
         log.info("Driver deleted with id: {}", id);
     }
 
     @Override
-    public DriverResponse createReview(Long id, RatingDriverRequest ratingRequest) {
-        Driver driver = getDriver(id);
+    public void acceptRide(String rideId, Long driverId) {
+        Driver driver = getAvailableDriver(driverId);
+        sendRequest(rideId, driverId, RideAction.ACCEPT);
+        driver.setAvailable(false);
+        driverRepository.save(driver);
+    }
 
-        RatingDriver addingRating = modelMapper.map(ratingRequest, RatingDriver.class);
-        addingRating.setDriverId(driver.getId());
+    @Override
+    public void rejectRide(String rideId, Long driverId) {
+        Driver driver = getNotAvailableDriver(driverId);
+        sendRequest(rideId, driverId, RideAction.REJECT);
+        driver.setAvailable(true);
+        driverRepository.save(driver);
+    }
+
+    @Override
+    public void startRide(String rideId, Long driverId) {
+        Driver driver = getNotAvailableDriver(driverId);
+        sendRequest(rideId, driverId, RideAction.START);
+        driverRepository.save(driver);
+    }
+
+    @Override
+    public void finishRide(String rideId, Long driverId) {
+        Driver driver = getNotAvailableDriver(driverId);
+        sendRequest(rideId, driverId, RideAction.FINISH);
+        driver.setAvailable(true);
+        driverRepository.save(driver);
+    }
+
+    private Driver getNotAvailableDriver(Long driverId) {
+        Driver driver = getOrThrow(driverId);
+        if (driver.getAvailable()) {
+            throw new DriverNoRidesException();
+        }
+        return driver;
+    }
+
+    private Driver getAvailableDriver(Long driverId) {
+        Driver driver = getOrThrow(driverId);
+        if (!driver.getAvailable()) {
+            throw new DriverIsNotAvailableException();
+        }
+        return driver;
+    }
+
+    private void sendRequest(String rideId, Long driverId, RideAction rideAction) {
+        rideStatusRequestProducer.sendChangeRideStatusRequest(ChangeRideStatusRequest.builder()
+                .rideId(rideId)
+                .driverId(driverId)
+                .rideAction(rideAction)
+                .build());
+    }
+
+    @Override
+    public void createReview(RatingDriverRequest ratingRequest) {
+        Driver driver = getOrThrow(ratingRequest.getDriverId());
+
+        RatingDriver addingRating = RatingDriver.builder()
+                .driverId(driver.getId())
+                .rating(ratingRequest.getRating())
+                .comment(ratingRequest.getComment())
+                .build();
 
         Set<RatingDriver> modifiedRatingSet = driver.getRatingSet();
         modifiedRatingSet.add(addingRating);
-
         driver.setRatingSet(modifiedRatingSet);
-        return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
+        driverRepository.save(driver);
     }
 
     @Override
     public DriverResponse addCarToDriver(Long id, CarRequest carRequest) {
-        Driver driver = getDriver(id);
+        Driver driver = getOrThrow(id);
         Set<Car> driverCars = driver.getCars();
 
         carService.createCar(carRequest);
@@ -107,7 +172,7 @@ public class DriverServiceImpl implements DriverService {
         return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
     }
 
-    public Driver getDriver(Long id) {
+    public Driver getOrThrow(Long id) {
         Optional<Driver> optionalDriver = driverRepository.findById(id);
         return optionalDriver.orElseThrow(DriverNotFoundException::new);
     }

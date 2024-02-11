@@ -1,4 +1,5 @@
-package com.nikonenko.passengerservice.utils;
+package com.nikonenko.driverservice.config.mapper;
+
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -6,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ModelMapperUtil {
+public class ModelMapperConfig {
     private final ModelMapper modelMapper;
 
-    public ModelMapperUtil() {
+    public ModelMapperConfig() {
         this.modelMapper = new ModelMapper();
         configureModelMapper();
     }

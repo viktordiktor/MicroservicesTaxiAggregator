@@ -4,13 +4,13 @@ import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
-import com.nikonenko.driverservice.dto.RatingDriverRequest;
 import com.nikonenko.driverservice.services.DriverServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,10 +60,24 @@ public class DriverController {
         driverService.deleteDriver(id);
     }
 
-    @PostMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public DriverResponse addRating(@PathVariable Long id, @Valid @RequestBody RatingDriverRequest ratingRequest) {
-        return driverService.createReview(id, ratingRequest);
+    @PatchMapping("/{driverId}/accept/{rideId}")
+    public void acceptRide(@PathVariable String rideId, @PathVariable Long driverId) {
+        driverService.acceptRide(rideId, driverId);
+    }
+
+    @PatchMapping("/{driverId}/reject/{rideId}")
+    public void rejectRide(@PathVariable String rideId, @PathVariable Long driverId) {
+        driverService.rejectRide(rideId, driverId);
+    }
+
+    @PatchMapping("/{driverId}/start/{rideId}")
+    public void startRide(@PathVariable String rideId, @PathVariable Long driverId) {
+        driverService.startRide(rideId, driverId);
+    }
+
+    @PatchMapping("/{driverId}/finish/{rideId}")
+    public void finishRide(@PathVariable String rideId, @PathVariable Long driverId) {
+        driverService.finishRide(rideId, driverId);
     }
 
     @PostMapping("/car/{driverId}")

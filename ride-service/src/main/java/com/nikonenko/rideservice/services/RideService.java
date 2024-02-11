@@ -2,16 +2,16 @@ package com.nikonenko.rideservice.services;
 
 import com.nikonenko.rideservice.dto.CalculateDistanceRequest;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
+import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
+import com.nikonenko.rideservice.dto.PassengerReviewRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
 
 public interface RideService {
     CalculateDistanceResponse calculateDistance(CalculateDistanceRequest calculateDistanceRequest);
 
     RideResponse createRide(CreateRideRequest createRideRequest);
-
-    RideResponse finishRide(String rideId, Long driverId);
 
     PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField);
 
@@ -21,11 +21,11 @@ public interface RideService {
 
     PageResponse<RideResponse> getRidesByDriver(Long driverId, int pageNumber, int pageSize, String sortField);
 
-    RideResponse startRide(String rideId, Long driverId);
+    void changeDriverRating(PassengerReviewRequest request);
 
-    RideResponse acceptRide(String rideId, Long driverId);
+    void changePassengerRating(PassengerReviewRequest request);
 
-    RideResponse rejectRide(String rideId, Long driverId);
+    void changeRideStatus(ChangeRideStatusRequest request);
 
     void closeRide(String rideId);
 }

@@ -17,6 +17,16 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+  kafka:
+    producer:
+      bootstrap-servers: broker:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: PassengerReviewRequest:com.nikonenko.passengerservice.dto.PassengerReviewRequest
+      passenger-review-topic:
+        name: passenger-review-topic
+
 eureka:
   client:
     service-url:

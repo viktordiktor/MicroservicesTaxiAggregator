@@ -1,4 +1,4 @@
-package com.nikonenko.driverservice.dto;
+package com.nikonenko.rideservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

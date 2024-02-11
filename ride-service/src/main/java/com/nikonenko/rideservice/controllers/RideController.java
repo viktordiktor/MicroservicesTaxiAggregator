@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,23 +73,23 @@ public class RideController {
         rideService.closeRide(rideId);
     }
 
-    @PatchMapping("/accept/{rideId}/{driverId}")
-    public RideResponse acceptRide(@PathVariable String rideId, @PathVariable Long driverId) {
-        return rideService.acceptRide(rideId, driverId);
-    }
-
-    @PatchMapping("/reject/{rideId}/{driverId}")
-    public RideResponse rejectRide(@PathVariable String rideId, @PathVariable Long driverId) {
-        return rideService.rejectRide(rideId, driverId);
-    }
-
-    @PatchMapping("/start/{rideId}/{driverId}")
-    public RideResponse startRide(@PathVariable String rideId, @PathVariable Long driverId) {
-        return rideService.startRide(rideId, driverId);
-    }
-
-    @PatchMapping("/finish/{rideId}/{driverId}")
-    public RideResponse finishRide(@PathVariable String rideId, @PathVariable Long driverId) {
-        return rideService.finishRide(rideId, driverId);
-    }
+//    @PatchMapping("/accept/{rideId}/{driverId}")
+//    public RideResponse acceptRide(@PathVariable String rideId, @PathVariable Long driverId) {
+//        return rideService.acceptRide(rideId, driverId);
+//    }
+//
+//    @PatchMapping("/reject/{rideId}/{driverId}")
+//    public RideResponse rejectRide(@PathVariable String rideId, @PathVariable Long driverId) {
+//        return rideService.rejectRide(rideId, driverId);
+//    }
+//
+//    @PatchMapping("/start/{rideId}/{driverId}")
+//    public RideResponse startRide(@PathVariable String rideId, @PathVariable Long driverId) {
+//        return rideService.startRide(rideId, driverId);
+//    }
+//
+//    @PatchMapping("/finish/{rideId}/{driverId}")
+//    public RideResponse finishRide(@PathVariable String rideId, @PathVariable Long driverId) {
+//        return rideService.finishRide(rideId, driverId);
+//    }
 }

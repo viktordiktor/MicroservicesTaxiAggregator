@@ -3,8 +3,12 @@ package com.nikonenko.rideservice.services.impl;
 import com.google.maps.model.LatLng;
 import com.nikonenko.rideservice.dto.CalculateDistanceRequest;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
+import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
+import com.nikonenko.rideservice.dto.RatingPassengerRequest;
+import com.nikonenko.rideservice.dto.PassengerReviewRequest;
+import com.nikonenko.rideservice.dto.RatingDriverRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
@@ -13,6 +17,8 @@ import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.rideservice.kafka.producer.UpdateDriverRatingRequestProducer;
+import com.nikonenko.rideservice.kafka.producer.UpdatePassengerRatingRequestProducer;
 import com.nikonenko.rideservice.models.Ride;
 import com.nikonenko.rideservice.models.RidePaymentMethod;
 import com.nikonenko.rideservice.models.RideStatus;
@@ -37,6 +43,8 @@ import java.util.Objects;
 public class RideServiceImpl implements RideService {
     private final RideRepository rideRepository;
     private final ModelMapper modelMapper;
+    private final UpdateDriverRatingRequestProducer updateDriverRatingRequestProducer;
+    private final UpdatePassengerRatingRequestProducer updatePassengerRatingRequestProducer;
 
     @Override
     public RideResponse getRideById(String rideId) {
@@ -134,45 +142,73 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public RideResponse acceptRide(String rideId, Long driverId) {
-        Ride ride = getOrThrow(rideId);
+    public void changeDriverRating(PassengerReviewRequest request) {
+        log.info("Request with ride id: {}", request.getRideId());
+        Ride ride = getOrThrow(request.getRideId());
+        updateDriverRatingRequestProducer.sendRatingDriverRequest(RatingDriverRequest.builder()
+                        .driverId(ride.getDriverId())
+                        .rating(request.getRating())
+                        .comment(request.getComment())
+                        .build());
+    }
+
+    @Override
+    public void changePassengerRating(PassengerReviewRequest request) {
+        log.info("Request with ride id: {}", request.getRideId());
+        Ride ride = getOrThrow(request.getRideId());
+        updatePassengerRatingRequestProducer.sendRatingPassengerRequest(RatingPassengerRequest.builder()
+                .passengerId(ride.getPassengerId())
+                .rating(request.getRating())
+                .comment(request.getComment())
+                .build());
+    }
+
+    @Override
+    public void changeRideStatus(ChangeRideStatusRequest request) {
+        switch (request.getRideAction()) {
+            case ACCEPT -> acceptRide(request);
+            case REJECT -> rejectRide(request);
+            case START -> startRide(request);
+            case FINISH -> finishRide(request);
+        }
+    }
+
+    public void acceptRide(ChangeRideStatusRequest request) {
+        Ride ride = getOrThrow(request.getRideId());
         if (ride.getStatus() != RideStatus.OPENED) {
             throw new RideIsNotOpenedException();
         }
-        ride.setDriverId(driverId);
+        ride.setDriverId(request.getDriverId());
         ride.setStatus(RideStatus.ACCEPTED);
-        log.info("Accepting ride with id: {}...", rideId);
-        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
+        log.info("Accepting ride with id: {}...", ride.getId());
+        rideRepository.save(ride);
     }
 
-    @Override
-    public RideResponse rejectRide(String rideId, Long driverId) {
-        Ride ride = getOrThrow(rideId);
-        checkRideAttributes(ride, driverId, RideStatus.ACCEPTED, new RideIsNotAcceptedException());
+    public void rejectRide(ChangeRideStatusRequest request) {
+        Ride ride = getOrThrow(request.getRideId());
+        checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setDriverId(null);
         ride.setStatus(RideStatus.OPENED);
-        log.info("Rejecting ride with id: {}...", rideId);
-        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
+        log.info("Rejecting ride with id: {}...", ride.getId());
+        rideRepository.save(ride);
     }
 
-    @Override
-    public RideResponse startRide(String rideId, Long driverId) {
-        Ride ride = getOrThrow(rideId);
-        checkRideAttributes(ride, driverId, RideStatus.ACCEPTED, new RideIsNotAcceptedException());
+    public void startRide(ChangeRideStatusRequest request) {
+        Ride ride = getOrThrow(request.getRideId());
+        checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setStartDate(LocalDateTime.now());
         ride.setStatus(RideStatus.STARTED);
-        log.info("Starting ride with id: {}...", rideId);
-        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
+        log.info("Starting ride with id: {}...", ride.getId());
+        rideRepository.save(ride);
     }
 
-    @Override
-    public RideResponse finishRide(String rideId, Long driverId) {
-        Ride ride = getOrThrow(rideId);
-        checkRideAttributes(ride, driverId, RideStatus.STARTED, new RideIsNotStartedException());
+    public void finishRide(ChangeRideStatusRequest request) {
+        Ride ride = getOrThrow(request.getRideId());
+        checkRideAttributes(ride, request.getDriverId(), RideStatus.STARTED, new RideIsNotStartedException());
         ride.setEndDate(LocalDateTime.now());
         ride.setStatus(RideStatus.FINISHED);
-        log.info("Finishing ride with id: {}...", rideId);
-        return modelMapper.map(rideRepository.save(ride), RideResponse.class);
+        log.info("Finishing ride with id: {}...", ride.getId());
+        rideRepository.save(ride);
     }
 
     public void checkRideAttributes(Ride ride, Long driverId, RideStatus rideStatus, RuntimeException ex) {

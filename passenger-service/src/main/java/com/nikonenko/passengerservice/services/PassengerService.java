@@ -16,5 +16,5 @@ public interface PassengerService {
 
     void deletePassenger(Long id);
 
-    PassengerResponse createReview(Long id, RatingPassengerRequest ratingRequest);
+    void createReview(String rideId, RatingPassengerRequest ratingRequest);
 }

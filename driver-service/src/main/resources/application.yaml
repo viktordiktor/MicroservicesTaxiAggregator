@@ -17,9 +17,33 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+  kafka:
+    consumer:
+      bootstrap-servers: broker:29092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json:
+          trusted.packages: "*"
+          type.mapping: RatingDriverRequest:com.nikonenko.driverservice.dto.RatingDriverRequest
+      group-id: ride-group
+      auto-offset-reset: latest
+      rating-topic-name: driver-rating-topic
+    producer:
+      bootstrap-servers: broker:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: ChangeRideStatusRequest:com.nikonenko.driverservice.dto.ChangeRideStatusRequest, DriverReviewRequest:com.nikonenko.driverservice.dto.DriverReviewRequest
+      status-producer-topic:
+        name: ride-status-topic
+      driver-review-topic:
+        name: driver-review-topic
+
 eureka:
   client:
     service-url:
       defaultZone: http://discovery-server:8761/eureka/
+
 server:
   port: 0

@@ -9,6 +9,30 @@ spring:
       authentication-database: admin
   application:
     name: RIDE-SERVICE
+  kafka:
+    consumer:
+      bootstrap-servers: broker:29092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json:
+          trusted.packages: "*"
+          type.mapping: ChangeRideStatusRequest:com.nikonenko.rideservice.dto.ChangeRideStatusRequest, PassengerReviewRequest:com.nikonenko.rideservice.dto.PassengerReviewRequest
+      group-id: ride-group
+      auto-offset-reset: latest
+      status-topic-name: ride-status-topic
+      passenger-review-name: passenger-review-topic
+      driver-review-name: driver-review-topic
+    producer:
+      bootstrap-servers: broker:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: RatingDriverRequest:com.nikonenko.rideservice.dto.RatingDriverRequest, RatingPassengerRequest:com.nikonenko.rideservice.dto.RatingPassengerRequest
+      driver-rating-topic:
+        name: driver-rating-topic
+      passenger-rating-topic:
+        name: passenger-rating-topic
 mongock:
   migration-scan-package:
     - com.nikonenko.rideservice.migrations

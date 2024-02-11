@@ -17,7 +17,15 @@ public interface DriverService {
 
     void deleteDriver(Long id);
 
-    DriverResponse createReview(Long id, RatingDriverRequest ratingRequest);
+    void acceptRide(String rideId, Long driverId);
+
+    void rejectRide(String rideId, Long driverId);
+
+    void startRide(String rideId, Long driverId);
+
+    void finishRide(String rideId, Long driverId);
+
+    void createReview(RatingDriverRequest ratingRequest);
 
     DriverResponse addCarToDriver(Long id, CarRequest carRequest);
 }
