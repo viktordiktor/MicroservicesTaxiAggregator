@@ -1,4 +1,4 @@
-package com.nikonenko.driverservice.services;
+package com.nikonenko.driverservice.services.impl;
 
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
@@ -8,6 +8,7 @@ import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.driverservice.models.Car;
 import com.nikonenko.driverservice.repositories.CarRepository;
+import com.nikonenko.driverservice.services.CarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +25,6 @@ import java.util.Optional;
 @Slf4j
 public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
-
     private final ModelMapper modelMapper;
 
     @Override

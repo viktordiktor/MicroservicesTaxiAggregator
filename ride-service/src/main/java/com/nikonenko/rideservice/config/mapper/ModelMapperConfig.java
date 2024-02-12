@@ -1,4 +1,4 @@
-package com.nikonenko.rideservice.config;
+package com.nikonenko.rideservice.config.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

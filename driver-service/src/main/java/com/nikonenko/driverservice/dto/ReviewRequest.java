@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.dto;
+package com.nikonenko.driverservice.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassengerReviewRequest {
+public class ReviewRequest {
     private String rideId;
     @Min(value = 1)
     @Max(value = 5)

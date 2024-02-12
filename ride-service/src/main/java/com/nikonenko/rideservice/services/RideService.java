@@ -5,7 +5,7 @@ import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
-import com.nikonenko.rideservice.dto.PassengerReviewRequest;
+import com.nikonenko.rideservice.dto.ReviewRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
 
 public interface RideService {
@@ -21,9 +21,9 @@ public interface RideService {
 
     PageResponse<RideResponse> getRidesByDriver(Long driverId, int pageNumber, int pageSize, String sortField);
 
-    void changeDriverRating(PassengerReviewRequest request);
+    void changeDriverRating(ReviewRequest request);
 
-    void changePassengerRating(PassengerReviewRequest request);
+    void changePassengerRating(ReviewRequest request);
 
     void changeRideStatus(ChangeRideStatusRequest request);
 

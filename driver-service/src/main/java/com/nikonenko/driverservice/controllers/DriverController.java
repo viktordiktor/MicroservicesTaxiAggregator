@@ -4,7 +4,8 @@ import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
-import com.nikonenko.driverservice.services.DriverServiceImpl;
+import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
+import com.nikonenko.driverservice.services.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequestMapping("/api/v1/drivers")
 @RestControllerAdvice
 public class DriverController {
-    private final DriverServiceImpl driverService;
+    private final DriverService driverService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -43,13 +44,11 @@ public class DriverController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public DriverResponse getDriverById(@PathVariable Long id) {
         return driverService.getDriverById(id);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public DriverResponse editDriver(@PathVariable Long id, @Valid @RequestBody DriverRequest driverRequest) {
         return driverService.editDriver(id, driverRequest);
     }
@@ -81,8 +80,15 @@ public class DriverController {
     }
 
     @PostMapping("/car/{driverId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public DriverResponse addCarToDriver(@PathVariable Long driverId, @Valid @RequestBody CarRequest carRequest) {
         return driverService.addCarToDriver(driverId, carRequest);
+    }
+
+    @PostMapping("/rating/{rideId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addRatingToPassenger(@PathVariable String rideId,
+                                     @Valid @RequestBody RatingFromDriverRequest request) {
+        driverService.sendReviewToPassenger(rideId, request);
     }
 }

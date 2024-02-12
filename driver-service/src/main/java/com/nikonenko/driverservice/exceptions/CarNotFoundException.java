@@ -1,9 +1,9 @@
 package com.nikonenko.driverservice.exceptions;
 
-import com.nikonenko.driverservice.utils.ErrorList;
+import com.nikonenko.driverservice.utils.ExceptionList;
 
 public class CarNotFoundException extends RuntimeException {
     public CarNotFoundException() {
-        super(ErrorList.CAR_NOT_FOUND);
+        super(ExceptionList.CAR_NOT_FOUND.getValue());
     }
 }

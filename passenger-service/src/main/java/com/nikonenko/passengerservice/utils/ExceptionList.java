@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import java.util.ResourceBundle;
 
 @AllArgsConstructor
-public enum ErrorList {
+public enum ExceptionList {
     USERNAME_EXISTS("passenger.exists.username"),
     PHONE_EXISTS("passenger.exists.phone"),
     NOT_FOUND("passenger.notfound"),

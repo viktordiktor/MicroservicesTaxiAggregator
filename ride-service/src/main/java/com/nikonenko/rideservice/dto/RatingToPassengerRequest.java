@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RatingPassengerRequest {
+public class RatingToPassengerRequest {
     private Long passengerId;
     private int rating;
     private String comment;

@@ -26,7 +26,6 @@ public class CarController {
     private final CarService carService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public PageResponse<CarResponse> getAllCars(@RequestParam(defaultValue = "0") int pageNumber,
                                                 @RequestParam(defaultValue = "5") int pageSize,
                                                 @RequestParam(defaultValue = "id") String sortField) {
@@ -34,13 +33,11 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public CarResponse getCarById(@PathVariable Long id) {
         return carService.getCarById(id);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public CarResponse editCar(@PathVariable Long id, @Valid @RequestBody CarRequest carRequest) {
         return carService.editCar(id, carRequest);
     }

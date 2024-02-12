@@ -1,9 +1,9 @@
 package com.nikonenko.driverservice.exceptions;
 
-import com.nikonenko.driverservice.utils.ErrorList;
+import com.nikonenko.driverservice.utils.ExceptionList;
 
 public class WrongPageableParameterException extends RuntimeException {
     public WrongPageableParameterException() {
-        super(ErrorList.WRONG_PARAMETER);
+        super(ExceptionList.WRONG_PARAMETER.getValue());
     }
 }

@@ -36,6 +36,7 @@ public class PaymentCustomerController {
     }
 
     @PostMapping("/charge")
+    @ResponseStatus(HttpStatus.CREATED)
     public CustomerChargeResponse customerCharge(@RequestBody @Valid CustomerChargeRequest customerChargeRequest) {
         return paymentCustomerService.customerCharge(customerChargeRequest);
     }

@@ -1,7 +1,5 @@
-package com.nikonenko.driverservice.dto;
+package com.nikonenko.rideservice.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DriverReviewRequest {
+public class ReviewRequest {
     private String rideId;
-    @Min(value = 1)
-    @Max(value = 5)
     private int rating;
     private String comment;
 }

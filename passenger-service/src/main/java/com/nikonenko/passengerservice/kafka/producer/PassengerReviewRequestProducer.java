@@ -1,6 +1,6 @@
 package com.nikonenko.passengerservice.kafka.producer;
 
-import com.nikonenko.passengerservice.dto.PassengerReviewRequest;
+import com.nikonenko.passengerservice.dto.ReviewRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
 public class PassengerReviewRequestProducer {
     @Value("${spring.kafka.producer.passenger-review-topic.name}")
     private String ratingTopic;
-    private final KafkaTemplate<String, PassengerReviewRequest> kafkaTemplate;
+    private final KafkaTemplate<String, ReviewRequest> kafkaTemplate;
 
-    public void sendRatingDriverRequest(@Valid PassengerReviewRequest request) {
+    public void sendRatingDriverRequest(@Valid ReviewRequest request) {
         log.info("Sending message {}", request);
-        Message<PassengerReviewRequest> message = MessageBuilder
+        Message<ReviewRequest> message = MessageBuilder
                 .withPayload(request)
                 .setHeader(KafkaHeaders.TOPIC, ratingTopic)
                 .build();

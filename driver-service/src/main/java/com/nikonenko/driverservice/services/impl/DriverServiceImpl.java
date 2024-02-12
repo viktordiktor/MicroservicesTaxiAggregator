@@ -1,11 +1,13 @@
-package com.nikonenko.driverservice.services;
+package com.nikonenko.driverservice.services.impl;
 
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
-import com.nikonenko.driverservice.dto.RatingDriverRequest;
+import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
+import com.nikonenko.driverservice.dto.RatingToDriverRequest;
+import com.nikonenko.driverservice.dto.ReviewRequest;
 import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
@@ -19,6 +21,8 @@ import com.nikonenko.driverservice.models.Driver;
 import com.nikonenko.driverservice.models.RatingDriver;
 import com.nikonenko.driverservice.models.RideAction;
 import com.nikonenko.driverservice.repositories.DriverRepository;
+import com.nikonenko.driverservice.services.CarService;
+import com.nikonenko.driverservice.services.DriverService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -119,6 +123,15 @@ public class DriverServiceImpl implements DriverService {
         driverRepository.save(driver);
     }
 
+    @Override
+    public void sendReviewToPassenger(String rideId, RatingFromDriverRequest request) {
+        driverReviewRequestProducer.sendRatingPassengerRequest(ReviewRequest.builder()
+                .rideId(rideId)
+                .rating(request.getRating())
+                .comment(request.getComment())
+                .build());
+    }
+
     private Driver getNotAvailableDriver(Long driverId) {
         Driver driver = getOrThrow(driverId);
         if (driver.getAvailable()) {
@@ -144,7 +157,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void createReview(RatingDriverRequest ratingRequest) {
+    public void createReview(RatingToDriverRequest ratingRequest) {
         Driver driver = getOrThrow(ratingRequest.getDriverId());
 
         RatingDriver addingRating = RatingDriver.builder()
@@ -179,7 +192,7 @@ public class DriverServiceImpl implements DriverService {
 
     public void checkDriverExists(DriverRequest driverRequest) {
         if (driverRepository.existsByPhone(driverRequest.getPhone())) {
-            log.info("Driver with ph`one {} already exists!", driverRequest.getPhone());
+            log.info("Driver with phone {} already exists!", driverRequest.getPhone());
             throw new PhoneAlreadyExistsException();
         }
         if (driverRepository.existsByUsername(driverRequest.getUsername())) {

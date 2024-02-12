@@ -17,7 +17,7 @@ spring:
       properties:
         spring.json:
           trusted.packages: "*"
-          type.mapping: ChangeRideStatusRequest:com.nikonenko.rideservice.dto.ChangeRideStatusRequest, PassengerReviewRequest:com.nikonenko.rideservice.dto.PassengerReviewRequest
+          type.mapping: ChangeRideStatusRequest:com.nikonenko.rideservice.dto.ChangeRideStatusRequest, ReviewRequest:com.nikonenko.rideservice.dto.ReviewRequest
       group-id: ride-group
       auto-offset-reset: latest
       status-topic-name: ride-status-topic
@@ -28,7 +28,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: RatingDriverRequest:com.nikonenko.rideservice.dto.RatingDriverRequest, RatingPassengerRequest:com.nikonenko.rideservice.dto.RatingPassengerRequest
+        spring.json.type.mapping: RatingToDriverRequest:com.nikonenko.rideservice.dto.RatingToDriverRequest, RatingToPassengerRequest:com.nikonenko.rideservice.dto.RatingToPassengerRequest
       driver-rating-topic:
         name: driver-rating-topic
       passenger-rating-topic:

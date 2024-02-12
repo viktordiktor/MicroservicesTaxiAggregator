@@ -1,9 +1,9 @@
 package com.nikonenko.driverservice.exceptions;
 
-import com.nikonenko.driverservice.utils.ErrorList;
+import com.nikonenko.driverservice.utils.ExceptionList;
 
 public class UsernameAlreadyExistsException extends RuntimeException {
     public UsernameAlreadyExistsException() {
-        super(ErrorList.USERNAME_EXISTS);
+        super(ExceptionList.USERNAME_EXISTS.getValue());
     }
 }

@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.config;
+package com.nikonenko.passengerservice.config.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

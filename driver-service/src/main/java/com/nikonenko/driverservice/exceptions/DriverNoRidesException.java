@@ -1,9 +1,9 @@
 package com.nikonenko.driverservice.exceptions;
 
-import com.nikonenko.driverservice.utils.ErrorList;
+import com.nikonenko.driverservice.utils.ExceptionList;
 
 public class DriverNoRidesException extends RuntimeException {
     public DriverNoRidesException() {
-        super(ErrorList.DRIVER_NO_RIDES);
+        super(ExceptionList.DRIVER_NO_RIDES.getValue());
     }
 }

@@ -1,7 +1,7 @@
 package com.nikonenko.rideservice.kafka.producer;
 
-import com.nikonenko.rideservice.dto.RatingDriverRequest;
-import com.nikonenko.rideservice.dto.RatingPassengerRequest;
+import com.nikonenko.rideservice.dto.RatingToDriverRequest;
+import com.nikonenko.rideservice.dto.RatingToPassengerRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
 public class UpdatePassengerRatingRequestProducer {
     @Value("${spring.kafka.producer.passenger-rating-topic.name}")
     private String ratingTopic;
-    private final KafkaTemplate<String, RatingDriverRequest> kafkaTemplate;
+    private final KafkaTemplate<String, RatingToDriverRequest> kafkaTemplate;
 
-    public void sendRatingPassengerRequest(RatingPassengerRequest request) {
+    public void sendRatingPassengerRequest(RatingToPassengerRequest request) {
         log.info("Sending message {}", request);
-        Message<RatingPassengerRequest> message = MessageBuilder
+        Message<RatingToPassengerRequest> message = MessageBuilder
                 .withPayload(request)
                 .setHeader(KafkaHeaders.TOPIC, ratingTopic)
                 .build();

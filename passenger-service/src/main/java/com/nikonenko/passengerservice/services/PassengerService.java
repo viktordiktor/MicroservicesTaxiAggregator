@@ -3,7 +3,8 @@ package com.nikonenko.passengerservice.services;
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
-import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
+import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 
 public interface PassengerService {
     PageResponse<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField);
@@ -16,5 +17,7 @@ public interface PassengerService {
 
     void deletePassenger(Long id);
 
-    void createReview(String rideId, RatingPassengerRequest ratingRequest);
+    void sendReviewToDriver(String rideId, RatingFromPassengerRequest request);
+
+    void createReview(RatingToPassengerRequest request);
 }

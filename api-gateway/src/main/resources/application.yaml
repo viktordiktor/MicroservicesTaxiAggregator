@@ -8,6 +8,10 @@ spring:
           uri: lb://DRIVER-SERVICE
           predicates:
             - Path=/api/v1/drivers/**
+        - id: driver-service-cars
+          uri: lb://DRIVER-SERVICE
+          predicates:
+            - Path=/api/v1/cars/**
         - id: passenger-service
           uri: lb://PASSENGER-SERVICE
           predicates:

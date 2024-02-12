@@ -1,9 +1,9 @@
 package com.nikonenko.passengerservice.exceptions;
 
-import com.nikonenko.passengerservice.utils.ErrorList;
+import com.nikonenko.passengerservice.utils.ExceptionList;
 
 public class UsernameAlreadyExistsException extends RuntimeException {
     public UsernameAlreadyExistsException() {
-        super(ErrorList.USERNAME_EXISTS.getValue());
+        super(ExceptionList.USERNAME_EXISTS.getValue());
     }
 }

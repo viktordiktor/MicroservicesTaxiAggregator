@@ -6,9 +6,9 @@ import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
-import com.nikonenko.rideservice.dto.RatingPassengerRequest;
-import com.nikonenko.rideservice.dto.PassengerReviewRequest;
-import com.nikonenko.rideservice.dto.RatingDriverRequest;
+import com.nikonenko.rideservice.dto.RatingToPassengerRequest;
+import com.nikonenko.rideservice.dto.ReviewRequest;
+import com.nikonenko.rideservice.dto.RatingToDriverRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
@@ -127,7 +127,7 @@ public class RideServiceImpl implements RideService {
     }
 
     private boolean isChargeSuccess(String chargeId) {
-        //TODO communication with payment-service
+        //TODO sync communication with payment-service
         return true;
     }
 
@@ -142,21 +142,21 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void changeDriverRating(PassengerReviewRequest request) {
+    public void changeDriverRating(ReviewRequest request) {
         log.info("Request with ride id: {}", request.getRideId());
         Ride ride = getOrThrow(request.getRideId());
-        updateDriverRatingRequestProducer.sendRatingDriverRequest(RatingDriverRequest.builder()
-                        .driverId(ride.getDriverId())
-                        .rating(request.getRating())
-                        .comment(request.getComment())
-                        .build());
+        updateDriverRatingRequestProducer.sendRatingDriverRequest(RatingToDriverRequest.builder()
+                .driverId(ride.getDriverId())
+                .rating(request.getRating())
+                .comment(request.getComment())
+                .build());
     }
 
     @Override
-    public void changePassengerRating(PassengerReviewRequest request) {
+    public void changePassengerRating(ReviewRequest request) {
         log.info("Request with ride id: {}", request.getRideId());
         Ride ride = getOrThrow(request.getRideId());
-        updatePassengerRatingRequestProducer.sendRatingPassengerRequest(RatingPassengerRequest.builder()
+        updatePassengerRatingRequestProducer.sendRatingPassengerRequest(RatingToPassengerRequest.builder()
                 .passengerId(ride.getPassengerId())
                 .rating(request.getRating())
                 .comment(request.getComment())

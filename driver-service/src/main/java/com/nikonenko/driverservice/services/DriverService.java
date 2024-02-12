@@ -4,7 +4,8 @@ import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
-import com.nikonenko.driverservice.dto.RatingDriverRequest;
+import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
+import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 
 public interface DriverService {
     PageResponse<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField);
@@ -25,7 +26,9 @@ public interface DriverService {
 
     void finishRide(String rideId, Long driverId);
 
-    void createReview(RatingDriverRequest ratingRequest);
+    void createReview(RatingToDriverRequest ratingRequest);
 
     DriverResponse addCarToDriver(Long id, CarRequest carRequest);
+
+    void sendReviewToPassenger(String rideId, RatingFromDriverRequest request);
 }

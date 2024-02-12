@@ -1,9 +1,9 @@
 package com.nikonenko.driverservice.exceptions;
 
-import com.nikonenko.driverservice.utils.ErrorList;
+import com.nikonenko.driverservice.utils.ExceptionList;
 
 public class PhoneAlreadyExistsException extends RuntimeException {
     public PhoneAlreadyExistsException() {
-        super(ErrorList.PHONE_EXISTS);
+        super(ExceptionList.PHONE_EXISTS.getValue());
     }
 }

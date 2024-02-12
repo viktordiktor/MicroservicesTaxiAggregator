@@ -1,17 +1,20 @@
-package com.nikonenko.passengerservice.services;
+package com.nikonenko.passengerservice.services.impl;
 
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
-import com.nikonenko.passengerservice.dto.PassengerReviewRequest;
-import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
+import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.dto.ReviewRequest;
+import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.passengerservice.kafka.producer.PassengerReviewRequestProducer;
 import com.nikonenko.passengerservice.models.Passenger;
+import com.nikonenko.passengerservice.models.RatingPassenger;
 import com.nikonenko.passengerservice.repositories.PassengerRepository;
+import com.nikonenko.passengerservice.services.PassengerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -22,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -79,28 +83,31 @@ public class PassengerServiceImpl implements PassengerService {
         log.info("Passenger deleted with id: {}", id);
     }
 
-//    @Override
-//    public PassengerResponse createReview(Long rideId, RatingPassengerRequest ratingRequest) {
-//        Passenger passenger = getPassenger(id);
-//
-//        RatingPassenger addingRating = modelMapper.map(ratingRequest, RatingPassenger.class);
-//        addingRating.setPassengerId(id);
-//
-//        Set<RatingPassenger> modifiedRatingSet = passenger.getRatingSet();
-//        modifiedRatingSet.add(addingRating);
-//
-//        passenger.setRatingSet(modifiedRatingSet);
-//        log.info("Review added to passenger with id: {}", id);
-//        return modelMapper.map(passengerRepository.save(passenger), PassengerResponse.class);
-//    }
+    @Override
+    public void sendReviewToDriver(String rideId, RatingFromPassengerRequest request) {
+        passengerReviewRequestProducer.sendRatingDriverRequest(ReviewRequest.builder()
+                .rideId(rideId)
+                .rating(request.getRating())
+                .comment(request.getComment())
+                .build());
+    }
 
     @Override
-    public void createReview(String rideId, RatingPassengerRequest ratingRequest) {
-        passengerReviewRequestProducer.sendRatingDriverRequest(PassengerReviewRequest.builder()
-                        .rideId(rideId)
-                        .rating(ratingRequest.getRating())
-                        .comment(ratingRequest.getComment())
-                        .build());
+    public void createReview(RatingToPassengerRequest request) {
+        Passenger passenger = getPassenger(request.getPassengerId());
+
+        RatingPassenger addingRating = RatingPassenger.builder()
+                .passengerId(passenger.getId())
+                .rating(request.getRating())
+                .comment(request.getComment())
+                .build();
+
+        Set<RatingPassenger> modifiedRatingSet = passenger.getRatingSet();
+        modifiedRatingSet.add(addingRating);
+
+        passenger.setRatingSet(modifiedRatingSet);
+        log.info("Review added to passenger with id: {}", request.getPassengerId());
+        passengerRepository.save(passenger);
     }
 
     public Passenger getPassenger(Long id) {
