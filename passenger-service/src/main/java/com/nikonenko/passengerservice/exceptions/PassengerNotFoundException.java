@@ -1,9 +1,9 @@
 package com.nikonenko.passengerservice.exceptions;
 
-import com.nikonenko.passengerservice.utils.ErrorList;
+import com.nikonenko.passengerservice.utils.ExceptionList;
 
 public class PassengerNotFoundException extends RuntimeException {
     public PassengerNotFoundException() {
-        super(ErrorList.NOT_FOUND.getValue());
+        super(ExceptionList.NOT_FOUND.getValue());
     }
 }

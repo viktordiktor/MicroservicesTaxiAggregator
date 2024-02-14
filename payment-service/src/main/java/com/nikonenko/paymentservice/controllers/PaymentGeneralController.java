@@ -33,6 +33,7 @@ public class PaymentGeneralController {
     }
 
     @PostMapping("/charge")
+    @ResponseStatus(HttpStatus.CREATED)
     public ChargeResponse charge(@RequestBody @Valid ChargeRequest chargeRequest) {
         return paymentGeneralService.charge(chargeRequest);
     }

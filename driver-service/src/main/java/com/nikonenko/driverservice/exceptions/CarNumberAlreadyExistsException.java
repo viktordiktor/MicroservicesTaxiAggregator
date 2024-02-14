@@ -1,9 +1,9 @@
 package com.nikonenko.driverservice.exceptions;
 
-import com.nikonenko.driverservice.utils.ErrorList;
+import com.nikonenko.driverservice.utils.ExceptionList;
 
 public class CarNumberAlreadyExistsException extends RuntimeException {
     public CarNumberAlreadyExistsException() {
-        super(ErrorList.NUMBER_EXISTS);
+        super(ExceptionList.NUMBER_EXISTS.getValue());
     }
 }

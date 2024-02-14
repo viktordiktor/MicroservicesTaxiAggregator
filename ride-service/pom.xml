@@ -21,6 +21,7 @@
         <google-maps.version>2.2.0</google-maps.version>
         <geotools.version>29.1</geotools.version>
         <mongock.version>5.4.0</mongock.version>
+        <cloud-deps.version>4.1.0</cloud-deps.version>
     </properties>
     <repositories>
         <repository>
@@ -51,6 +52,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${cloud-deps.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${cloud-deps.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>

@@ -1,9 +1,9 @@
 package com.nikonenko.passengerservice.exceptions;
 
-import com.nikonenko.passengerservice.utils.ErrorList;
+import com.nikonenko.passengerservice.utils.ExceptionList;
 
 public class WrongPageableParameterException extends RuntimeException {
     public WrongPageableParameterException() {
-        super(ErrorList.WRONG_PARAMETER.getValue());
+        super(ExceptionList.WRONG_PARAMETER.getValue());
     }
 }

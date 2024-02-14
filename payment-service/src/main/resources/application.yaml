@@ -1,0 +1,34 @@
+spring:
+  messages:
+    basename: validation
+  datasource:
+    url: ${MYSQL_JDBC_URL:jdbc:mysql://mysqldb:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false}
+    username: ${MYSQL_USERNAME:user}
+    password: ${MYSQL_PASSWORD:pass}
+  application:
+    name: PAYMENT-SERVICE
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true
+    hibernate:
+      ddl-auto: validate
+    generate-ddl: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+api:
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY}
+    public-key: ${STRIPE_PUBLIC_KEY}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+
+server:
+  port: 0

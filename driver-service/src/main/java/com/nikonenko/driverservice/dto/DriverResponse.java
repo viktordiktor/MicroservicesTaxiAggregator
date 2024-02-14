@@ -17,4 +17,5 @@ public class DriverResponse {
     private String phone;
     private Set<CarResponse> cars;
     private Set<RatingDriverResponse> ratingSet;
+    private boolean available;
 }

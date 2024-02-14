@@ -3,8 +3,8 @@ package com.nikonenko.passengerservice.controllers;
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
-import com.nikonenko.passengerservice.dto.RatingPassengerRequest;
-import com.nikonenko.passengerservice.services.PassengerServiceImpl;
+import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,10 +25,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequestMapping("/api/v1/passengers")
 @RestControllerAdvice
 public class PassengerController {
-    private final PassengerServiceImpl passengerService;
+    private final PassengerService passengerService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public PageResponse<PassengerResponse> getAllPassengers(@RequestParam(defaultValue = "0") int pageNumber,
                                                             @RequestParam(defaultValue = "5") int pageSize,
                                                             @RequestParam(defaultValue = "id") String sortField) {
@@ -42,13 +41,11 @@ public class PassengerController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public PassengerResponse getPassengerById(@PathVariable Long id) {
         return passengerService.getPassengerById(id);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public PassengerResponse editPassenger(@PathVariable Long id,
                                            @Valid @RequestBody PassengerRequest passengerRequest) {
         return passengerService.editPassenger(id, passengerRequest);
@@ -60,10 +57,10 @@ public class PassengerController {
         passengerService.deletePassenger(id);
     }
 
-    @PostMapping("/rating/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PassengerResponse addRating(@PathVariable Long id,
-                                       @Valid @RequestBody RatingPassengerRequest ratingRequest) {
-        return passengerService.createReview(id, ratingRequest);
+    @PostMapping("/rating/{rideId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addRatingToDriver(@PathVariable String rideId,
+                                  @Valid @RequestBody RatingFromPassengerRequest request) {
+        passengerService.sendReviewToDriver(rideId, request);
     }
 }

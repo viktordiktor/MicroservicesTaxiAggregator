@@ -1,10 +1,12 @@
 spring:
+  messages:
+    basename: validation
   datasource:
-    url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/cabDB?createDatabaseIfNotExist=true}
+    url: ${MYSQL_JDBC_URL:jdbc:mysql://mysqldb:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false}
     username: ${MYSQL_USERNAME:user}
     password: ${MYSQL_PASSWORD:pass}
   application:
-    name: passenger-service
+    name: PASSENGER-SERVICE
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
@@ -17,3 +19,30 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+  kafka:
+    consumer:
+      bootstrap-servers: broker:29092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json:
+          trusted.packages: "*"
+          type.mapping: RatingToPassengerRequest:com.nikonenko.passengerservice.dto.RatingToPassengerRequest
+      group-id: passenger-group
+      auto-offset-reset: latest
+      rating-topic-name: passenger-rating-topic
+    producer:
+      bootstrap-servers: broker:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: ReviewRequest:com.nikonenko.passengerservice.dto.ReviewRequest
+      passenger-review-topic:
+        name: passenger-review-topic
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+server:
+  port: 0

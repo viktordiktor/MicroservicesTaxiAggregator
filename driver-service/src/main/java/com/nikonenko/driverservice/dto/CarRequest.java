@@ -1,7 +1,7 @@
 package com.nikonenko.driverservice.dto;
 
-import com.nikonenko.driverservice.utils.ErrorList;
 import com.nikonenko.driverservice.utils.PatternList;
+import com.nikonenko.driverservice.utils.ValidationList;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CarRequest {
-    @NotBlank(message = ErrorList.NUMBER_REQUIRED)
-    @Pattern(regexp = PatternList.NUMBER_PATTERN, message = ErrorList.WRONG_NUMBER_FORMAT)
+    @NotBlank(message = ValidationList.NUMBER_REQUIRED)
+    @Pattern(regexp = PatternList.NUMBER_PATTERN, message = ValidationList.WRONG_NUMBER_FORMAT)
     private String number;
     private String model;
     private String color;
