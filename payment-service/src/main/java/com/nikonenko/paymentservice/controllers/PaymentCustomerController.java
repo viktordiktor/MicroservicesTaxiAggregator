@@ -3,8 +3,6 @@ package com.nikonenko.paymentservice.controllers;
 import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
-import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
-import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerExistsResponse;
 import com.nikonenko.paymentservice.services.PaymentCustomerService;
 import jakarta.validation.Valid;
@@ -25,12 +23,6 @@ import java.time.LocalDateTime;
 @RequestMapping("api/v1/payments/customers")
 public class PaymentCustomerController {
     private final PaymentCustomerService paymentCustomerService;
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CustomerCreationResponse createCustomer(@RequestBody @Valid CustomerCreationRequest customerRequest) {
-        return paymentCustomerService.createCustomer(customerRequest);
-    }
 
     @GetMapping("/checkExists/{passengerId}")
     public CustomerExistsResponse isCustomerExists(@PathVariable Long passengerId) {

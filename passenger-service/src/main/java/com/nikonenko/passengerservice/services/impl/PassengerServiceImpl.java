@@ -1,5 +1,7 @@
 package com.nikonenko.passengerservice.services.impl;
 
+import com.nikonenko.passengerservice.dto.CustomerCreationRequest;
+import com.nikonenko.passengerservice.dto.CustomerDataRequest;
 import com.nikonenko.passengerservice.dto.RideByPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideResponse;
@@ -20,6 +22,7 @@ import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.passengerservice.kafka.producer.CustomerCreationRequestProducer;
 import com.nikonenko.passengerservice.kafka.producer.PassengerReviewRequestProducer;
 import com.nikonenko.passengerservice.models.Passenger;
 import com.nikonenko.passengerservice.models.RatingPassenger;
@@ -50,6 +53,7 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final ModelMapper modelMapper;
     private final PassengerReviewRequestProducer passengerReviewRequestProducer;
+    private final CustomerCreationRequestProducer customerCreationRequestProducer;
     private final PaymentService paymentService;
     private final RideService rideService;
 
@@ -169,6 +173,19 @@ public class PassengerServiceImpl implements PassengerService {
         passenger.setRatingSet(modifiedRatingSet);
         log.info("Review added to passenger with id: {}", request.getPassengerId());
         passengerRepository.save(passenger);
+    }
+
+    @Override
+    public void createCustomerByPassenger(Long passengerId, CustomerDataRequest dataRequest) {
+        Passenger passenger = getPassenger(passengerId);
+        customerCreationRequestProducer.sendCustomerCreationRequest(CustomerCreationRequest.builder()
+                        .passengerId(passengerId)
+                        .amount(dataRequest.getAmount())
+                        .phone(dataRequest.getPhone() == null ?
+                                passenger.getPhone() : dataRequest.getPhone())
+                        .username(dataRequest.getUsername() == null ?
+                                passenger.getUsername() : dataRequest.getUsername())
+                        .build());
     }
 
     public Passenger getPassenger(Long id) {

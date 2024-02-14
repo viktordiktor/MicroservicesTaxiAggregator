@@ -1,5 +1,6 @@
 package com.nikonenko.passengerservice.services;
 
+import com.nikonenko.passengerservice.dto.CustomerDataRequest;
 import com.nikonenko.passengerservice.dto.RideByPassengerRequest;
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
@@ -24,4 +25,6 @@ public interface PassengerService {
     void sendReviewToDriver(String rideId, RatingFromPassengerRequest request);
 
     void createReview(RatingToPassengerRequest request);
+
+    void createCustomerByPassenger(Long passengerId, CustomerDataRequest dataRequest);
 }

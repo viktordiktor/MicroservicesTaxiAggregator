@@ -1,5 +1,6 @@
 package com.nikonenko.passengerservice.controllers;
 
+import com.nikonenko.passengerservice.dto.CustomerDataRequest;
 import com.nikonenko.passengerservice.dto.RideByPassengerRequest;
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
@@ -71,5 +72,11 @@ public class PassengerController {
     public void addRatingToDriver(@PathVariable String rideId,
                                   @Valid @RequestBody RatingFromPassengerRequest request) {
         passengerService.sendReviewToDriver(rideId, request);
+    }
+
+    @PostMapping("/{passengerId}/customer")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createCustomer(@PathVariable Long passengerId, @Valid @RequestBody CustomerDataRequest dataRequest) {
+        passengerService.createCustomerByPassenger(passengerId, dataRequest);
     }
 }

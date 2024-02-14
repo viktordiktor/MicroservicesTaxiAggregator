@@ -19,6 +19,18 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+  kafka:
+    consumer:
+      bootstrap-servers: broker:29092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json:
+          trusted.packages: "*"
+          type.mapping: CustomerCreationRequest:com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest
+      group-id: payment-group
+      auto-offset-reset: latest
+      payment-customer-name: payment-customer-topic
 
 api:
   stripe:
