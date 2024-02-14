@@ -19,7 +19,7 @@
         <stripe.version>24.13.0</stripe.version>
         <dotenv.version>4.0.0</dotenv.version>
         <liquibase.version>4.24.0</liquibase.version>
-        <eureka.version>4.1.0</eureka.version>
+        <cloud-deps.version>4.1.0</cloud-deps.version>
     </properties>
     <dependencies>
         <dependency>
@@ -33,7 +33,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>${eureka.version}</version>
+            <version>${cloud-deps.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${cloud-deps.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

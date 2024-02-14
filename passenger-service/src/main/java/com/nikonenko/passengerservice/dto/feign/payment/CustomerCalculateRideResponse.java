@@ -1,4 +1,4 @@
-package com.nikonenko.paymentservice.dto.customers;
+package com.nikonenko.passengerservice.dto.feign.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

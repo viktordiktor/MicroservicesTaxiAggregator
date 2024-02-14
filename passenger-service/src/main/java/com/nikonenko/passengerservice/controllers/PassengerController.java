@@ -1,9 +1,11 @@
 package com.nikonenko.passengerservice.controllers;
 
+import com.nikonenko.passengerservice.dto.RideByPassengerRequest;
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
 import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 import com.nikonenko.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,13 @@ public class PassengerController {
     @ResponseStatus(HttpStatus.CREATED)
     public PassengerResponse createPassenger(@Valid @RequestBody PassengerRequest passengerRequest) {
         return passengerService.createPassenger(passengerRequest);
+    }
+
+    @PostMapping("/{passengerId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RideResponse createRide(@PathVariable Long passengerId,
+                                   @RequestBody RideByPassengerRequest rideByPassengerRequest) {
+        return passengerService.createRideByPassenger(passengerId, rideByPassengerRequest);
     }
 
     @GetMapping("/{id}")

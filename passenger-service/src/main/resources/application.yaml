@@ -46,3 +46,13 @@ eureka:
       defaultZone: http://discovery-server:8761/eureka/
 server:
   port: 0
+
+feign:
+  client:
+    config:
+      payment:
+        name: PAYMENT-SERVICE
+        path: /api/v1/payments
+      ride:
+        name: RIDE-SERVICE
+        path: /api/v1/rides

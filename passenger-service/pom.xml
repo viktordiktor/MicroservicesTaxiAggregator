@@ -18,6 +18,7 @@
         <modelmapper.version>3.2.0</modelmapper.version>
         <liquibase.version>4.24.0</liquibase.version>
         <cloud-deps.version>4.1.0</cloud-deps.version>
+        <google-maps.version>2.2.0</google-maps.version>
     </properties>
     <dependencies>
         <dependency>
@@ -72,6 +73,13 @@
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.maps</groupId>
+            <artifactId>google-maps-services</artifactId>
+            <version>${google-maps.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

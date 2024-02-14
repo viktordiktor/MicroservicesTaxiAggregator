@@ -1,11 +1,11 @@
 package com.nikonenko.paymentservice.controllers;
 
-import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerExistsResponse;
 import com.nikonenko.paymentservice.services.PaymentCustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,15 +26,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentCustomerController {
     private final PaymentCustomerService paymentCustomerService;
 
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerCreationResponse createCustomer(@RequestBody @Valid CustomerCreationRequest customerRequest) {
         return paymentCustomerService.createCustomer(customerRequest);
     }
 
+    @GetMapping("/checkExists/{passengerId}")
+    public CustomerExistsResponse isCustomerExists(@PathVariable Long passengerId) {
+        return paymentCustomerService.isCustomerExists(passengerId);
+    }
+
     @GetMapping("/ride-price")
-    public CustomerCalculateRideResponse calculateRidePrice(@RequestBody @Valid CustomerCalculateRideRequest customerCalculateRideRequest) {
-        return paymentCustomerService.calculateRidePrice(customerCalculateRideRequest);
+    public CustomerCalculateRideResponse calculateRidePrice(@RequestParam(value = "rideLength") Double rideLength,
+                                         @RequestParam(value = "rideDateTime") LocalDateTime rideDateTime,
+                                         @RequestParam(value = "coupon", required = false) String coupon) {
+        return paymentCustomerService.calculateRidePrice(rideLength, rideDateTime, coupon);
     }
 
     @PostMapping("/charge")

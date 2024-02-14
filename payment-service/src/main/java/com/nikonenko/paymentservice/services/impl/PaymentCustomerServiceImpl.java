@@ -1,11 +1,11 @@
 package com.nikonenko.paymentservice.services.impl;
 
-import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerExistsResponse;
 import com.nikonenko.paymentservice.exceptions.CustomerAlreadyExistsException;
 import com.nikonenko.paymentservice.exceptions.CustomerNotFoundException;
 import com.nikonenko.paymentservice.exceptions.InsufficientFundsException;
@@ -19,9 +19,10 @@ import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.CustomerUpdateParams;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Service
@@ -29,7 +30,6 @@ import java.time.LocalDateTime;
 public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     private final CustomerUserRepository customerUserRepository;
     private final StripeUtil stripeUtil;
-    private final ModelMapper modelMapper;
     private final PaymentCoefficientUtil coefficientUtil;
 
     @Override
@@ -105,21 +105,37 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     @Override
-    public CustomerCalculateRideResponse calculateRidePrice(CustomerCalculateRideRequest customerCalculateRideRequest) {
-        CustomerCalculateRideResponse customerCalculateRideResponse = modelMapper.map(customerCalculateRideRequest, CustomerCalculateRideResponse.class);
-        customerCalculateRideResponse.setPrice(calculatePrice(customerCalculateRideRequest));
+    public CustomerExistsResponse isCustomerExists(Long passengerId) {
+        return new CustomerExistsResponse(customerUserRepository.existsByPassengerId(passengerId));
+    }
+
+    @Override
+    public CustomerCalculateRideResponse calculateRidePrice(Double rideLength,
+                                                            LocalDateTime rideDateTime, String coupon) {
+        CustomerCalculateRideResponse customerCalculateRideResponse = CustomerCalculateRideResponse.builder()
+                .rideLength(rideLength)
+                .rideDateTime(rideDateTime)
+                .coupon(coupon)
+                .price(calculatePrice(rideLength, rideDateTime, coupon))
+                .build();
+        customerCalculateRideResponse.setPrice(calculatePrice(rideLength, rideDateTime, coupon));
         return customerCalculateRideResponse;
     }
 
-    private Double calculatePrice(CustomerCalculateRideRequest customerCalculateRideRequest) {
-        LocalDateTime dateTime = customerCalculateRideRequest.getRideDateTime();
-        Double length = customerCalculateRideRequest.getRideLength();
-        double price = 1.0;
-        price *= calculateWithRideLength(length) * coefficientUtil.getDayCoefficient(dateTime) *
-                coefficientUtil.getTimeCoefficient(dateTime);
-        if (customerCalculateRideRequest.getCoupon() != null) {
-            Coupon coupon = stripeUtil.retrieveCoupon(customerCalculateRideRequest.getCoupon(), dateTime);
-            price -= price * coupon.getPercentOff().doubleValue() / 100;
+    private BigDecimal calculatePrice(Double rideLength,
+                                      LocalDateTime rideDateTime, String coupon) {
+        BigDecimal length = BigDecimal.valueOf(rideLength);
+        BigDecimal price = BigDecimal.valueOf(1.0);
+
+        price = price.multiply(calculateWithRideLength(length))
+                .multiply(coefficientUtil.getDayCoefficient(rideDateTime))
+                .multiply(coefficientUtil.getTimeCoefficient(rideDateTime));
+
+        if (coupon != null) {
+            Coupon stripeCoupon = stripeUtil.retrieveCoupon(coupon, rideDateTime);
+            BigDecimal percentOff = stripeCoupon.getPercentOff();
+            MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+            price = price.subtract(price.multiply(percentOff).divide(BigDecimal.valueOf(100), mc));
         }
         return price;
     }
@@ -130,7 +146,8 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
      * @param length Ride Length
      * @return Price without coefficients and discounts
      */
-    private Double calculateWithRideLength(Double length) {
-        return length / 2;
+    private BigDecimal calculateWithRideLength(BigDecimal length) {
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+        return length.divide(BigDecimal.valueOf(2), mc);
     }
 }

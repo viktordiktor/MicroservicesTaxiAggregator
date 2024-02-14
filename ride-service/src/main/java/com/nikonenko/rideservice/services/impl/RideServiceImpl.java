@@ -1,7 +1,6 @@
 package com.nikonenko.rideservice.services.impl;
 
 import com.google.maps.model.LatLng;
-import com.nikonenko.rideservice.dto.CalculateDistanceRequest;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
@@ -93,10 +92,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public CalculateDistanceResponse calculateDistance(CalculateDistanceRequest calculateDistanceRequest) {
-        LatLng startGeo = calculateDistanceRequest.getStartGeo();
-        LatLng endGeo = calculateDistanceRequest.getEndGeo();
-
+    public CalculateDistanceResponse calculateDistance(LatLng startGeo, LatLng endGeo) {
         GeodeticCalculator geoCalc = new GeodeticCalculator();
         geoCalc.setStartingGeographicPoint(startGeo.lng, startGeo.lat);
         geoCalc.setDestinationGeographicPoint(endGeo.lng, endGeo.lat);
