@@ -3,6 +3,7 @@ package com.nikonenko.paymentservice.services.impl;
 import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeReturnResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerExistsResponse;
@@ -17,6 +18,7 @@ import com.nikonenko.paymentservice.utils.StripeUtil;
 import com.stripe.model.Coupon;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.Refund;
 import com.stripe.param.CustomerUpdateParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -99,9 +101,15 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     @Override
-    public void returnCustomerCharge(String chargeId) {
-        PaymentIntent paymentIntent = stripeUtil.stripeIntentRetrieving(chargeId);
-        updateBalance(paymentIntent.getCustomer(), (double) -paymentIntent.getAmount() / 100);
+    public CustomerChargeReturnResponse returnCustomerCharge(String chargeId) {
+        Refund refund = stripeUtil.stripeRefund(chargeId);
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+        return CustomerChargeReturnResponse.builder()
+                .id(refund.getId())
+                .amount(BigDecimal.valueOf(refund.getAmount()).divide(BigDecimal.valueOf(100), mc))
+                .currency(refund.getCurrency())
+                .paymentId(refund.getPaymentIntent())
+                .build();
     }
 
     @Override

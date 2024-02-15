@@ -3,6 +3,7 @@ package com.nikonenko.paymentservice.controllers;
 import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeResponse;
+import com.nikonenko.paymentservice.dto.customers.CustomerChargeReturnResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerExistsResponse;
 import com.nikonenko.paymentservice.services.PaymentCustomerService;
 import jakarta.validation.Valid;
@@ -43,7 +44,7 @@ public class PaymentCustomerController {
     }
 
     @PostMapping("/charge/{chargeId}/return")
-    public void returnCustomerCharge(@PathVariable String chargeId) {
-        paymentCustomerService.returnCustomerCharge(chargeId);
+    public CustomerChargeReturnResponse returnCustomerCharge(@PathVariable String chargeId) {
+        return paymentCustomerService.returnCustomerCharge(chargeId);
     }
 }

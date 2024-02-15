@@ -19,6 +19,7 @@ public enum ExceptionList {
     CREATE_COUPON_FAILED("create.coupon.failed"),
     RETRIEVE_CUSTOMER_FAILED("retrieve.customer.failed"),
     RETRIEVE_CHARGE_FAILED("retrieve.charge.failed"),
+    REFUND_FAILED("refund.failed"),
     RETRIEVE_COUPON_FAILED("retrieve.coupon.failed"),
     RETRIEVE_INTENT_FAILED("retrieve.intent.failed"),
     UPDATE_CUSTOMER_FAILED("update.customer.failed");
