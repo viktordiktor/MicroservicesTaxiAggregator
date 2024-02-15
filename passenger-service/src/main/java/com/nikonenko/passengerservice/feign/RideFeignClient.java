@@ -1,6 +1,7 @@
 package com.nikonenko.passengerservice.feign;
 
 import com.nikonenko.passengerservice.config.feign.FeignConfig;
+import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
@@ -26,4 +27,7 @@ public interface RideFeignClient {
 
     @DeleteMapping("/{rideId}")
     CloseRideResponse closeRide(@PathVariable String rideId);
+
+    @GetMapping("/by-passenger/{passengerId}")
+    PageResponse<RideResponse> getRidesByPassengerId(@PathVariable Long passengerId);
 }

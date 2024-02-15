@@ -23,6 +23,8 @@ public interface PassengerService {
 
     CloseRideResponse closeRide(String rideId);
 
+    PageResponse<RideResponse> getPassengerRides(Long passengerId);
+
     void deletePassenger(Long id);
 
     void sendReviewToDriver(String rideId, RatingFromPassengerRequest request);

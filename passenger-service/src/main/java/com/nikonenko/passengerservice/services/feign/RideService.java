@@ -1,5 +1,6 @@
 package com.nikonenko.passengerservice.services.feign;
 
+import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
@@ -12,4 +13,6 @@ public interface RideService {
     RideResponse createRide(CreateRideRequest createRideRequest);
 
     CloseRideResponse closeRide(String rideId);
+
+    PageResponse<RideResponse> getRidesByPassengerId(Long passengerId);
 }

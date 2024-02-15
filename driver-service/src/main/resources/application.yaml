@@ -49,3 +49,10 @@ eureka:
 
 server:
   port: 0
+
+feign:
+  client:
+    config:
+      ride:
+        name: RIDE-SERVICE
+        path: /api/v1/rides

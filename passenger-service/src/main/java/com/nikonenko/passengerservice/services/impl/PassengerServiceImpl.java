@@ -41,6 +41,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -91,46 +92,78 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public RideResponse createRideByPassenger(Long passengerId, RideByPassengerRequest rideByPassengerRequest) {
-        log.info("Request for distance..");
-        CalculateDistanceResponse distanceResponse = rideService.getRideDistance(CalculateDistanceRequest.builder()
-                        .startGeo(rideByPassengerRequest.getStartGeo())
-                        .endGeo(rideByPassengerRequest.getEndGeo())
-                        .build());
-        log.info("Got distance");
+        CalculateDistanceResponse distanceResponse = getRideDistance(rideByPassengerRequest);
 
-        log.info("\nRequest for price...");
-        CustomerCalculateRideResponse calculatePriceResponse =
-                paymentService.calculateRidePrice(CustomerCalculateRideRequest.builder()
-                        .rideLength(distanceResponse.getDistance())
-                        .coupon(rideByPassengerRequest.getCoupon())
-                        .rideDateTime(LocalDateTime.now())
-                        .build());
-        log.info("Got price: {}", calculatePriceResponse.getPrice());
+        CustomerCalculateRideResponse calculatePriceResponse = calculateRidePrice(rideByPassengerRequest,
+                distanceResponse.getDistance());
 
         CustomerChargeResponse chargeResponse = null;
         if (rideByPassengerRequest.getRidePaymentMethod() == RidePaymentMethod.BY_CARD) {
-            log.info("\nRequest for check customer exists..");
-            if (!paymentService.checkCustomerExists(passengerId).isExists()) {
-                throw new NotFoundByPassengerException();
-            }
-            log.info("Customer exists");
-
-            log.info("\n Request for Charge...");
-            chargeResponse = paymentService.createCharge(CustomerChargeRequest.builder()
-                            .passengerId(passengerId)
-                            .amount(calculatePriceResponse.getPrice())
-                            .currency(rideByPassengerRequest.getCurrency())
-                            .build());
-            log.info("Got Charge: {}", chargeResponse.getId());
+            checkCustomerExists(passengerId);
+            chargeResponse = createCharge(passengerId, calculatePriceResponse.getPrice(),
+                    rideByPassengerRequest.getCurrency());
         }
-        log.info("\n Request for Ride...");
-        return rideService.createRide(CreateRideRequest.builder()
-                        .passengerId(passengerId)
-                        .distance(distanceResponse.getDistance())
-                        .startAddress(rideByPassengerRequest.getStartAddress())
-                        .endAddress(rideByPassengerRequest.getEndAddress())
-                        .chargeId(chargeResponse != null ? chargeResponse.getId() : null)
-                        .build());
+
+        return createRide(passengerId, rideByPassengerRequest, distanceResponse.getDistance(), chargeResponse);
+    }
+
+    private CalculateDistanceResponse getRideDistance(RideByPassengerRequest rideByPassengerRequest) {
+        log.info("Request for distance..");
+        CalculateDistanceRequest distanceRequest = CalculateDistanceRequest.builder()
+                .startGeo(rideByPassengerRequest.getStartGeo())
+                .endGeo(rideByPassengerRequest.getEndGeo())
+                .build();
+        CalculateDistanceResponse distanceResponse = rideService.getRideDistance(distanceRequest);
+        log.info("Got distance");
+        return distanceResponse;
+    }
+
+    private CustomerCalculateRideResponse calculateRidePrice(RideByPassengerRequest rideByPassengerRequest,
+                                                             double distance) {
+        log.info("\nRequest for price...");
+        CustomerCalculateRideRequest calculatePriceRequest = CustomerCalculateRideRequest.builder()
+                .rideLength(distance)
+                .coupon(rideByPassengerRequest.getCoupon())
+                .rideDateTime(LocalDateTime.now())
+                .build();
+        CustomerCalculateRideResponse calculatePriceResponse = paymentService.calculateRidePrice(calculatePriceRequest);
+        log.info("Got price: {}", calculatePriceResponse.getPrice());
+        return calculatePriceResponse;
+    }
+
+    private void checkCustomerExists(Long passengerId) {
+        log.info("\nRequest for check customer exists..");
+        if (!paymentService.checkCustomerExists(passengerId).isExists()) {
+            throw new NotFoundByPassengerException();
+        }
+        log.info("Customer exists");
+    }
+
+    private CustomerChargeResponse createCharge(Long passengerId, BigDecimal amount, String currency) {
+        log.info("\nRequest for Charge...");
+        CustomerChargeRequest chargeRequest = CustomerChargeRequest.builder()
+                .passengerId(passengerId)
+                .amount(amount)
+                .currency(currency)
+                .build();
+        CustomerChargeResponse chargeResponse = paymentService.createCharge(chargeRequest);
+        log.info("Got Charge: {}", chargeResponse.getId());
+        return chargeResponse;
+    }
+
+    private RideResponse createRide(Long passengerId, RideByPassengerRequest rideByPassengerRequest,
+                                    double distance, CustomerChargeResponse chargeResponse) {
+        log.info("\nRequest for Ride...");
+        CreateRideRequest createRideRequest = CreateRideRequest.builder()
+                .passengerId(passengerId)
+                .distance(distance)
+                .startAddress(rideByPassengerRequest.getStartAddress())
+                .endAddress(rideByPassengerRequest.getEndAddress())
+                .chargeId(chargeResponse != null ? chargeResponse.getId() : null)
+                .build();
+        RideResponse rideResponse = rideService.createRide(createRideRequest);
+        log.info("Created ride with id: {}", rideResponse.getId());
+        return rideResponse;
     }
 
     @Override
@@ -146,6 +179,11 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public CloseRideResponse closeRide(String rideId) {
         return rideService.closeRide(rideId);
+    }
+
+    @Override
+    public PageResponse<RideResponse> getPassengerRides(Long passengerId) {
+        return rideService.getRidesByPassengerId(passengerId);
     }
 
     @Override

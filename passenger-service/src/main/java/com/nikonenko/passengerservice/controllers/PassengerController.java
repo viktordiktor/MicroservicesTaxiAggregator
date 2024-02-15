@@ -85,4 +85,9 @@ public class PassengerController {
     public CloseRideResponse closeRide(@PathVariable String rideId) {
         return passengerService.closeRide(rideId);
     }
+
+    @GetMapping("/rides/{passengerId}")
+    public PageResponse<RideResponse> getPassengerRides(@PathVariable Long passengerId) {
+        return passengerService.getPassengerRides(passengerId);
+    }
 }
