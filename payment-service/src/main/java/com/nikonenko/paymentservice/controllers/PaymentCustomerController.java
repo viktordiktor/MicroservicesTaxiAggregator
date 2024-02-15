@@ -39,8 +39,14 @@ public class PaymentCustomerController {
 
     @PostMapping("/charge")
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerChargeResponse customerCharge(@RequestBody @Valid CustomerChargeRequest customerChargeRequest) {
-        return paymentCustomerService.customerCharge(customerChargeRequest);
+    public CustomerChargeResponse createCustomerCharge(@RequestBody
+                                                           @Valid CustomerChargeRequest customerChargeRequest) {
+        return paymentCustomerService.createCustomerCharge(customerChargeRequest);
+    }
+
+    @GetMapping("/charge/{chargeId}")
+    public CustomerChargeResponse getCustomerCharge(@PathVariable String chargeId) {
+        return paymentCustomerService.getCustomerCharge(chargeId);
     }
 
     @PostMapping("/charge/{chargeId}/return")

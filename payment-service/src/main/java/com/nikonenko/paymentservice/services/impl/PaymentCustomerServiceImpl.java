@@ -64,7 +64,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     @Override
-    public CustomerChargeResponse customerCharge(CustomerChargeRequest customerChargeRequest) {
+    public CustomerChargeResponse createCustomerCharge(CustomerChargeRequest customerChargeRequest) {
         Long passengerId = customerChargeRequest.getPassengerId();
         CustomerUser user = getCustomerUser(passengerId);
         String customerId = user.getCustomerId();
@@ -98,6 +98,21 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                         .setBalance((long) (customer.getBalance() - amount * 100))
                         .build();
         stripeUtil.stripeCustomerUpdating(customer, params);
+    }
+
+    @Override
+    public CustomerChargeResponse getCustomerCharge(String chargeId) {
+        PaymentIntent paymentIntent = stripeUtil.stripeIntentRetrieving(chargeId);
+        CustomerUser customerUser = customerUserRepository.findByCustomerId(paymentIntent.getCustomer())
+                .orElseThrow(CustomerNotFoundException::new);
+
+        MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+        return CustomerChargeResponse.builder()
+                .id(paymentIntent.getId())
+                .success(paymentIntent.getStatus().equals("succeeded"))
+                .amount(BigDecimal.valueOf(paymentIntent.getAmount()).divide(BigDecimal.valueOf(100), mc))
+                .passengerId(customerUser.getPassengerId())
+                .build();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.nikonenko.rideservice.controllers;
 
 import com.google.maps.model.LatLng;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
+import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.RideResponse;
@@ -68,8 +69,7 @@ public class RideController {
     }
 
     @DeleteMapping("/{rideId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void closeRide(@PathVariable String rideId) {
-        rideService.closeRide(rideId);
+    public CloseRideResponse closeRide(@PathVariable String rideId) {
+        return rideService.closeRide(rideId);
     }
 }

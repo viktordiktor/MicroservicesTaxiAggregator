@@ -15,6 +15,7 @@ import com.nikonenko.passengerservice.dto.ReviewRequest;
 import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
+import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
@@ -140,6 +141,11 @@ public class PassengerServiceImpl implements PassengerService {
         passengerRepository.save(editingPassenger);
         log.info("Passenger edited with id: {}", id);
         return modelMapper.map(editingPassenger, PassengerResponse.class);
+    }
+
+    @Override
+    public CloseRideResponse closeRide(String rideId) {
+        return rideService.closeRide(rideId);
     }
 
     @Override

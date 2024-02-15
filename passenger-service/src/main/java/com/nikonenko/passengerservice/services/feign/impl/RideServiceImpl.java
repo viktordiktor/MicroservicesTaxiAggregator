@@ -2,6 +2,7 @@ package com.nikonenko.passengerservice.services.feign.impl;
 
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
+import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 import com.nikonenko.passengerservice.feign.RideFeignClient;
@@ -22,5 +23,10 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponse createRide(CreateRideRequest createRideRequest) {
         return rideFeignClient.createRideRequest(createRideRequest);
+    }
+
+    @Override
+    public CloseRideResponse closeRide(String rideId) {
+        return rideFeignClient.closeRide(rideId);
     }
 }

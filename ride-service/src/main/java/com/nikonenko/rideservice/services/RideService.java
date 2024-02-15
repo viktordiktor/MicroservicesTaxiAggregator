@@ -3,6 +3,7 @@ package com.nikonenko.rideservice.services;
 import com.google.maps.model.LatLng;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
+import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.ReviewRequest;
@@ -27,5 +28,5 @@ public interface RideService {
 
     void changeRideStatus(ChangeRideStatusRequest request);
 
-    void closeRide(String rideId);
+    CloseRideResponse closeRide(String rideId);
 }

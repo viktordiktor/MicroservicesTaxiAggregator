@@ -6,6 +6,7 @@ import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
 import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 import com.nikonenko.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
@@ -78,5 +79,10 @@ public class PassengerController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createCustomer(@PathVariable Long passengerId, @Valid @RequestBody CustomerDataRequest dataRequest) {
         passengerService.createCustomerByPassenger(passengerId, dataRequest);
+    }
+
+    @DeleteMapping("/close/{rideId}")
+    public CloseRideResponse closeRide(@PathVariable String rideId) {
+        return passengerService.closeRide(rideId);
     }
 }
