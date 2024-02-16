@@ -5,6 +5,7 @@ import com.nikonenko.paymentservice.dto.ChargeRequest;
 import com.nikonenko.paymentservice.dto.ChargeResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;
 import com.nikonenko.paymentservice.dto.customers.CustomerCreationRequest;
+import com.nikonenko.paymentservice.exceptions.RefundFailedException;
 import com.nikonenko.paymentservice.exceptions.RetrieveChargeFailedException;
 import com.nikonenko.paymentservice.exceptions.ConfirmIntentFailedException;
 import com.nikonenko.paymentservice.exceptions.CreateChargeFailedException;
@@ -24,12 +25,14 @@ import com.stripe.model.Coupon;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
+import com.stripe.model.Refund;
 import com.stripe.model.Token;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.CouponCreateParams;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
 import com.stripe.param.PaymentIntentConfirmParams;
+import com.stripe.param.RefundCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -194,6 +197,16 @@ public class StripeUtil {
             return intent;
         } catch (StripeException ex) {
             throw new CreateIntentFailedException(ex.getMessage());
+        }
+    }
+
+    public Refund stripeRefund(String intentId) {
+        try {
+            RefundCreateParams params =
+                    RefundCreateParams.builder().setPaymentIntent(intentId).build();
+            return Refund.create(params, getRequestOptions(secretKey));
+        } catch (StripeException ex) {
+            throw new RefundFailedException(ex.getMessage());
         }
     }
 

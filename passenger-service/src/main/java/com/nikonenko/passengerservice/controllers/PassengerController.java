@@ -1,9 +1,13 @@
 package com.nikonenko.passengerservice.controllers;
 
+import com.nikonenko.passengerservice.dto.CustomerDataRequest;
+import com.nikonenko.passengerservice.dto.RideByPassengerRequest;
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
 import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
+import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 import com.nikonenko.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +44,13 @@ public class PassengerController {
         return passengerService.createPassenger(passengerRequest);
     }
 
+    @PostMapping("/{passengerId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RideResponse createRide(@PathVariable Long passengerId,
+                                   @RequestBody RideByPassengerRequest rideByPassengerRequest) {
+        return passengerService.createRideByPassenger(passengerId, rideByPassengerRequest);
+    }
+
     @GetMapping("/{id}")
     public PassengerResponse getPassengerById(@PathVariable Long id) {
         return passengerService.getPassengerById(id);
@@ -62,5 +73,21 @@ public class PassengerController {
     public void addRatingToDriver(@PathVariable String rideId,
                                   @Valid @RequestBody RatingFromPassengerRequest request) {
         passengerService.sendReviewToDriver(rideId, request);
+    }
+
+    @PostMapping("/{passengerId}/customer")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createCustomer(@PathVariable Long passengerId, @Valid @RequestBody CustomerDataRequest dataRequest) {
+        passengerService.createCustomerByPassenger(passengerId, dataRequest);
+    }
+
+    @DeleteMapping("/close/{rideId}")
+    public CloseRideResponse closeRide(@PathVariable String rideId) {
+        return passengerService.closeRide(rideId);
+    }
+
+    @GetMapping("/rides/{passengerId}")
+    public PageResponse<RideResponse> getPassengerRides(@PathVariable Long passengerId) {
+        return passengerService.getPassengerRides(passengerId);
     }
 }

@@ -5,10 +5,12 @@ import java.util.ResourceBundle;
 
 @AllArgsConstructor
 public enum ExceptionList {
-    USERNAME_EXISTS("passenger.exists.username"),
-    PHONE_EXISTS("passenger.exists.phone"),
-    NOT_FOUND("passenger.notfound"),
-    WRONG_PARAMETER("wrong.parameter");
+    USERNAME_EXISTS("passenger-exists-username"),
+    PHONE_EXISTS("passenger-exists-phone"),
+    PASSENGER_NOT_FOUND("passenger-not-found"),
+    WRONG_PARAMETER("wrong-parameter"),
+    BAD_REQUEST_BY_PASSENGER("bad-request-by-passenger"),
+    NOT_FOUND_BY_PASSENGER("not-found-by-passenger");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
     private final String key;

@@ -36,9 +36,11 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: ReviewRequest:com.nikonenko.passengerservice.dto.ReviewRequest
+        spring.json.type.mapping: ReviewRequest:com.nikonenko.passengerservice.dto.ReviewRequest, CustomerCreationRequest:com.nikonenko.passengerservice.dto.CustomerCreationRequest
       passenger-review-topic:
         name: passenger-review-topic
+      payment-customer-topic:
+        name: payment-customer-topic
 
 eureka:
   client:
@@ -46,3 +48,13 @@ eureka:
       defaultZone: http://discovery-server:8761/eureka/
 server:
   port: 0
+
+feign:
+  client:
+    config:
+      payment:
+        name: PAYMENT-SERVICE
+        path: /api/v1/payments
+      ride:
+        name: RIDE-SERVICE
+        path: /api/v1/rides

@@ -1,5 +1,7 @@
 package com.nikonenko.passengerservice.utils;
 
+import com.nikonenko.passengerservice.exceptions.BadRequestByPassengerException;
+import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
@@ -20,8 +22,8 @@ import java.util.List;
 
 @ControllerAdvice
 public class RestExceptionHandler {
-    @ExceptionHandler(PassengerNotFoundException.class)
-    public ResponseEntity<String> handlePassengerNotFoundException(PassengerNotFoundException ex) {
+    @ExceptionHandler({PassengerNotFoundException.class, NotFoundByPassengerException.class})
+    public ResponseEntity<String> handleNotFoundException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
@@ -43,7 +45,8 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class,
             HttpMessageNotReadableException.class, PropertyReferenceException.class,
-            WrongPageableParameterException.class, MethodArgumentTypeMismatchException.class})
+            WrongPageableParameterException.class, MethodArgumentTypeMismatchException.class,
+            BadRequestByPassengerException.class})
     public ResponseEntity<String> handleUsernameAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

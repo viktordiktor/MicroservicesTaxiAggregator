@@ -2,19 +2,20 @@ package com.nikonenko.paymentservice.utils;
 
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Component
 public class PaymentCoefficientUtil {
-    private final double DEFAULT_COEFFICIENT = 1;
-    private final double FRIDAY_COEFFICIENT = 1.6;
-    private final double SATURDAY_COEFFICIENT = 1.4;
-    private final double SUNDAY_COEFFICIENT = 1.2;
-    private final double MORNING_COEFFICIENT = 1.4;
-    private final double EVENING_COEFFICIENT = 1.5;
-    private final double NIGHT_COEFFICIENT = 1.3;
+    private static final BigDecimal DEFAULT_COEFFICIENT = BigDecimal.valueOf(1);
+    private static final BigDecimal FRIDAY_COEFFICIENT = BigDecimal.valueOf(1.6);
+    private static final BigDecimal SATURDAY_COEFFICIENT = BigDecimal.valueOf(1.4);
+    private static final BigDecimal SUNDAY_COEFFICIENT = BigDecimal.valueOf(1.2);
+    private static final BigDecimal MORNING_COEFFICIENT = BigDecimal.valueOf(1.4);
+    private static final BigDecimal EVENING_COEFFICIENT = BigDecimal.valueOf(1.5);
+    private static final BigDecimal NIGHT_COEFFICIENT = BigDecimal.valueOf(1.3);
 
     /**
      * The method returns a coefficient, depending on the time of ordering
@@ -26,7 +27,7 @@ public class PaymentCoefficientUtil {
      * @param localDateTime DateTime of ordering
      * @return Day Coefficient
      */
-    public double getDayCoefficient(LocalDateTime localDateTime) {
+    public BigDecimal getDayCoefficient(LocalDateTime localDateTime) {
         DayOfWeek dayOfWeek = localDateTime.getDayOfWeek();
         return switch (dayOfWeek) {
             case MONDAY, TUESDAY, WEDNESDAY, THURSDAY -> DEFAULT_COEFFICIENT;
@@ -46,7 +47,7 @@ public class PaymentCoefficientUtil {
      * @param localDateTime DateTime of ordering
      * @return Time Coefficient
      */
-    public double getTimeCoefficient(LocalDateTime localDateTime) {
+    public BigDecimal getTimeCoefficient(LocalDateTime localDateTime) {
         LocalTime time = localDateTime.toLocalTime();
         if (time.isAfter(LocalTime.of(7, 0)) && time.isBefore(LocalTime.of(10, 0))) {
             return MORNING_COEFFICIENT;
@@ -56,8 +57,7 @@ public class PaymentCoefficientUtil {
         }
         if (time.isAfter(LocalTime.of(16, 0)) && time.isBefore(LocalTime.of(21, 0))) {
             return EVENING_COEFFICIENT;
-        }
-        else {
+        } else {
             return NIGHT_COEFFICIENT;
         }
     }

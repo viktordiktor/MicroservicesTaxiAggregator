@@ -8,6 +8,7 @@ import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.ReviewRequest;
+import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
@@ -23,6 +24,7 @@ import com.nikonenko.driverservice.models.RideAction;
 import com.nikonenko.driverservice.repositories.DriverRepository;
 import com.nikonenko.driverservice.services.CarService;
 import com.nikonenko.driverservice.services.DriverService;
+import com.nikonenko.driverservice.services.feign.RideService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -44,6 +46,7 @@ public class DriverServiceImpl implements DriverService {
     private final CarService carService;
     private final RideStatusRequestProducer rideStatusRequestProducer;
     private final DriverReviewRequestProducer driverReviewRequestProducer;
+    private final RideService rideService;
 
     @Override
     public PageResponse<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField) {
@@ -183,6 +186,11 @@ public class DriverServiceImpl implements DriverService {
         driver.setCars(driverCars);
 
         return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
+    }
+
+    @Override
+    public PageResponse<RideResponse> getDriverRides(Long driverId) {
+        return rideService.getRidesByDriverId(driverId);
     }
 
     public Driver getOrThrow(Long id) {

@@ -5,6 +5,7 @@ import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
+import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import com.nikonenko.driverservice.services.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -90,5 +91,10 @@ public class DriverController {
     public void addRatingToPassenger(@PathVariable String rideId,
                                      @Valid @RequestBody RatingFromDriverRequest request) {
         driverService.sendReviewToPassenger(rideId, request);
+    }
+
+    @GetMapping("/rides/{driverId}")
+    public PageResponse<RideResponse> getDriverRides(@PathVariable Long driverId) {
+        return driverService.getDriverRides(driverId);
     }
 }

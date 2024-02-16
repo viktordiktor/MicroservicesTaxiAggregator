@@ -1,5 +1,6 @@
 package com.nikonenko.rideservice.utils;
 
+import com.nikonenko.rideservice.exceptions.BadRequestByRideException;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsAlreadyStartedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
@@ -48,7 +49,8 @@ public class RestExceptionHandler {
             MethodArgumentTypeMismatchException.class, RideIsAlreadyStartedException.class,
             RideIsNotOpenedException.class, RideIsNotStartedException.class,
             RideIsNotAcceptedException.class, UnknownDriverException.class,
-            ChargeIsNotSuccessException.class, WrongPageableParameterException.class})
+            ChargeIsNotSuccessException.class, WrongPageableParameterException.class,
+            BadRequestByRideException.class})
     public ResponseEntity<String> handleBadRequestsExceptions(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

@@ -12,6 +12,7 @@ public enum ExceptionList {
     WRONG_PARAMETER("wrong-parameter"),
     NUMBER_EXISTS("number-exists"),
     DRIVER_NOT_AVAILABLE("driver-not-available"),
+    BAD_REQUEST_BY_DRIVER("bad-request-by-driver"),
     DRIVER_NO_RIDES("driver-no-rides");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");

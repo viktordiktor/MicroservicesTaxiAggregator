@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerCalculateRideResponse {
-    private Double price;
+    private BigDecimal price;
     private Double rideLength;
     private LocalDateTime rideDateTime;
     private String coupon;

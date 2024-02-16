@@ -1,15 +1,16 @@
 package com.nikonenko.rideservice.services.impl;
 
 import com.google.maps.model.LatLng;
-import com.nikonenko.rideservice.dto.CalculateDistanceRequest;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
+import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.RatingToPassengerRequest;
 import com.nikonenko.rideservice.dto.ReviewRequest;
 import com.nikonenko.rideservice.dto.RatingToDriverRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
+import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeReturnResponse;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
@@ -24,6 +25,7 @@ import com.nikonenko.rideservice.models.RidePaymentMethod;
 import com.nikonenko.rideservice.models.RideStatus;
 import com.nikonenko.rideservice.repositories.RideRepository;
 import com.nikonenko.rideservice.services.RideService;
+import com.nikonenko.rideservice.services.feign.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.referencing.GeodeticCalculator;
@@ -45,6 +47,7 @@ public class RideServiceImpl implements RideService {
     private final ModelMapper modelMapper;
     private final UpdateDriverRatingRequestProducer updateDriverRatingRequestProducer;
     private final UpdatePassengerRatingRequestProducer updatePassengerRatingRequestProducer;
+    private final PaymentService paymentService;
 
     @Override
     public RideResponse getRideById(String rideId) {
@@ -93,10 +96,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public CalculateDistanceResponse calculateDistance(CalculateDistanceRequest calculateDistanceRequest) {
-        LatLng startGeo = calculateDistanceRequest.getStartGeo();
-        LatLng endGeo = calculateDistanceRequest.getEndGeo();
-
+    public CalculateDistanceResponse calculateDistance(LatLng startGeo, LatLng endGeo) {
         GeodeticCalculator geoCalc = new GeodeticCalculator();
         geoCalc.setStartingGeographicPoint(startGeo.lng, startGeo.lat);
         geoCalc.setDestinationGeographicPoint(endGeo.lng, endGeo.lat);
@@ -113,32 +113,52 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponse createRide(CreateRideRequest createRideRequest) {
         Ride ride = modelMapper.map(createRideRequest, Ride.class);
-        if (!isChargeSuccess(createRideRequest.getChargeId())) {
-            throw new ChargeIsNotSuccessException();
+
+        if (createRideRequest.getChargeId() != null && !createRideRequest.getChargeId().isEmpty()) {
+            checkChargeSuccess(createRideRequest.getChargeId());
+            log.info("Charge success");
         }
 
         ride.setStatus(RideStatus.OPENED);
-        ride.setPaymentMethod(createRideRequest.getChargeId() == null || createRideRequest.getChargeId().isEmpty() ?
-                RidePaymentMethod.BY_CASH : RidePaymentMethod.BY_CARD);
+        ride.setPaymentMethod(getPaymentMethod(createRideRequest));
 
         Ride savedRide = rideRepository.save(ride);
         log.info("Created ride with id: {}", savedRide.getId());
         return modelMapper.map(savedRide, RideResponse.class);
     }
 
-    private boolean isChargeSuccess(String chargeId) {
-        //TODO sync communication with payment-service
-        return true;
+    private RidePaymentMethod getPaymentMethod(CreateRideRequest createRideRequest) {
+        return (createRideRequest.getChargeId() == null || createRideRequest.getChargeId().isEmpty())
+                ? RidePaymentMethod.BY_CASH
+                : RidePaymentMethod.BY_CARD;
+    }
+
+    private void checkChargeSuccess(String chargeId) {
+        if (!paymentService.getChargeById(chargeId).isSuccess()) {
+            throw new ChargeIsNotSuccessException();
+        }
     }
 
     @Override
-    public void closeRide(String rideId) {
+    public CloseRideResponse closeRide(String rideId) {
         Ride ride = getOrThrow(rideId);
         if (ride.getStatus() != RideStatus.OPENED) {
             throw new RideIsNotOpenedException();
         }
+        CustomerChargeReturnResponse customerChargeReturnResponse = null;
+        if (ride.getPaymentMethod() == RidePaymentMethod.BY_CARD) {
+            customerChargeReturnResponse = returnCharge(ride);
+        }
         rideRepository.delete(ride);
         log.info("Deleted ride with id: {}", rideId);
+        return CloseRideResponse.builder()
+                .ridePaymentMethod(ride.getPaymentMethod())
+                .customerChargeReturnResponse(customerChargeReturnResponse)
+                .build();
+    }
+
+    public CustomerChargeReturnResponse returnCharge(Ride ride) {
+        return paymentService.returnCharge(ride.getChargeId());
     }
 
     @Override
