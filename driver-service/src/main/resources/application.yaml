@@ -56,3 +56,11 @@ feign:
       ride:
         name: RIDE-SERVICE
         path: /api/v1/rides
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      rideBreaker:
+        ringBufferSizeInClosedState: 5
+        ringBufferSizeInHalfOpenState: 5
+        waitDurationInOpenState: 500ms
