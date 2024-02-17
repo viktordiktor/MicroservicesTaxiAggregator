@@ -49,3 +49,15 @@ feign:
       payment:
         name: PAYMENT-SERVICE
         path: /api/v1/payments
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentBreaker:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: TIME_BASED
+        minimumNumberOfCalls: 20
+        waitDurationInOpenState: 50s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
