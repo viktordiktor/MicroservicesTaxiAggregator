@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class CloseRideResponse {
     private RidePaymentMethod ridePaymentMethod;
     private CustomerChargeReturnResponse customerChargeReturnResponse;
+    private String errorMessage;
 }

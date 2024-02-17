@@ -17,4 +17,5 @@ public class CustomerChargeResponse {
     private String currency;
     private BigDecimal amount;
     private boolean success;
+    private String errorMessage;
 }

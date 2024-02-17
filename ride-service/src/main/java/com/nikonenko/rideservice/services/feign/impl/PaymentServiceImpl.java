@@ -1,42 +1,55 @@
 package com.nikonenko.rideservice.services.feign.impl;
 
-import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeResponse;
 import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeReturnResponse;
 import com.nikonenko.rideservice.feign.PaymentFeignClient;
 import com.nikonenko.rideservice.services.feign.PaymentService;
 import com.nikonenko.rideservice.utils.ExceptionList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
+@Retry(name = "paymentRetry")
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentFeignClient paymentFeignClient;
 
     @Override
-    @CircuitBreaker(name = "paymentBreaker", fallbackMethod = "fallbackPaymentService")
+    @CircuitBreaker(name = "paymentBreaker", fallbackMethod = "fallbackReturnChargePaymentService")
     public CustomerChargeReturnResponse returnCharge(String chargeId) {
         return paymentFeignClient.returnCharge(chargeId);
     }
 
     @Override
-    @CircuitBreaker(name = "paymentBreaker", fallbackMethod = "fallbackPaymentService")
+    @CircuitBreaker(name = "paymentBreaker", fallbackMethod = "fallbackGetChargeByIdPaymentService")
     public CustomerChargeResponse getChargeById(String chargeId) {
         return paymentFeignClient.getChargeById(chargeId);
     }
 
-    public PageResponse<CustomerChargeResponse> fallbackPaymentService(Exception ex) {
-        log.info("Exception during request to Payment Service: {}", ex.getMessage());
-        return PageResponse.<CustomerChargeResponse>builder()
-                .objectList(Collections.emptyList())
-                .totalElements(0)
-                .totalPages(0)
+    public CustomerChargeReturnResponse fallbackReturnChargePaymentService(String chargeId, Exception ex) {
+        log.info("Exception during returnCharge request to Payment Service: {}", ex.getMessage());
+        return CustomerChargeReturnResponse.builder()
+                .id("")
+                .paymentId("")
+                .amount(BigDecimal.ZERO)
+                .currency("")
+                .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
+                .build();
+    }
+
+    public CustomerChargeResponse fallbackGetChargeByIdPaymentService(String chargeId, Exception ex) {
+        log.info("Exception during getChargeById request to Payment Service: {}", ex.getMessage());
+        return CustomerChargeResponse.builder()
+                .id("")
+                .amount(BigDecimal.ZERO)
+                .passengerId(0L)
+                .currency("")
+                .success(false)
                 .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
                 .build();
     }

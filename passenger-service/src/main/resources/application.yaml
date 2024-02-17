@@ -62,7 +62,7 @@ feign:
 resilience4j:
   circuitbreaker:
     instances:
-      rideBreaker:
+      rideBreaker: &circuitbreakerConfig
         slidingWindowSize: 10
         permittedNumberOfCallsInHalfOpenState: 3
         slidingWindowType: TIME_BASED
@@ -70,11 +70,12 @@ resilience4j:
         waitDurationInOpenState: 50s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
-      paymentBreaker:
-        slidingWindowSize: 10
-        permittedNumberOfCallsInHalfOpenState: 3
-        slidingWindowType: TIME_BASED
-        minimumNumberOfCalls: 20
-        waitDurationInOpenState: 50s
-        failureRateThreshold: 50
-        eventConsumerBufferSize: 10
+      paymentBreaker: *circuitbreakerConfig
+  retry:
+    instances:
+      rideRetry: &retryConfig
+        maxAttempts: 3
+        waitDuration: 10s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+      paymentRetry: *retryConfig

@@ -14,4 +14,5 @@ public class CalculateDistanceResponse {
     private LatLng startGeo;
     private LatLng endGeo;
     private Double distance;
+    private String errorMessage;
 }
