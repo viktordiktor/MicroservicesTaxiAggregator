@@ -61,6 +61,10 @@ resilience4j:
   circuitbreaker:
     instances:
       rideBreaker:
-        ringBufferSizeInClosedState: 5
-        ringBufferSizeInHalfOpenState: 5
-        waitDurationInOpenState: 500ms
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: TIME_BASED
+        minimumNumberOfCalls: 20
+        waitDurationInOpenState: 50s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
