@@ -1,5 +1,6 @@
 package com.nikonenko.driverservice.utils;
 
+import com.nikonenko.driverservice.dto.ExceptionResponse;
 import com.nikonenko.driverservice.exceptions.BadRequestByDriverException;
 import com.nikonenko.driverservice.exceptions.CarNotFoundException;
 import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
@@ -25,10 +26,10 @@ import java.util.List;
 @ControllerAdvice
 public class RestExceptionHandler {
     @ExceptionHandler({DriverNotFoundException.class, CarNotFoundException.class})
-    public ResponseEntity<String> handleNotFoundException(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,9 +51,9 @@ public class RestExceptionHandler {
             PropertyReferenceException.class, WrongPageableParameterException.class,
             MethodArgumentTypeMismatchException.class, DriverIsNotAvailableException.class,
             DriverNoRidesException.class, BadRequestByDriverException.class})
-    public ResponseEntity<String> handleAlreadyExistsException(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 }

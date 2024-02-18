@@ -1,5 +1,6 @@
 package com.nikonenko.paymentservice.utils;
 
+import com.nikonenko.paymentservice.dto.ExceptionResponse;
 import com.nikonenko.paymentservice.exceptions.CustomerAlreadyExistsException;
 import com.nikonenko.paymentservice.exceptions.CustomerNotFoundException;
 import com.nikonenko.paymentservice.exceptions.ExpiredCouponException;
@@ -21,17 +22,17 @@ import java.util.List;
 @RestControllerAdvice
 public class RestExceptionHandler {
     @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<String> handleNotFoundException(CustomerNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(CustomerNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(InsufficientFundsException.class)
-    public ResponseEntity<String> handleInsufficientFundsException(InsufficientFundsException ex) {
+    public ResponseEntity<ExceptionResponse> handleInsufficientFundsException(InsufficientFundsException ex) {
         return ResponseEntity
                 .status(HttpStatus.PAYMENT_REQUIRED)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.PAYMENT_REQUIRED));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -49,18 +50,18 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(CustomerAlreadyExistsException.class)
-    public ResponseEntity<String> handleAlreadyExistsException(CustomerAlreadyExistsException ex) {
+    public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(CustomerAlreadyExistsException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.CONFLICT));
     }
 
     @ExceptionHandler({StripeOperationFailedException.class, HttpMessageNotReadableException.class,
             PropertyReferenceException.class, MethodArgumentTypeMismatchException.class,
             ExpiredCouponException.class})
-    public ResponseEntity<String> handleStripeOperationException(StripeOperationFailedException ex) {
+    public ResponseEntity<ExceptionResponse> handleStripeOperationException(StripeOperationFailedException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 }
