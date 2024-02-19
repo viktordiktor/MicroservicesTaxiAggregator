@@ -15,4 +15,5 @@ public class PageResponse<T> {
     private List<T> objectList;
     private long totalElements;
     private int totalPages;
+    private String errorMessage;
 }

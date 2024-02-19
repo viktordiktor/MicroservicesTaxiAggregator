@@ -16,4 +16,5 @@ public class CustomerChargeReturnResponse {
     private BigDecimal amount;
     private String currency;
     private String paymentId;
+    private String errorMessage;
 }

@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CustomerExistsResponse {
     private boolean isExists;
+    private String errorMessage;
 }

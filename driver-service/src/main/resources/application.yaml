@@ -56,3 +56,22 @@ feign:
       ride:
         name: RIDE-SERVICE
         path: /api/v1/rides
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      rideBreaker:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: TIME_BASED
+        minimumNumberOfCalls: 20
+        waitDurationInOpenState: 50s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      rideRetry:
+        maxAttempts: 3
+        waitDuration: 10s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2

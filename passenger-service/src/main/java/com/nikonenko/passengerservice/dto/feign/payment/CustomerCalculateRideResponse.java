@@ -17,4 +17,5 @@ public class CustomerCalculateRideResponse {
     private Double rideLength;
     private LocalDateTime rideDateTime;
     private String coupon;
+    private String errorMessage;
 }

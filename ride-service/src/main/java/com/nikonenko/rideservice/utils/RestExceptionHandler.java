@@ -1,5 +1,6 @@
 package com.nikonenko.rideservice.utils;
 
+import com.nikonenko.rideservice.dto.ExceptionResponse;
 import com.nikonenko.rideservice.exceptions.BadRequestByRideException;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsAlreadyStartedException;
@@ -25,10 +26,10 @@ import java.util.List;
 @RestControllerAdvice
 public class RestExceptionHandler {
     @ExceptionHandler(RideNotFoundException.class)
-    public ResponseEntity<String> handleNotFoundException(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -51,9 +52,9 @@ public class RestExceptionHandler {
             RideIsNotAcceptedException.class, UnknownDriverException.class,
             ChargeIsNotSuccessException.class, WrongPageableParameterException.class,
             BadRequestByRideException.class})
-    public ResponseEntity<String> handleBadRequestsExceptions(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleBadRequestsExceptions(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 }

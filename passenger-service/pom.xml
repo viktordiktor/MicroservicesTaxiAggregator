@@ -19,6 +19,7 @@
         <liquibase.version>4.24.0</liquibase.version>
         <cloud-deps.version>4.1.0</cloud-deps.version>
         <google-maps.version>2.2.0</google-maps.version>
+        <circuit-breaker.version>3.1.0</circuit-breaker.version>
     </properties>
     <dependencies>
         <dependency>
@@ -57,6 +58,11 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+            <version>${circuit-breaker.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

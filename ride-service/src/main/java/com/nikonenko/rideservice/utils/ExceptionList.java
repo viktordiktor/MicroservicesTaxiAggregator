@@ -15,7 +15,8 @@ public enum ExceptionList {
     WRONG_PAGEABLE_PARAMETER("wrong-pageable-parameter"),
     CHARGE_IS_NOT_SUCCESS("charge-is-not-success"),
     BAD_REQUEST_BY_RIDE("bad-request-by-ride"),
-    RIDE_IS_ALREADY_STARTED("ride.is-already-started");
+    RIDE_IS_ALREADY_STARTED("ride.is-already-started"),
+    PAYMENT_SERVICE_NOT_AVAILABLE("payment-service-not-available"),;
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
     private final String key;

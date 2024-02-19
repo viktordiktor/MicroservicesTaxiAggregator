@@ -25,4 +25,5 @@ public class RideResponse {
     private Double distance;
     private RideStatus status;
     private RidePaymentMethod paymentMethod;
+    private String errorMessage;
 }

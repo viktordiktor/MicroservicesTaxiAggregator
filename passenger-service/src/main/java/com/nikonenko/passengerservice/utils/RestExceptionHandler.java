@@ -1,5 +1,6 @@
 package com.nikonenko.passengerservice.utils;
 
+import com.nikonenko.passengerservice.dto.ExceptionResponse;
 import com.nikonenko.passengerservice.exceptions.BadRequestByPassengerException;
 import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
@@ -16,17 +17,16 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
 public class RestExceptionHandler {
     @ExceptionHandler({PassengerNotFoundException.class, NotFoundByPassengerException.class})
-    public ResponseEntity<String> handleNotFoundException(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -47,9 +47,9 @@ public class RestExceptionHandler {
             HttpMessageNotReadableException.class, PropertyReferenceException.class,
             WrongPageableParameterException.class, MethodArgumentTypeMismatchException.class,
             BadRequestByPassengerException.class})
-    public ResponseEntity<String> handleUsernameAlreadyExistsException(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleUsernameAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 }
