@@ -1,5 +1,6 @@
 package com.nikonenko.rideservice.models;
 
+import com.nikonenko.rideservice.dto.feign.drivers.CarResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 
 @Document(value = "rides")
@@ -29,4 +29,5 @@ public class Ride {
     private Double distance;
     private RideStatus status;
     private RidePaymentMethod paymentMethod;
+    private CarResponse car;
 }

@@ -200,6 +200,7 @@ public class RideServiceImpl implements RideService {
         }
         ride.setDriverId(request.getDriverId());
         ride.setStatus(RideStatus.ACCEPTED);
+        ride.setCar(request.getCar());
         log.info("Accepting ride with id: {}...", ride.getId());
         rideRepository.save(ride);
     }
