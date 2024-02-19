@@ -1,5 +1,6 @@
 package com.nikonenko.rideservice.dto;
 
+import com.nikonenko.rideservice.dto.feign.drivers.CarResponse;
 import com.nikonenko.rideservice.models.RideAction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,4 +15,5 @@ public class ChangeRideStatusRequest {
     private Long driverId;
     private String rideId;
     private RideAction rideAction;
+    private CarResponse car;
 }

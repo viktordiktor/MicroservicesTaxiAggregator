@@ -22,8 +22,6 @@ public class Car {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "driver_id")
-    private Long driverId;
     @Column(name = "number", unique = true)
     private String number;
     @Column(name = "model")

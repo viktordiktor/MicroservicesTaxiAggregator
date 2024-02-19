@@ -1,6 +1,7 @@
 package com.nikonenko.driverservice.services.impl;
 
 import com.nikonenko.driverservice.dto.CarRequest;
+import com.nikonenko.driverservice.dto.CarResponse;
 import com.nikonenko.driverservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
@@ -11,6 +12,7 @@ import com.nikonenko.driverservice.dto.ReviewRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
+import com.nikonenko.driverservice.exceptions.DriverNotAddedCarException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
@@ -156,7 +158,15 @@ public class DriverServiceImpl implements DriverService {
                 .rideId(rideId)
                 .driverId(driverId)
                 .rideAction(rideAction)
+                .car(getCarByDriver(driverId))
                 .build());
+    }
+
+    private CarResponse getCarByDriver(Long driverId) {
+        Driver driver = getOrThrow(driverId);
+        return Optional.ofNullable(driver.getCar())
+                .map(car -> modelMapper.map(car, CarResponse.class))
+                .orElseThrow(DriverNotAddedCarException::new);
     }
 
     @Override
@@ -178,13 +188,8 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponse addCarToDriver(Long id, CarRequest carRequest) {
         Driver driver = getOrThrow(id);
-        Set<Car> driverCars = driver.getCars();
-
         carService.createCar(carRequest);
-
-        driverCars.add(modelMapper.map(carRequest, Car.class));
-        driver.setCars(driverCars);
-
+        driver.setCar(modelMapper.map(carRequest, Car.class));
         return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
     }
 

@@ -15,7 +15,7 @@ public class DriverResponse {
     private Long id;
     private String username;
     private String phone;
-    private Set<CarResponse> cars;
+    private CarResponse car;
     private Set<RatingDriverResponse> ratingSet;
     private boolean available;
 }

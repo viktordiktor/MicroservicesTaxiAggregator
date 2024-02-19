@@ -14,6 +14,7 @@ public enum ExceptionList {
     DRIVER_NOT_AVAILABLE("driver-not-available"),
     BAD_REQUEST_BY_DRIVER("bad-request-by-driver"),
     DRIVER_NO_RIDES("driver-no-rides"),
+    DRIVER_NO_CAR("driver-no-car"),
     RIDE_SERVICE_NOT_AVAILABLE("ride-service-not-available");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
