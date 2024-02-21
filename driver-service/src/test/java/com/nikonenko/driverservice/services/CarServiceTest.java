@@ -108,7 +108,7 @@ public class CarServiceTest {
     }
 
     @Test
-    void givenNonExistingDriverId_whenFindById_thenThrowException() {
+    void givenNonExistingCarId_whenFindById_thenThrowException() {
         doReturn(Optional.empty())
                 .when(carRepository)
                 .findById(TestUtil.DEFAULT_ID);
@@ -217,7 +217,7 @@ public class CarServiceTest {
     }
 
     @Test
-    void givenNonExistingDriver_whenEditDriver_thenThrowException() {
+    void givenNonExistingCar_whenEditCar_thenThrowException() {
         CarRequest request = TestUtil.getDefaultCarRequest();
 
         doReturn(Optional.empty())
@@ -235,7 +235,7 @@ public class CarServiceTest {
     }
 
     @Test
-    void givenExistingDriver_whenDeleteDriver_thenDeleteDriver() {
+    void givenExistingCar_whenDeleteCar_thenDeleteCar() {
         Car car = TestUtil.getDefaultCar();
 
         doReturn(Optional.of(car))
@@ -249,7 +249,7 @@ public class CarServiceTest {
     }
 
     @Test
-    void givenNonExistingDriver_whenDeleteDriver_thenThrowException() {
+    void givenNonExistingCar_whenDeleteCar_thenThrowException() {
         doReturn(Optional.empty())
                 .when(carRepository)
                 .findById(TestUtil.DEFAULT_ID);
