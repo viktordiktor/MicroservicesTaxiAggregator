@@ -171,7 +171,7 @@ public class CarServiceTest {
         CarResponse response = TestUtil.getUpdateCarResponse();
         CarRequest request = TestUtil.getUpdateCarRequest();
         Car car = TestUtil.getDefaultCar();
-        Car editCar = TestUtil.getDefaultSecondCar();
+        Car editCar = TestUtil.getSecondCar();
 
         doReturn(false)
                 .when(carRepository)

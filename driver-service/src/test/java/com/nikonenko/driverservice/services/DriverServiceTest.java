@@ -212,7 +212,7 @@ class DriverServiceTest {
         DriverResponse response = TestUtil.getUpdateDriverResponse();
         DriverRequest request = TestUtil.getUpdateDriverRequest();
         Driver driver = TestUtil.getDefaultDriver();
-        Driver editDriver = TestUtil.getDefaultSecondDriver();
+        Driver editDriver = TestUtil.getSecondDriver();
 
         doReturn(false)
                 .when(driverRepository)

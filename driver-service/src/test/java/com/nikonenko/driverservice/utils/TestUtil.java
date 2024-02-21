@@ -30,11 +30,11 @@ public class TestUtil {
     public final String INVALID_PAGE_SORT = "aaa";
     public final int DEFAULT_TOTAL_PAGE_SIZE = 1;
     public final Long DEFAULT_ID = 1L;
-    public final Long DEFAULT_SECOND_ID = 2L;
+    public final Long SECOND_ID = 2L;
     public final String DEFAULT_USERNAME = "USERNAME1";
-    public final String DEFAULT_SECOND_USERNAME = "USERNAME2";
+    public final String SECOND_USERNAME = "USERNAME2";
     public final String DEFAULT_PHONE = "+375111111111";
-    public final String DEFAULT_SECOND_PHONE = "+375222222222";
+    public final String SECOND_PHONE = "+375222222222";
     public final String DEFAULT_CAR_NUMBER = "1111-AA1";
     public final String SECOND_CAR_NUMBER = "2222-AA2";
     public final String DEFAULT_CAR_MODEL = "Model1";
@@ -55,7 +55,7 @@ public class TestUtil {
     public final RidePaymentMethod DEFAULT_PAYMENT_METHOD = RidePaymentMethod.BY_CARD;
 
     public List<Driver> getDriverList() {
-        return List.of(getDefaultDriver(), getDefaultSecondDriver());
+        return List.of(getDefaultDriver(), getSecondDriver());
     }
 
     public Driver getDefaultDriver() {
@@ -69,12 +69,12 @@ public class TestUtil {
                 .build();
     }
 
-    public Driver getDefaultSecondDriver() {
+    public Driver getSecondDriver() {
         return Driver.builder()
-                .id(DEFAULT_SECOND_ID)
-                .username(DEFAULT_SECOND_USERNAME)
+                .id(SECOND_ID)
+                .username(SECOND_USERNAME)
                 .car(getDefaultCar())
-                .phone(DEFAULT_SECOND_PHONE)
+                .phone(SECOND_PHONE)
                 .ratingSet(getDefaultRatingSet())
                 .available(FALSE_AVAILABLE)
                 .build();
@@ -89,8 +89,8 @@ public class TestUtil {
 
     public DriverRequest getUpdateDriverRequest() {
         return DriverRequest.builder()
-                .username(DEFAULT_SECOND_USERNAME)
-                .phone(DEFAULT_SECOND_PHONE)
+                .username(SECOND_USERNAME)
+                .phone(SECOND_PHONE)
                 .build();
     }
 
@@ -160,9 +160,9 @@ public class TestUtil {
     public DriverResponse getUpdateDriverResponse() {
         return DriverResponse.builder()
                 .id(DEFAULT_ID)
-                .username(DEFAULT_SECOND_USERNAME)
+                .username(SECOND_USERNAME)
                 .car(getDefaultCarResponse())
-                .phone(DEFAULT_SECOND_PHONE)
+                .phone(SECOND_PHONE)
                 .ratingSet(getDefaultRatingSetResponse())
                 .available(FALSE_AVAILABLE)
                 .build();
@@ -183,9 +183,9 @@ public class TestUtil {
                 .build();
     }
 
-    public Car getDefaultSecondCar() {
+    public Car getSecondCar() {
         return Car.builder()
-                .id(DEFAULT_SECOND_ID)
+                .id(SECOND_ID)
                 .number(SECOND_CAR_NUMBER)
                 .model(SECOND_CAR_MODEL)
                 .color(SECOND_CAR_COLOR)
@@ -246,12 +246,12 @@ public class TestUtil {
 
     public Set<RatingDriver> getDefaultRatingSet() {
         return Set.of(new RatingDriver(DEFAULT_ID, DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
-                new RatingDriver(DEFAULT_SECOND_ID, DEFAULT_SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
+                new RatingDriver(SECOND_ID, SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
     }
 
     public Set<RatingDriverResponse> getDefaultRatingSetResponse() {
         return Set.of(new RatingDriverResponse(DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
-                new RatingDriverResponse(DEFAULT_SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
+                new RatingDriverResponse(SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
     }
 
     public RatingToDriverRequest getRatingToDriverRequest() {
