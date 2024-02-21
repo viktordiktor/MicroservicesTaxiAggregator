@@ -18,6 +18,7 @@ import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
 import com.nikonenko.rideservice.kafka.producer.UpdateDriverRatingRequestProducer;
 import com.nikonenko.rideservice.kafka.producer.UpdatePassengerRatingRequestProducer;
 import com.nikonenko.rideservice.models.Ride;
@@ -35,9 +36,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +85,7 @@ public class RideServiceImpl implements RideService {
         if (pageNumber < 0 || pageSize < 1) {
             throw new WrongPageableParameterException();
         }
+        checkSortField(sortField);
         return PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
     }
 
@@ -93,6 +98,14 @@ public class RideServiceImpl implements RideService {
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
                 .build();
+    }
+
+    private void checkSortField(String sortField) {
+        if (Stream.of(RideResponse.class.getDeclaredFields())
+                .map(Field::getName)
+                .noneMatch(field -> field.equals(sortField))) {
+            throw new WrongSortFieldException();
+        }
     }
 
     @Override

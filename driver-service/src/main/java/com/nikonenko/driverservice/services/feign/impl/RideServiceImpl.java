@@ -21,8 +21,8 @@ public class RideServiceImpl implements RideService {
     private final RideFeignClient rideFeignClient;
 
     @Override
-    public PageResponse<RideResponse> getRidesByDriverId(Long driverId) {
-        return rideFeignClient.getRidesByDriverId(driverId);
+    public PageResponse<RideResponse> getRidesByDriverId(Long driverId, int pageNumber, int pageSize, String sortField) {
+        return rideFeignClient.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
     }
 
     public PageResponse<RideResponse> fallbackRideService(Long driverId, Exception ex) {

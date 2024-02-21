@@ -10,6 +10,7 @@ import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class RestExceptionHandler {
             RideIsNotOpenedException.class, RideIsNotStartedException.class,
             RideIsNotAcceptedException.class, UnknownDriverException.class,
             ChargeIsNotSuccessException.class, WrongPageableParameterException.class,
-            BadRequestByRideException.class})
+            BadRequestByRideException.class, WrongSortFieldException.class})
     public ResponseEntity<ExceptionResponse> handleBadRequestsExceptions(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

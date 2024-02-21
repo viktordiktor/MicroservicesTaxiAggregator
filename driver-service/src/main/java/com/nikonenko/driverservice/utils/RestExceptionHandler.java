@@ -11,6 +11,7 @@ import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.driverservice.exceptions.WrongSortFieldException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,8 @@ public class RestExceptionHandler {
             CarNumberAlreadyExistsException.class, HttpMessageNotReadableException.class,
             PropertyReferenceException.class, WrongPageableParameterException.class,
             MethodArgumentTypeMismatchException.class, DriverIsNotAvailableException.class,
-            DriverNoRidesException.class, BadRequestByDriverException.class, DriverNotAddedCarException.class})
+            DriverNoRidesException.class, BadRequestByDriverException.class,
+            DriverNotAddedCarException.class, WrongSortFieldException.class})
     public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

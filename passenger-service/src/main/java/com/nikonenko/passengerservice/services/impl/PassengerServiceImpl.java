@@ -23,6 +23,7 @@ import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.passengerservice.exceptions.WrongSortFieldException;
 import com.nikonenko.passengerservice.kafka.producer.CustomerCreationRequestProducer;
 import com.nikonenko.passengerservice.kafka.producer.PassengerReviewRequestProducer;
 import com.nikonenko.passengerservice.models.Passenger;
@@ -41,11 +42,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +67,7 @@ public class PassengerServiceImpl implements PassengerService {
         if (pageNumber < 0 || pageSize < 1) {
             throw new WrongPageableParameterException();
         }
+        checkSortField(sortField);
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
         Page<Passenger> page = passengerRepository.findAll(pageable);
         List<PassengerResponse> passengerResponses = page.getContent().stream()
@@ -74,6 +78,14 @@ public class PassengerServiceImpl implements PassengerService {
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
                 .build();
+    }
+
+    private void checkSortField(String sortField) {
+        if (Stream.of(PassengerResponse.class.getDeclaredFields())
+                .map(Field::getName)
+                .noneMatch(field -> field.equals(sortField))) {
+            throw new WrongSortFieldException();
+        }
     }
 
     @Override
