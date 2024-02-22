@@ -111,20 +111,20 @@ class DriverServiceTest {
     @Test
     void givenExistingDriverId_whenFindById_thenReturnDriverResponse() {
         Driver retrievedDriver = TestUtil.getDefaultDriver();
-        DriverResponse expected = TestUtil.getDefaultDriverResponse();
+        DriverResponse response = TestUtil.getDefaultDriverResponse();
 
         doReturn(Optional.of(retrievedDriver))
                 .when(driverRepository)
                 .findById(TestUtil.DEFAULT_ID);
         when(modelMapper.map(retrievedDriver, DriverResponse.class))
-                .thenReturn(expected);
+                .thenReturn(response);
 
         DriverResponse result = driverService.getDriverById(TestUtil.DEFAULT_ID);
 
         verify(driverRepository).findById(TestUtil.DEFAULT_ID);
         verify(modelMapper).map(retrievedDriver, DriverResponse.class);
         assertNotNull(result);
-        assertThat(result).isEqualTo(expected);
+        assertEquals(response, result);
     }
 
     @Test
@@ -171,7 +171,7 @@ class DriverServiceTest {
         verify(modelMapper).map(request, Driver.class);
         verify(driverRepository).save(notSavedDriver);
         verify(modelMapper).map(savedDriver, DriverResponse.class);
-        assertThat(result).isEqualTo(response);
+        assertEquals(response, result);
     }
 
     @Test
@@ -241,7 +241,7 @@ class DriverServiceTest {
         verify(modelMapper).map(request, Driver.class);
         verify(driverRepository).save(editDriver);
         verify(modelMapper).map(editDriver, DriverResponse.class);
-        assertThat(result).isEqualTo(response);
+        assertEquals(response, result);
     }
 
     @Test
@@ -721,7 +721,7 @@ class DriverServiceTest {
                 TestUtil.DEFAULT_PAGE_SIZE, TestUtil.DEFAULT_PAGE_SORT);
         assertNotNull(result);
         assertEquals(result.getTotalElements(), expectedList.size());
-        assertEquals(result, expectedPageResponse);
+        assertEquals(expectedPageResponse, result);
     }
 
     @Test
