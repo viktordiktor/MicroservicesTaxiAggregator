@@ -140,7 +140,7 @@ public class PassengerServiceTest {
         verify(modelMapper).map(request, Passenger.class);
         verify(passengerRepository).save(notSavedPassenger);
         verify(modelMapper).map(savedPassenger, PassengerResponse.class);
-        assertThat(result).isEqualTo(response);
+        assertEquals(response, result);
     }
 
     @Test
@@ -210,7 +210,7 @@ public class PassengerServiceTest {
         verify(modelMapper).map(request, Passenger.class);
         verify(passengerRepository).save(editPassenger);
         verify(modelMapper).map(editPassenger, PassengerResponse.class);
-        assertThat(result).isEqualTo(response);
+        assertEquals(response, result);
     }
 
     @Test

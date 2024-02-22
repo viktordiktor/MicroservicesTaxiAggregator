@@ -91,20 +91,20 @@ public class CarServiceTest {
     @Test
     void givenExistingCarId_whenFindById_thenReturnCarResponse() {
         Car retrievedCar = TestUtil.getDefaultCar();
-        CarResponse expected = TestUtil.getDefaultCarResponse();
+        CarResponse response = TestUtil.getDefaultCarResponse();
 
         doReturn(Optional.of(retrievedCar))
                 .when(carRepository)
                 .findById(TestUtil.DEFAULT_ID);
         when(modelMapper.map(retrievedCar, CarResponse.class))
-                .thenReturn(expected);
+                .thenReturn(response);
 
         CarResponse result = carService.getCarById(TestUtil.DEFAULT_ID);
 
         verify(carRepository).findById(TestUtil.DEFAULT_ID);
         verify(modelMapper).map(retrievedCar, CarResponse.class);
         assertNotNull(result);
-        assertThat(result).isEqualTo(expected);
+        assertEquals(response, result);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class CarServiceTest {
         verify(modelMapper).map(request, Car.class);
         verify(carRepository).save(notSavedCar);
         verify(modelMapper).map(savedCar, CarResponse.class);
-        assertThat(result).isEqualTo(response);
+        assertEquals(response, result);
     }
 
     @Test
@@ -196,7 +196,7 @@ public class CarServiceTest {
         verify(modelMapper).map(request, Car.class);
         verify(carRepository).save(editCar);
         verify(modelMapper).map(editCar, CarResponse.class);
-        assertThat(result).isEqualTo(response);
+        assertEquals(response, result);
     }
 
     @Test
