@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -90,7 +91,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse getPassengerById(Long id) {
-        return modelMapper.map(getPassenger(id), PassengerResponse.class);
+        return modelMapper.map(getOrThrow(id), PassengerResponse.class);
     }
 
     @Override
@@ -104,6 +105,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public RideResponse createRideByPassenger(Long passengerId, RideByPassengerRequest rideByPassengerRequest) {
+        getOrThrow(passengerId);
         CalculateDistanceResponse distanceResponse = getRideDistance(rideByPassengerRequest);
 
         CustomerCalculateRideResponse calculatePriceResponse = calculateRidePrice(rideByPassengerRequest,
@@ -181,8 +183,9 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponse editPassenger(Long id, PassengerRequest passengerRequest) {
         checkPassengerExists(passengerRequest);
-        Passenger editingPassenger = getPassenger(id);
-        modelMapper.map(passengerRequest, editingPassenger);
+        Passenger editingPassenger = getOrThrow(id);
+        editingPassenger = modelMapper.map(passengerRequest, Passenger.class);
+        editingPassenger.setId(id);
         passengerRepository.save(editingPassenger);
         log.info("Passenger edited with id: {}", id);
         return modelMapper.map(editingPassenger, PassengerResponse.class);
@@ -200,7 +203,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public void deletePassenger(Long id) {
-        passengerRepository.delete(getPassenger(id));
+        passengerRepository.delete(getOrThrow(id));
         log.info("Passenger deleted with id: {}", id);
     }
 
@@ -215,7 +218,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public void createReview(RatingToPassengerRequest request) {
-        Passenger passenger = getPassenger(request.getPassengerId());
+        Passenger passenger = getOrThrow(request.getPassengerId());
 
         RatingPassenger addingRating = RatingPassenger.builder()
                 .passengerId(passenger.getId())
@@ -223,7 +226,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .comment(request.getComment())
                 .build();
 
-        Set<RatingPassenger> modifiedRatingSet = passenger.getRatingSet();
+        Set<RatingPassenger> modifiedRatingSet = new HashSet<>(passenger.getRatingSet());
         modifiedRatingSet.add(addingRating);
 
         passenger.setRatingSet(modifiedRatingSet);
@@ -233,7 +236,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public void createCustomerByPassenger(Long passengerId, CustomerDataRequest dataRequest) {
-        Passenger passenger = getPassenger(passengerId);
+        Passenger passenger = getOrThrow(passengerId);
         customerCreationRequestProducer.sendCustomerCreationRequest(CustomerCreationRequest.builder()
                         .passengerId(passengerId)
                         .amount(dataRequest.getAmount())
@@ -244,7 +247,7 @@ public class PassengerServiceImpl implements PassengerService {
                         .build());
     }
 
-    public Passenger getPassenger(Long id) {
+    public Passenger getOrThrow(Long id) {
         Optional<Passenger> optionalPassenger = passengerRepository.findById(id);
         return optionalPassenger.orElseThrow(PassengerNotFoundException::new);
     }
