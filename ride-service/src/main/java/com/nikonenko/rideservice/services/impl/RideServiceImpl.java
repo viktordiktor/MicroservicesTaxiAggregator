@@ -6,9 +6,9 @@ import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.PageResponse;
+import com.nikonenko.rideservice.dto.RatingToDriverRequest;
 import com.nikonenko.rideservice.dto.RatingToPassengerRequest;
 import com.nikonenko.rideservice.dto.ReviewRequest;
-import com.nikonenko.rideservice.dto.RatingToDriverRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeReturnResponse;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
@@ -17,8 +17,6 @@ import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
-import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
-import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
 import com.nikonenko.rideservice.kafka.producer.UpdateDriverRatingRequestProducer;
 import com.nikonenko.rideservice.kafka.producer.UpdatePassengerRatingRequestProducer;
 import com.nikonenko.rideservice.models.Ride;
@@ -27,21 +25,17 @@ import com.nikonenko.rideservice.models.RideStatus;
 import com.nikonenko.rideservice.repositories.RideRepository;
 import com.nikonenko.rideservice.services.RideService;
 import com.nikonenko.rideservice.services.feign.PaymentService;
+import com.nikonenko.rideservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.referencing.GeodeticCalculator;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +54,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField) {
-        Pageable pageable = createPageable(pageNumber, pageSize, sortField);
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PageResponse.class);
         Page<Ride> page = rideRepository.findAllByStatusIs(RideStatus.OPENED, pageable);
         return getPageRides(page);
     }
@@ -68,7 +62,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public PageResponse<RideResponse> getRidesByPassenger(Long passengerId,
                                                           int pageNumber, int pageSize, String sortField) {
-        Pageable pageable = createPageable(pageNumber, pageSize, sortField);
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PageResponse.class);
         Page<Ride> page = rideRepository.findAllByPassengerIdIs(passengerId, pageable);
         return getPageRides(page);
     }
@@ -76,17 +70,9 @@ public class RideServiceImpl implements RideService {
     @Override
     public PageResponse<RideResponse> getRidesByDriver(Long driverId,
                                                        int pageNumber, int pageSize, String sortField) {
-        Pageable pageable = createPageable(pageNumber, pageSize, sortField);
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PageResponse.class);
         Page<Ride> page = rideRepository.findAllByDriverIdIs(driverId, pageable);
         return getPageRides(page);
-    }
-
-    private Pageable createPageable(int pageNumber, int pageSize, String sortField) {
-        if (pageNumber < 0 || pageSize < 1) {
-            throw new WrongPageableParameterException();
-        }
-        checkSortField(sortField);
-        return PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
     }
 
     private PageResponse<RideResponse> getPageRides(Page<Ride> page) {
@@ -98,14 +84,6 @@ public class RideServiceImpl implements RideService {
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
                 .build();
-    }
-
-    private void checkSortField(String sortField) {
-        if (Stream.of(RideResponse.class.getDeclaredFields())
-                .map(Field::getName)
-                .noneMatch(field -> field.equals(sortField))) {
-            throw new WrongSortFieldException();
-        }
     }
 
     @Override

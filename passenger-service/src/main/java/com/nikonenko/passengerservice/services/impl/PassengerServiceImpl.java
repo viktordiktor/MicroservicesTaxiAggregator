@@ -2,17 +2,17 @@ package com.nikonenko.passengerservice.services.impl;
 
 import com.nikonenko.passengerservice.dto.CustomerCreationRequest;
 import com.nikonenko.passengerservice.dto.CustomerDataRequest;
+import com.nikonenko.passengerservice.dto.PageResponse;
+import com.nikonenko.passengerservice.dto.PassengerRequest;
+import com.nikonenko.passengerservice.dto.PassengerResponse;
+import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
+import com.nikonenko.passengerservice.dto.ReviewRequest;
 import com.nikonenko.passengerservice.dto.RideByPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideResponse;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeResponse;
-import com.nikonenko.passengerservice.dto.PageResponse;
-import com.nikonenko.passengerservice.dto.PassengerRequest;
-import com.nikonenko.passengerservice.dto.PassengerResponse;
-import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
-import com.nikonenko.passengerservice.dto.ReviewRequest;
-import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
@@ -22,8 +22,6 @@ import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
-import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
-import com.nikonenko.passengerservice.exceptions.WrongSortFieldException;
 import com.nikonenko.passengerservice.kafka.producer.CustomerCreationRequestProducer;
 import com.nikonenko.passengerservice.kafka.producer.PassengerReviewRequestProducer;
 import com.nikonenko.passengerservice.models.Passenger;
@@ -33,23 +31,19 @@ import com.nikonenko.passengerservice.repositories.PassengerRepository;
 import com.nikonenko.passengerservice.services.PassengerService;
 import com.nikonenko.passengerservice.services.feign.PaymentService;
 import com.nikonenko.passengerservice.services.feign.RideService;
+import com.nikonenko.passengerservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -65,11 +59,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PageResponse<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField) {
-        if (pageNumber < 0 || pageSize < 1) {
-            throw new WrongPageableParameterException();
-        }
-        checkSortField(sortField);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PassengerResponse.class);
         Page<Passenger> page = passengerRepository.findAll(pageable);
         List<PassengerResponse> passengerResponses = page.getContent().stream()
                 .map(passenger -> modelMapper.map(passenger, PassengerResponse.class))
@@ -79,14 +69,6 @@ public class PassengerServiceImpl implements PassengerService {
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
                 .build();
-    }
-
-    private void checkSortField(String sortField) {
-        if (Stream.of(PassengerResponse.class.getDeclaredFields())
-                .map(Field::getName)
-                .noneMatch(field -> field.equals(sortField))) {
-            throw new WrongSortFieldException();
-        }
     }
 
     @Override
