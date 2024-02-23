@@ -110,6 +110,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
         return CustomerChargeResponse.builder()
                 .id(paymentIntent.getId())
                 .success(paymentIntent.getStatus().equals("succeeded"))
+                .currency(paymentIntent.getCurrency())
                 .amount(BigDecimal.valueOf(paymentIntent.getAmount()).divide(BigDecimal.valueOf(100), mc))
                 .passengerId(customerUser.getPassengerId())
                 .build();
@@ -133,16 +134,13 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     @Override
-    public CustomerCalculateRideResponse calculateRidePrice(Double rideLength,
-                                                            LocalDateTime rideDateTime, String coupon) {
-        CustomerCalculateRideResponse customerCalculateRideResponse = CustomerCalculateRideResponse.builder()
+    public CustomerCalculateRideResponse calculateRidePrice(Double rideLength, LocalDateTime rideDateTime, String coupon) {
+        return CustomerCalculateRideResponse.builder()
                 .rideLength(rideLength)
                 .rideDateTime(rideDateTime)
                 .coupon(coupon)
                 .price(calculatePrice(rideLength, rideDateTime, coupon))
                 .build();
-        customerCalculateRideResponse.setPrice(calculatePrice(rideLength, rideDateTime, coupon));
-        return customerCalculateRideResponse;
     }
 
     private BigDecimal calculatePrice(Double rideLength,

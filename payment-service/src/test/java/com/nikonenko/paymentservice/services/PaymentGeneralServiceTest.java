@@ -77,7 +77,6 @@ public class PaymentGeneralServiceTest {
                 .when(stripeUtil)
                 .stripeChargeCreation(chargeParams);
         doCallRealMethod().when(stripeUtil).setChargeResponse(charge, initialResponse);
-
         ChargeResponse result = paymentGeneralService.charge(request);
 
         verify(modelMapper).map(request, ChargeResponse.class);
