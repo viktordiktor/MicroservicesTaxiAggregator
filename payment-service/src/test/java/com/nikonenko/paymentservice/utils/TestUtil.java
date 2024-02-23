@@ -57,6 +57,8 @@ public class TestUtil {
     public final String DEFAULT_REFUND_ID = "refund1";
     public final boolean CUSTOMER_EXISTS = true;
     public final boolean CUSTOMER_NOT_EXISTS = false;
+    public final String DEFAULT_ALLOW_REDIRECTS = "never";
+    public final String DEFAULT_PAYMENT_METHOD = "pm_card_visa";
 
     public CardRequest getCardRequest() {
         return CardRequest.builder()
@@ -129,7 +131,7 @@ public class TestUtil {
         Charge.Outcome outcome = new Charge.Outcome();
         outcome.setSellerMessage(DEFAULT_MESSAGE);
         charge.setOutcome(outcome);
-        charge.setStatus("succeeded");
+        charge.setStatus(DEFAULT_MESSAGE);
         return charge;
     }
 
@@ -222,9 +224,9 @@ public class TestUtil {
         paymentIntent.setCustomer(DEFAULT_CUSTOMER_ID);
         PaymentIntent.AutomaticPaymentMethods automaticPaymentMethods = new PaymentIntent.AutomaticPaymentMethods();
         automaticPaymentMethods.setEnabled(true);
-        automaticPaymentMethods.setAllowRedirects("never");
+        automaticPaymentMethods.setAllowRedirects(DEFAULT_ALLOW_REDIRECTS);
         paymentIntent.setAutomaticPaymentMethods(automaticPaymentMethods);
-        paymentIntent.setPaymentMethod("pm_card_visa");
+        paymentIntent.setPaymentMethod(DEFAULT_PAYMENT_METHOD);
         paymentIntent.setStatus(DEFAULT_MESSAGE);
         paymentIntent.setCurrency(DEFAULT_CURRENCY);
         return paymentIntent;

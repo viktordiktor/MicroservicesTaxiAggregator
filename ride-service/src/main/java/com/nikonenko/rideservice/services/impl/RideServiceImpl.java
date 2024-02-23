@@ -13,6 +13,7 @@ import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeReturnResponse;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
+import com.nikonenko.rideservice.exceptions.RideIsNotFinishedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
@@ -54,7 +55,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField) {
-        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PageResponse.class);
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
         Page<Ride> page = rideRepository.findAllByStatusIs(RideStatus.OPENED, pageable);
         return getPageRides(page);
     }
@@ -62,7 +63,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public PageResponse<RideResponse> getRidesByPassenger(Long passengerId,
                                                           int pageNumber, int pageSize, String sortField) {
-        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PageResponse.class);
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
         Page<Ride> page = rideRepository.findAllByPassengerIdIs(passengerId, pageable);
         return getPageRides(page);
     }
@@ -70,7 +71,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public PageResponse<RideResponse> getRidesByDriver(Long driverId,
                                                        int pageNumber, int pageSize, String sortField) {
-        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PageResponse.class);
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
         Page<Ride> page = rideRepository.findAllByDriverIdIs(driverId, pageable);
         return getPageRides(page);
     }
@@ -154,8 +155,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public void changeDriverRating(ReviewRequest request) {
-        log.info("Request with ride id: {}", request.getRideId());
-        Ride ride = getOrThrow(request.getRideId());
+        Ride ride = getFinishedRide(request);
         updateDriverRatingRequestProducer.sendRatingDriverRequest(RatingToDriverRequest.builder()
                 .driverId(ride.getDriverId())
                 .rating(request.getRating())
@@ -165,13 +165,21 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public void changePassengerRating(ReviewRequest request) {
-        log.info("Request with ride id: {}", request.getRideId());
-        Ride ride = getOrThrow(request.getRideId());
+        Ride ride = getFinishedRide(request);
         updatePassengerRatingRequestProducer.sendRatingPassengerRequest(RatingToPassengerRequest.builder()
                 .passengerId(ride.getPassengerId())
                 .rating(request.getRating())
                 .comment(request.getComment())
                 .build());
+    }
+
+    private Ride getFinishedRide(ReviewRequest request) {
+        log.info("Request with ride id: {}", request.getRideId());
+        Ride ride = getOrThrow(request.getRideId());
+        if (ride.getStatus() != RideStatus.FINISHED) {
+            throw new RideIsNotFinishedException();
+        }
+        return ride;
     }
 
     @Override

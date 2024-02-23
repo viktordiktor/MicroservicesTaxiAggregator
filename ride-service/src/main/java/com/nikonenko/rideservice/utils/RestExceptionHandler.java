@@ -5,6 +5,7 @@ import com.nikonenko.rideservice.exceptions.BadRequestByRideException;
 import com.nikonenko.rideservice.exceptions.ChargeIsNotSuccessException;
 import com.nikonenko.rideservice.exceptions.RideIsAlreadyStartedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotAcceptedException;
+import com.nikonenko.rideservice.exceptions.RideIsNotFinishedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
@@ -49,7 +50,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class,
             MethodArgumentTypeMismatchException.class, RideIsAlreadyStartedException.class,
-            RideIsNotOpenedException.class, RideIsNotStartedException.class,
+            RideIsNotOpenedException.class, RideIsNotStartedException.class, RideIsNotFinishedException.class,
             RideIsNotAcceptedException.class, UnknownDriverException.class,
             ChargeIsNotSuccessException.class, WrongPageableParameterException.class,
             BadRequestByRideException.class, WrongSortFieldException.class})
