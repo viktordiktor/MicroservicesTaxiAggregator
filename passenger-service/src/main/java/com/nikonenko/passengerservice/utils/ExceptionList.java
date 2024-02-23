@@ -9,6 +9,7 @@ public enum ExceptionList {
     PHONE_EXISTS("passenger-exists-phone"),
     PASSENGER_NOT_FOUND("passenger-not-found"),
     WRONG_PARAMETER("wrong-parameter"),
+    WRONG_SORT_FIELD("wrong-sort-field"),
     BAD_REQUEST_BY_PASSENGER("bad-request-by-passenger"),
     RIDE_SERVICE_NOT_AVAILABLE("ride-service-not-available"),
     PAYMENT_SERVICE_NOT_AVAILABLE("payment-service-not-available"),

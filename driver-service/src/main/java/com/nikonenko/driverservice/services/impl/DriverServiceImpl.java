@@ -16,7 +16,6 @@ import com.nikonenko.driverservice.exceptions.DriverNotAddedCarException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
-import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.driverservice.kafka.producer.DriverReviewRequestProducer;
 import com.nikonenko.driverservice.kafka.producer.RideStatusRequestProducer;
 import com.nikonenko.driverservice.models.Car;
@@ -27,14 +26,14 @@ import com.nikonenko.driverservice.repositories.DriverRepository;
 import com.nikonenko.driverservice.services.CarService;
 import com.nikonenko.driverservice.services.DriverService;
 import com.nikonenko.driverservice.services.feign.RideService;
+import com.nikonenko.driverservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -52,10 +51,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public PageResponse<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField) {
-        if (pageNumber < 0 || pageSize < 1) {
-            throw new WrongPageableParameterException();
-        }
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, DriverResponse.class);
         Page<Driver> page = driverRepository.findAll(pageable);
         List<DriverResponse> drivers = page.getContent().stream()
                 .map(driver -> modelMapper.map(driver, DriverResponse.class))
@@ -85,7 +81,8 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse editDriver(Long id, DriverRequest driverRequest) {
         checkDriverExists(driverRequest);
         Driver editingDriver = getOrThrow(id);
-        modelMapper.map(driverRequest, editingDriver);
+        editingDriver = modelMapper.map(driverRequest, Driver.class);
+        editingDriver.setId(id);
         driverRepository.save(editingDriver);
         log.info("Driver edited with id: {}", id);
         return modelMapper.map(editingDriver, DriverResponse.class);
@@ -179,9 +176,10 @@ public class DriverServiceImpl implements DriverService {
                 .comment(ratingRequest.getComment())
                 .build();
 
-        Set<RatingDriver> modifiedRatingSet = driver.getRatingSet();
+        Set<RatingDriver> modifiedRatingSet = new HashSet<>(driver.getRatingSet());
         modifiedRatingSet.add(addingRating);
         driver.setRatingSet(modifiedRatingSet);
+
         driverRepository.save(driver);
     }
 
@@ -194,8 +192,9 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public PageResponse<RideResponse> getDriverRides(Long driverId) {
-        return rideService.getRidesByDriverId(driverId);
+    public PageResponse<RideResponse> getDriverRides(Long driverId, int pageNumber, int pageSize, String sortField) {
+        getOrThrow(driverId);
+        return rideService.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
     }
 
     public Driver getOrThrow(Long id) {

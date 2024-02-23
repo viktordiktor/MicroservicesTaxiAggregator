@@ -4,5 +4,5 @@ import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 
 public interface RideService {
-    PageResponse<RideResponse> getRidesByDriverId(Long driverId);
+    PageResponse<RideResponse> getRidesByDriverId(Long driverId, int pageNumber, int pageSize, String sortField);
 }

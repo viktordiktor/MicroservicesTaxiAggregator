@@ -7,6 +7,7 @@ import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.passengerservice.exceptions.WrongSortFieldException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class RestExceptionHandler {
     @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class,
             HttpMessageNotReadableException.class, PropertyReferenceException.class,
             WrongPageableParameterException.class, MethodArgumentTypeMismatchException.class,
-            BadRequestByPassengerException.class})
+            BadRequestByPassengerException.class, WrongSortFieldException.class})
     public ResponseEntity<ExceptionResponse> handleUsernameAlreadyExistsException(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

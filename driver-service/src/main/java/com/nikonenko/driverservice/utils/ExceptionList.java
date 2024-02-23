@@ -10,6 +10,7 @@ public enum ExceptionList {
     DRIVER_NOT_FOUND("driver-not-found"),
     CAR_NOT_FOUND("car-not-found"),
     WRONG_PARAMETER("wrong-parameter"),
+    WRONG_SORT_FIELD("wrong-sort-field"),
     NUMBER_EXISTS("number-exists"),
     DRIVER_NOT_AVAILABLE("driver-not-available"),
     BAD_REQUEST_BY_DRIVER("bad-request-by-driver"),

@@ -94,7 +94,10 @@ public class DriverController {
     }
 
     @GetMapping("/rides/{driverId}")
-    public PageResponse<RideResponse> getDriverRides(@PathVariable Long driverId) {
-        return driverService.getDriverRides(driverId);
+    public PageResponse<RideResponse> getDriverRides(@PathVariable Long driverId,
+                                                     @RequestParam(defaultValue = "0") int pageNumber,
+                                                     @RequestParam(defaultValue = "5") int pageSize,
+                                                     @RequestParam(defaultValue = "id") String sortField) {
+        return driverService.getDriverRides(driverId, pageNumber, pageSize, sortField);
     }
 }

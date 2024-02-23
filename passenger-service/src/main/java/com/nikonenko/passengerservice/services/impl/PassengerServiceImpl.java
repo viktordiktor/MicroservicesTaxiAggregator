@@ -2,17 +2,17 @@ package com.nikonenko.passengerservice.services.impl;
 
 import com.nikonenko.passengerservice.dto.CustomerCreationRequest;
 import com.nikonenko.passengerservice.dto.CustomerDataRequest;
+import com.nikonenko.passengerservice.dto.PageResponse;
+import com.nikonenko.passengerservice.dto.PassengerRequest;
+import com.nikonenko.passengerservice.dto.PassengerResponse;
+import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
+import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
+import com.nikonenko.passengerservice.dto.ReviewRequest;
 import com.nikonenko.passengerservice.dto.RideByPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideResponse;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeResponse;
-import com.nikonenko.passengerservice.dto.PageResponse;
-import com.nikonenko.passengerservice.dto.PassengerRequest;
-import com.nikonenko.passengerservice.dto.PassengerResponse;
-import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
-import com.nikonenko.passengerservice.dto.ReviewRequest;
-import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
@@ -22,7 +22,6 @@ import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
-import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.passengerservice.kafka.producer.CustomerCreationRequestProducer;
 import com.nikonenko.passengerservice.kafka.producer.PassengerReviewRequestProducer;
 import com.nikonenko.passengerservice.models.Passenger;
@@ -32,17 +31,16 @@ import com.nikonenko.passengerservice.repositories.PassengerRepository;
 import com.nikonenko.passengerservice.services.PassengerService;
 import com.nikonenko.passengerservice.services.feign.PaymentService;
 import com.nikonenko.passengerservice.services.feign.RideService;
+import com.nikonenko.passengerservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -61,10 +59,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PageResponse<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField) {
-        if (pageNumber < 0 || pageSize < 1) {
-            throw new WrongPageableParameterException();
-        }
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
+        Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, PassengerResponse.class);
         Page<Passenger> page = passengerRepository.findAll(pageable);
         List<PassengerResponse> passengerResponses = page.getContent().stream()
                 .map(passenger -> modelMapper.map(passenger, PassengerResponse.class))
@@ -78,7 +73,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse getPassengerById(Long id) {
-        return modelMapper.map(getPassenger(id), PassengerResponse.class);
+        return modelMapper.map(getOrThrow(id), PassengerResponse.class);
     }
 
     @Override
@@ -92,6 +87,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public RideResponse createRideByPassenger(Long passengerId, RideByPassengerRequest rideByPassengerRequest) {
+        getOrThrow(passengerId);
         CalculateDistanceResponse distanceResponse = getRideDistance(rideByPassengerRequest);
 
         CustomerCalculateRideResponse calculatePriceResponse = calculateRidePrice(rideByPassengerRequest,
@@ -169,8 +165,9 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponse editPassenger(Long id, PassengerRequest passengerRequest) {
         checkPassengerExists(passengerRequest);
-        Passenger editingPassenger = getPassenger(id);
-        modelMapper.map(passengerRequest, editingPassenger);
+        Passenger editingPassenger = getOrThrow(id);
+        editingPassenger = modelMapper.map(passengerRequest, Passenger.class);
+        editingPassenger.setId(id);
         passengerRepository.save(editingPassenger);
         log.info("Passenger edited with id: {}", id);
         return modelMapper.map(editingPassenger, PassengerResponse.class);
@@ -188,7 +185,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public void deletePassenger(Long id) {
-        passengerRepository.delete(getPassenger(id));
+        passengerRepository.delete(getOrThrow(id));
         log.info("Passenger deleted with id: {}", id);
     }
 
@@ -203,7 +200,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public void createReview(RatingToPassengerRequest request) {
-        Passenger passenger = getPassenger(request.getPassengerId());
+        Passenger passenger = getOrThrow(request.getPassengerId());
 
         RatingPassenger addingRating = RatingPassenger.builder()
                 .passengerId(passenger.getId())
@@ -211,7 +208,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .comment(request.getComment())
                 .build();
 
-        Set<RatingPassenger> modifiedRatingSet = passenger.getRatingSet();
+        Set<RatingPassenger> modifiedRatingSet = new HashSet<>(passenger.getRatingSet());
         modifiedRatingSet.add(addingRating);
 
         passenger.setRatingSet(modifiedRatingSet);
@@ -221,7 +218,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public void createCustomerByPassenger(Long passengerId, CustomerDataRequest dataRequest) {
-        Passenger passenger = getPassenger(passengerId);
+        Passenger passenger = getOrThrow(passengerId);
         customerCreationRequestProducer.sendCustomerCreationRequest(CustomerCreationRequest.builder()
                         .passengerId(passengerId)
                         .amount(dataRequest.getAmount())
@@ -232,7 +229,7 @@ public class PassengerServiceImpl implements PassengerService {
                         .build());
     }
 
-    public Passenger getPassenger(Long id) {
+    public Passenger getOrThrow(Long id) {
         Optional<Passenger> optionalPassenger = passengerRepository.findById(id);
         return optionalPassenger.orElseThrow(PassengerNotFoundException::new);
     }
