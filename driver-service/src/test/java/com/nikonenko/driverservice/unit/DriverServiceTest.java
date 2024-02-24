@@ -1,4 +1,4 @@
-package com.nikonenko.driverservice.services;
+package com.nikonenko.driverservice.unit;
 
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
@@ -19,6 +19,7 @@ import com.nikonenko.driverservice.kafka.producer.RideStatusRequestProducer;
 import com.nikonenko.driverservice.models.Car;
 import com.nikonenko.driverservice.models.Driver;
 import com.nikonenko.driverservice.repositories.DriverRepository;
+import com.nikonenko.driverservice.services.CarService;
 import com.nikonenko.driverservice.services.feign.RideService;
 import com.nikonenko.driverservice.services.impl.DriverServiceImpl;
 import com.nikonenko.driverservice.utils.TestUtil;

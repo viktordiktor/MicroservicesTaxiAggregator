@@ -1,4 +1,4 @@
-package com.nikonenko.paymentservice.services;
+package com.nikonenko.paymentservice.unit;
 
 import com.nikonenko.paymentservice.dto.customers.CustomerCalculateRideResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerChargeRequest;

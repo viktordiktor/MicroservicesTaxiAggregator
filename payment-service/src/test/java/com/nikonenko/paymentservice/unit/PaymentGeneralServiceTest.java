@@ -1,4 +1,4 @@
-package com.nikonenko.paymentservice.services;
+package com.nikonenko.paymentservice.unit;
 
 import com.nikonenko.paymentservice.dto.CardRequest;
 import com.nikonenko.paymentservice.dto.ChargeRequest;

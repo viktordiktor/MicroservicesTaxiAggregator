@@ -1,4 +1,4 @@
-package com.nikonenko.rideservice.services;
+package com.nikonenko.rideservice.unit;
 
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;

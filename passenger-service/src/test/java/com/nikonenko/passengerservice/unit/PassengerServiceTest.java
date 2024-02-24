@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.services;
+package com.nikonenko.passengerservice.unit;
 
 import com.nikonenko.passengerservice.dto.CustomerDataRequest;
 import com.nikonenko.passengerservice.dto.PageResponse;
