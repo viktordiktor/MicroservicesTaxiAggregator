@@ -72,7 +72,7 @@ public class PassengerServiceTest {
     void givenValidParams_whenGetPassengers_thenReturnPageResponsePassengerResponse() {
         List<Passenger> expectedList = TestUtil.getPassengerList();
         Page<Passenger> driversPage = new PageImpl<>(expectedList);
-        List<PassengerResponse> expectedResponses = TestUtil.getPassengerResponseList(modelMapper);
+        List<PassengerResponse> expectedResponses = TestUtil.getPassengerResponseList(modelMapper, expectedList);
 
         doReturn(driversPage)
                 .when(passengerRepository)

@@ -3,6 +3,7 @@ package com.nikonenko.passengerservice.utils;
 import com.google.maps.model.LatLng;
 import com.nikonenko.passengerservice.dto.CustomerCreationRequest;
 import com.nikonenko.passengerservice.dto.CustomerDataRequest;
+import com.nikonenko.passengerservice.dto.ExceptionResponse;
 import com.nikonenko.passengerservice.dto.PassengerRequest;
 import com.nikonenko.passengerservice.dto.PassengerResponse;
 import com.nikonenko.passengerservice.dto.RatingPassengerResponse;
@@ -17,18 +18,23 @@ import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CarResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
+import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
+import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
+import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
+import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.passengerservice.exceptions.WrongSortFieldException;
 import com.nikonenko.passengerservice.models.Passenger;
 import com.nikonenko.passengerservice.models.RatingPassenger;
 import com.nikonenko.passengerservice.models.feign.RidePaymentMethod;
 import com.nikonenko.passengerservice.models.feign.RideStatus;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
-
+import org.springframework.http.HttpStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class TestUtil {
@@ -40,10 +46,17 @@ public class TestUtil {
     public final String INVALID_PAGE_SORT = "aaa";
     public final Long DEFAULT_ID = 1L;
     public final Long SECOND_ID = 2L;
+    public final Long NOT_EXISTING_ID = 999L;
     public final String DEFAULT_USERNAME = "USERNAME1";
     public final String SECOND_USERNAME = "USERNAME2";
-    public final String DEFAULT_PHONE = "+375111111111";
+    public final String DEFAULT_PHONE = "+375484848484";
     public final String SECOND_PHONE = "+375222222222";
+    public final Long UPDATING_ID = 3L;
+    public final Long CREATION_ID = 4L;
+    public final String CREATION_PHONE = "+375191911919";
+    public final String EXISTING_PHONE = "+375111111111";
+    public final String CREATION_USERNAME = "CREATION_USERNAME";
+    public final String EXISTING_USERNAME = "JohnDoe";
     public final Integer DEFAULT_RATING = 5;
     public final String DEFAULT_RATING_COMMENT = "Comment1";
     public final BigDecimal DEFAULT_AMOUNT = BigDecimal.ZERO;
@@ -61,6 +74,12 @@ public class TestUtil {
     public final LocalDateTime DEFAULT_DATE = LocalDateTime.now();
     public final RideStatus DEFAULT_RIDE_STATUS = RideStatus.OPENED;
     public final BigDecimal DEFAULT_PRICE = BigDecimal.ZERO;
+    public final String DEFAULT_ID_PATH = "/api/v1/passengers/{id}";
+    public final String DEFAULT_PATH = "/api/v1/passengers";
+    public final String ID_PARAMETER = "id";
+    public final String PAGE_NUMBER_PARAMETER = "pageNumber";
+    public final String PAGE_SIZE_PARAMETER = "pageSize";
+    public final String SORT_FIELD_PARAMETER = "sortField";
 
     public List<Passenger> getPassengerList() {
         return List.of(getDefaultPassenger(), getSecondPassenger());
@@ -117,16 +136,46 @@ public class TestUtil {
 
     public PassengerResponse getUpdatePassengerResponse() {
         return PassengerResponse.builder()
-                .id(DEFAULT_ID)
+                .id(UPDATING_ID)
                 .username(SECOND_USERNAME)
                 .phone(SECOND_PHONE)
+                .ratingSet(new HashSet<>())
                 .build();
     }
 
-    public List<PassengerResponse> getPassengerResponseList(ModelMapper modelMapper) {
-        return getPassengerList().stream()
+    public PassengerResponse getCreationPassengerResponse() {
+        return PassengerResponse.builder()
+                .id(CREATION_ID)
+                .username(CREATION_USERNAME)
+                .phone(CREATION_PHONE)
+                .build();
+    }
+
+    public PassengerRequest getCreationPassengerRequest() {
+        return PassengerRequest.builder()
+                .username(CREATION_USERNAME)
+                .phone(CREATION_PHONE)
+                .build();
+    }
+
+    public PassengerRequest getPassengerRequestWithExistingPhoneRequest() {
+        return PassengerRequest.builder()
+                .username(CREATION_USERNAME)
+                .phone(EXISTING_PHONE)
+                .build();
+    }
+
+    public PassengerRequest getPassengerRequestWithExistingUsernameRequest() {
+        return PassengerRequest.builder()
+                .username(EXISTING_USERNAME)
+                .phone(CREATION_PHONE)
+                .build();
+    }
+
+    public List<PassengerResponse> getPassengerResponseList(ModelMapper modelMapper, List<Passenger> passengers) {
+        return passengers.stream()
                 .map(passenger -> modelMapper.map(passenger, PassengerResponse.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Set<RatingPassenger> getDefaultRatingSet() {
@@ -291,4 +340,30 @@ public class TestUtil {
                 .build();
     }
 
+    public ExceptionResponse getNotFoundExceptionResponse() {
+        return getBasicExceptionResponse(new PassengerNotFoundException(), HttpStatus.NOT_FOUND);
+    }
+
+    public ExceptionResponse getWrongPageableParameterExceptionResponse() {
+        return getBasicExceptionResponse(new WrongPageableParameterException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getUsernameAlreadyExistsExceptionResponse() {
+        return getBasicExceptionResponse(new UsernameAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getPhoneAlreadyExistsExceptionResponse() {
+        return getBasicExceptionResponse(new PhoneAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getWrongSortFieldExceptionResponse() {
+        return getBasicExceptionResponse(new WrongSortFieldException(), HttpStatus.BAD_REQUEST);
+    }
+
+    private ExceptionResponse getBasicExceptionResponse(Exception ex, HttpStatus status) {
+        return ExceptionResponse.builder()
+                .message(ex.getMessage())
+                .httpStatus(status)
+                .build();
+    }
 }

@@ -1,0 +1,15 @@
+spring:
+  messages:
+    basename: validation
+  datasource:
+    url: ${MYSQL_JDBC_URL:jdbc:mysql://mysqldb:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false}
+    username: ${MYSQL_USERNAME:user}
+    password: ${MYSQL_PASSWORD:pass}
+  kafka:
+    bootstrap-servers: broker:29092
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+server:
+  port: 0
