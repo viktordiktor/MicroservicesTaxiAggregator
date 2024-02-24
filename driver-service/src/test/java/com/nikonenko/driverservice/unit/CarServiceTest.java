@@ -1,4 +1,4 @@
-package com.nikonenko.driverservice.services;
+package com.nikonenko.driverservice.unit;
 
 import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
