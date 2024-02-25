@@ -53,7 +53,7 @@ public class RideController {
     }
 
     @GetMapping("/by-passenger/{passengerId}")
-    public PageResponse<RideResponse> getRidersByPassenger(@PathVariable Long passengerId,
+    public PageResponse<RideResponse> getRidesByPassenger(@PathVariable Long passengerId,
                                                            @RequestParam(defaultValue = "0") int pageNumber,
                                                            @RequestParam(defaultValue = "5") int pageSize,
                                                            @RequestParam(defaultValue = "id") String sortField) {
@@ -61,7 +61,7 @@ public class RideController {
     }
 
     @GetMapping("/by-driver/{driverId}")
-    public PageResponse<RideResponse> getRidersByDriver(@PathVariable Long driverId,
+    public PageResponse<RideResponse> getRidesByDriver(@PathVariable Long driverId,
                                                         @RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
                                                         @RequestParam(defaultValue = "id") String sortField) {

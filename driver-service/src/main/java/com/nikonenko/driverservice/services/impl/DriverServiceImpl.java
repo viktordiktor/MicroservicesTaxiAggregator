@@ -193,7 +193,6 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public PageResponse<RideResponse> getDriverRides(Long driverId, int pageNumber, int pageSize, String sortField) {
-        getOrThrow(driverId);
         return rideService.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
     }
 

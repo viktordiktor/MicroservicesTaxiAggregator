@@ -31,6 +31,7 @@ import com.nikonenko.passengerservice.repositories.PassengerRepository;
 import com.nikonenko.passengerservice.services.PassengerService;
 import com.nikonenko.passengerservice.services.feign.PaymentService;
 import com.nikonenko.passengerservice.services.feign.RideService;
+import com.nikonenko.passengerservice.utils.ExceptionList;
 import com.nikonenko.passengerservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,6 +99,9 @@ public class PassengerServiceImpl implements PassengerService {
             checkCustomerExists(passengerId);
             chargeResponse = createCharge(passengerId, calculatePriceResponse.getPrice(),
                     rideByPassengerRequest.getCurrency());
+            if (!chargeResponse.isSuccess()) {
+                return RideResponse.builder().errorMessage(ExceptionList.CHARGE_IS_NOT_SUCCESS.getValue()).build();
+            }
         }
 
         return createRide(passengerId, rideByPassengerRequest, distanceResponse.getDistance(), chargeResponse);
