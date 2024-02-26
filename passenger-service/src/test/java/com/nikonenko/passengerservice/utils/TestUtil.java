@@ -125,7 +125,7 @@ public class TestUtil {
 
     public List<PassengerResponse> getPassengerResponseList(ModelMapper modelMapper) {
         return getPassengerList().stream()
-                .map(driver -> modelMapper.map(driver, PassengerResponse.class))
+                .map(passenger -> modelMapper.map(passenger, PassengerResponse.class))
                 .collect(Collectors.toList());
     }
 
