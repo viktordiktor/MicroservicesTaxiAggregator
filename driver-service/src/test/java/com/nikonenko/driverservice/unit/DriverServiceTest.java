@@ -71,7 +71,7 @@ class DriverServiceTest {
     void givenValidParams_whenGetDrivers_thenReturnPageResponseDriverResponse() {
         List<Driver> expectedList = TestUtil.getDriverList();
         Page<Driver> driversPage = new PageImpl<>(expectedList);
-        List<DriverResponse> expectedResponses = TestUtil.getDriverResponseList(modelMapper);
+        List<DriverResponse> expectedResponses = TestUtil.getDriverResponseList(modelMapper, expectedList);
 
         doReturn(driversPage)
                 .when(driverRepository)

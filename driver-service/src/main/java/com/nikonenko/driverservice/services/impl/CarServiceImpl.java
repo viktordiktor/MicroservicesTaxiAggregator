@@ -4,7 +4,7 @@ import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.exceptions.CarNotFoundException;
-import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
+import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
 import com.nikonenko.driverservice.models.Car;
 import com.nikonenko.driverservice.repositories.CarRepository;
 import com.nikonenko.driverservice.services.CarService;
@@ -78,7 +78,7 @@ public class CarServiceImpl implements CarService {
     public void checkCarExists(CarRequest carRequest) {
         if (carRepository.existsByNumber(carRequest.getNumber())) {
             log.info("Car with number {} already exists!", carRequest.getNumber());
-            throw new PhoneAlreadyExistsException();
+            throw new CarNumberAlreadyExistsException();
         }
     }
 }

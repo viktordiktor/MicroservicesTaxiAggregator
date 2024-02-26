@@ -11,6 +11,7 @@ import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import com.nikonenko.driverservice.exceptions.CarNotFoundException;
 import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
+import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
@@ -25,6 +26,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,11 +42,15 @@ public class TestUtil {
     public final int DEFAULT_TOTAL_PAGE_SIZE = 1;
     public final Long DEFAULT_ID = 1L;
     public final Long SECOND_ID = 2L;
+    public final Long UPDATING_ID = 3L;
+    public final Long CREATION_ID = 4L;
     public final Long NOT_EXISTING_ID = 999L;
     public final String DEFAULT_USERNAME = "USERNAME1";
     public final String SECOND_USERNAME = "USERNAME2";
+    public final String EXISTING_USERNAME = "FANAT_UBER";
     public final String DEFAULT_PHONE = "+375111111111";
-    public final String SECOND_PHONE = "+375222222222";
+    public final String SECOND_PHONE = "+375232323232";
+    public final String EXISTING_PHONE = "+375123456789";
     public final String DEFAULT_CAR_NUMBER = "1111AA1";
     public final String SECOND_CAR_NUMBER = "2222AA2";
     public final String EXISTING_CAR_NUMBER = "1234AA1";
@@ -66,6 +72,9 @@ public class TestUtil {
     public final RidePaymentMethod DEFAULT_PAYMENT_METHOD = RidePaymentMethod.BY_CARD;
     public final String DEFAULT_CARS_ID_PATH = "/api/v1/cars/{id}";
     public final String DEFAULT_CARS_PATH = "/api/v1/cars";
+    public final String DEFAULT_DRIVERS_ID_PATH = "/api/v1/drivers/{id}";
+    public final String DEFAULT_DRIVER_CAR_PATH = "/api/v1/drivers/car/{id}";
+    public final String DEFAULT_DRIVERS_PATH = "/api/v1/drivers";
     public final String ID_PARAMETER = "id";
     public final String PAGE_NUMBER_PARAMETER = "pageNumber";
     public final String PAGE_SIZE_PARAMETER = "pageSize";
@@ -93,6 +102,15 @@ public class TestUtil {
                 .car(getDefaultCar())
                 .phone(SECOND_PHONE)
                 .ratingSet(getDefaultRatingSet())
+                .available(FALSE_AVAILABLE)
+                .build();
+    }
+
+    public Driver getCreationDriver() {
+        return Driver.builder()
+                .id(CREATION_ID)
+                .username(DEFAULT_USERNAME)
+                .phone(DEFAULT_PHONE)
                 .available(FALSE_AVAILABLE)
                 .build();
     }
@@ -176,17 +194,57 @@ public class TestUtil {
 
     public DriverResponse getUpdateDriverResponse() {
         return DriverResponse.builder()
-                .id(DEFAULT_ID)
+                .id(UPDATING_ID)
                 .username(SECOND_USERNAME)
-                .car(getDefaultCarResponse())
                 .phone(SECOND_PHONE)
-                .ratingSet(getDefaultRatingSetResponse())
+                .ratingSet(new HashSet<>())
                 .available(FALSE_AVAILABLE)
                 .build();
     }
 
-    public List<DriverResponse> getDriverResponseList(ModelMapper modelMapper) {
-        return getDriverList().stream()
+    public DriverRequest getCreationDriverRequest() {
+        return DriverRequest.builder()
+                .username(DEFAULT_USERNAME)
+                .phone(DEFAULT_PHONE)
+                .build();
+    }
+
+    public DriverResponse getCreationDriverResponse() {
+        return DriverResponse.builder()
+                .id(CREATION_ID)
+                .username(DEFAULT_USERNAME)
+                .phone(DEFAULT_PHONE)
+                .available(true)
+                .build();
+    }
+
+    public DriverRequest getDriverRequestWithExistingPhoneRequest() {
+        return DriverRequest.builder()
+                .username(DEFAULT_USERNAME)
+                .phone(EXISTING_PHONE)
+                .build();
+    }
+
+    public DriverRequest getDriverRequestWithExistingUsernameRequest() {
+        return DriverRequest.builder()
+                .username(EXISTING_USERNAME)
+                .phone(DEFAULT_PHONE)
+                .build();
+    }
+
+    public DriverResponse getDriverAddingCarResponse() {
+        return DriverResponse.builder()
+                .id(UPDATING_ID)
+                .username(EXISTING_USERNAME)
+                .phone(EXISTING_PHONE)
+                .car(getCreationCarResponse())
+                .ratingSet(new HashSet<>())
+                .available(true)
+                .build();
+    }
+
+    public List<DriverResponse> getDriverResponseList(ModelMapper modelMapper, List<Driver> driverList) {
+        return driverList.stream()
                 .map(driver -> modelMapper.map(driver, DriverResponse.class))
                 .collect(Collectors.toList());
     }
@@ -248,6 +306,15 @@ public class TestUtil {
                 .number(SECOND_CAR_NUMBER)
                 .model(SECOND_CAR_MODEL)
                 .color(SECOND_CAR_COLOR)
+                .build();
+    }
+
+    public CarResponse getCreationCarResponse() {
+        return CarResponse.builder()
+                .id(CREATION_ID)
+                .number(DEFAULT_CAR_NUMBER)
+                .model(DEFAULT_CAR_MODEL)
+                .color(DEFAULT_CAR_COLOR)
                 .build();
     }
 
@@ -316,8 +383,12 @@ public class TestUtil {
                 .build();
     }
 
-    public ExceptionResponse getNotFoundExceptionResponse() {
+    public ExceptionResponse getCarNotFoundExceptionResponse() {
         return getBasicExceptionResponse(new CarNotFoundException(), HttpStatus.NOT_FOUND);
+    }
+
+    public ExceptionResponse getDriverNotFoundExceptionResponse() {
+        return getBasicExceptionResponse(new DriverNotFoundException(), HttpStatus.NOT_FOUND);
     }
 
     public ExceptionResponse getWrongPageableParameterExceptionResponse() {

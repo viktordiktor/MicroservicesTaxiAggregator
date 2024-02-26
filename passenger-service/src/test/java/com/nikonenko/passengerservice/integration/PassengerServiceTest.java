@@ -58,7 +58,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenNonExistsPassengerId_whenFindById_thenThrowException() {
+    void givenNonExistsPassengerId_whenFindById_thenReturnExceptionResponse() {
         ExceptionResponse response = TestUtil.getNotFoundExceptionResponse();
 
         ExceptionResponse result = given()
@@ -98,7 +98,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenInvalidPageParams_whenFindAll_thenThrowException() {
+    void givenInvalidPageParams_whenFindAll_thenReturnExceptionResponse() {
         ExceptionResponse response = TestUtil.getWrongPageableParameterExceptionResponse();
 
         ExceptionResponse result = given()
@@ -118,7 +118,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenInvalidSortField_whenFindAll_thenThrowException() {
+    void givenInvalidSortField_whenFindAll_thenReturnExceptionResponse() {
         ExceptionResponse response = TestUtil.getWrongSortFieldExceptionResponse();
 
         ExceptionResponse result = given()
@@ -157,7 +157,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenPassengerWithExistingPhone_whenCreatePassenger_thenThrowException() {
+    void givenPassengerWithExistingPhone_whenCreatePassenger_thenReturnExceptionResponse() {
         PassengerRequest request = TestUtil.getPassengerRequestWithExistingPhoneRequest();
         ExceptionResponse response = TestUtil.getPhoneAlreadyExistsExceptionResponse();
 
@@ -177,7 +177,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenPassengerWithExistingUsername_whenCreatePassenger_thenThrowException() {
+    void givenPassengerWithExistingUsername_whenCreatePassenger_thenReturnExceptionResponse() {
         PassengerRequest request = TestUtil.getPassengerRequestWithExistingUsernameRequest();
         ExceptionResponse response = TestUtil.getUsernameAlreadyExistsExceptionResponse();
 
@@ -217,7 +217,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenExistsPassengerIdAndPassengerWithExistingPhone_whenEditPassenger_thenThrowException() {
+    void givenExistsPassengerIdAndPassengerWithExistingPhone_whenEditPassenger_thenReturnExceptionResponse() {
         PassengerRequest request = TestUtil.getPassengerRequestWithExistingPhoneRequest();
         ExceptionResponse response = TestUtil.getPhoneAlreadyExistsExceptionResponse();
 
@@ -238,7 +238,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenExistsPassengerIdAndPassengerWithExistingUsername_whenEditPassenger_thenThrowException() {
+    void givenExistsPassengerIdAndPassengerWithExistingUsername_whenEditPassenger_thenReturnExceptionResponse() {
         PassengerRequest request = TestUtil.getPassengerRequestWithExistingUsernameRequest();
         ExceptionResponse response = TestUtil.getUsernameAlreadyExistsExceptionResponse();
 
@@ -259,7 +259,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenNonExistsPassengerId_whenEditPassenger_thenThrowException() {
+    void givenNonExistsPassengerId_whenEditPassenger_thenReturnExceptionResponse() {
         PassengerRequest request = TestUtil.getUpdatePassengerRequest();
         ExceptionResponse response = TestUtil.getNotFoundExceptionResponse();
 
@@ -292,7 +292,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenNonExistsPassengerId_whenDeletePassenger_thenThrowException() {
+    void givenNonExistsPassengerId_whenDeletePassenger_thenReturnExceptionResponse() {
         ExceptionResponse response = TestUtil.getNotFoundExceptionResponse();
 
         ExceptionResponse result = given()

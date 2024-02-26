@@ -10,6 +10,7 @@ import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.ReviewRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
+import com.nikonenko.driverservice.exceptions.CarNotFoundException;
 import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotAddedCarException;
@@ -82,8 +83,10 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse editDriver(Long id, DriverRequest driverRequest) {
         checkDriverExists(driverRequest);
         Driver editingDriver = getOrThrow(id);
+        Set<RatingDriver> driverRating = editingDriver.getRatingSet();
         editingDriver = modelMapper.map(driverRequest, Driver.class);
         editingDriver.setId(id);
+        editingDriver.setRatingSet(driverRating);
         driverRepository.save(editingDriver);
         log.info("Driver edited with id: {}", id);
         return modelMapper.map(editingDriver, DriverResponse.class);
@@ -187,8 +190,8 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponse addCarToDriver(Long id, CarRequest carRequest) {
         Driver driver = getOrThrow(id);
-        carService.createCar(carRequest);
-        driver.setCar(modelMapper.map(carRequest, Car.class));
+        CarResponse carResponse = carService.createCar(carRequest);
+        driver.setCar(modelMapper.map(carResponse, Car.class));
         return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
     }
 
@@ -200,6 +203,9 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public void deleteCar(Long driverId) {
         Driver driver = getOrThrow(driverId);
+        if (driver.getCar() == null) {
+            throw new CarNotFoundException();
+        }
         Long carId = driver.getCar().getId();
         driver.setCar(null);
         carService.deleteCar(carId);

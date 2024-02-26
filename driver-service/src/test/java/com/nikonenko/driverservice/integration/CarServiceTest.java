@@ -57,8 +57,8 @@ public class CarServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenNonExistingCarId_whenFindById_thenThrowException() {
-        ExceptionResponse response = TestUtil.getNotFoundExceptionResponse();
+    void givenNonExistingCarId_whenFindById_thenReturnExceptionResponse() {
+        ExceptionResponse response = TestUtil.getCarNotFoundExceptionResponse();
 
         ExceptionResponse result = given()
                 .port(port)
@@ -97,7 +97,7 @@ public class CarServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenInvalidPageParams_whenGetCars_thenThrowException() {
+    void givenInvalidPageParams_whenGetCars_thenReturnExceptionResponse() {
         ExceptionResponse response = TestUtil.getWrongPageableParameterExceptionResponse();
 
         ExceptionResponse result = given()
@@ -117,7 +117,7 @@ public class CarServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenInvalidSortByParam_whenGetCars_thenThrowException() {
+    void givenInvalidSortByParam_whenGetCars_thenReturnExceptionResponse() {
         ExceptionResponse response = TestUtil.getWrongSortFieldExceptionResponse();
 
         ExceptionResponse result = given()
@@ -137,7 +137,7 @@ public class CarServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenExistingCar_whenEditCar_thenUpdateCar() {
+    void givenExistingCar_whenEditCar_thenReturnCarResponse() {
         CarRequest request = TestUtil.getUpdateCarRequest();
         CarResponse response = TestUtil.getUpdateCarResponse();
 
@@ -157,9 +157,9 @@ public class CarServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenCarWithExistingNumber_whenEditCar_thenThrowException() {
+    void givenCarWithExistingNumber_whenEditCar_thenReturnExceptionResponse() {
         CarRequest request = TestUtil.getCarRequestWithExistingNumberRequest();
-        ExceptionResponse response = TestUtil.getPhoneAlreadyExistsExceptionResponse();
+        ExceptionResponse response = TestUtil.getCarNumberAlreadyExistsExceptionResponse();
 
         ExceptionResponse result = given()
                 .port(port)
@@ -178,9 +178,9 @@ public class CarServiceTest extends ContainerConfiguration {
     }
 
     @Test
-    void givenNonExistingCar_whenEditCar_thenThrowException() {
+    void givenNonExistingCar_whenEditCar_thenReturnExceptionResponse() {
         CarRequest request = TestUtil.getUpdateCarRequest();
-        ExceptionResponse response = TestUtil.getNotFoundExceptionResponse();
+        ExceptionResponse response = TestUtil.getCarNotFoundExceptionResponse();
 
         ExceptionResponse result = given()
                 .port(port)
