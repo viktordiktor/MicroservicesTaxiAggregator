@@ -60,6 +60,12 @@ public class DriverController {
         driverService.deleteDriver(id);
     }
 
+    @DeleteMapping("/car/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCar(@PathVariable Long id) {
+        driverService.deleteCar(id);
+    }
+
     @PatchMapping("/{driverId}/accept/{rideId}")
     public void acceptRide(@PathVariable String rideId, @PathVariable Long driverId) {
         driverService.acceptRide(rideId, driverId);

@@ -346,7 +346,7 @@ class DriverServiceTest {
         verify(driverRepository, times(2)).findById(availableDriver.getId());
         verify(modelMapper).map(car, CarResponse.class);
         verify(driverRepository).save(availableDriver);
-        assertFalse(availableDriver.getAvailable());
+        assertFalse(availableDriver.isAvailable());
     }
 
     @Test
@@ -364,7 +364,7 @@ class DriverServiceTest {
 
         verify(driverRepository).findById(notAvailableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertFalse(notAvailableDriver.getAvailable());
+        assertFalse(notAvailableDriver.isAvailable());
     }
 
     @Test
@@ -382,7 +382,7 @@ class DriverServiceTest {
 
         verify(driverRepository, times(2)).findById(availableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertTrue(availableDriver.getAvailable());
+        assertTrue(availableDriver.isAvailable());
     }
 
     @Test
@@ -418,7 +418,7 @@ class DriverServiceTest {
         verify(driverRepository, times(2)).findById(notAvailableDriver.getId());
         verify(modelMapper).map(car, CarResponse.class);
         verify(driverRepository).save(notAvailableDriver);
-        assertTrue(notAvailableDriver.getAvailable());
+        assertTrue(notAvailableDriver.isAvailable());
     }
 
     @Test
@@ -436,7 +436,7 @@ class DriverServiceTest {
 
         verify(driverRepository).findById(availableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertTrue(availableDriver.getAvailable());
+        assertTrue(availableDriver.isAvailable());
     }
 
     @Test
@@ -454,7 +454,7 @@ class DriverServiceTest {
 
         verify(driverRepository, times(2)).findById(notAvailableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertFalse(notAvailableDriver.getAvailable());
+        assertFalse(notAvailableDriver.isAvailable());
     }
 
     @Test
@@ -490,7 +490,7 @@ class DriverServiceTest {
         verify(driverRepository, times(2)).findById(notAvailableDriver.getId());
         verify(modelMapper).map(car, CarResponse.class);
         verify(driverRepository).save(notAvailableDriver);
-        assertFalse(notAvailableDriver.getAvailable());
+        assertFalse(notAvailableDriver.isAvailable());
     }
 
     @Test
@@ -508,7 +508,7 @@ class DriverServiceTest {
 
         verify(driverRepository).findById(availableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertTrue(availableDriver.getAvailable());
+        assertTrue(availableDriver.isAvailable());
     }
 
     @Test
@@ -526,7 +526,7 @@ class DriverServiceTest {
 
         verify(driverRepository, times(2)).findById(notAvailableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertFalse(notAvailableDriver.getAvailable());
+        assertFalse(notAvailableDriver.isAvailable());
     }
 
     @Test
@@ -562,7 +562,7 @@ class DriverServiceTest {
         verify(driverRepository, times(2)).findById(notAvailableDriver.getId());
         verify(modelMapper).map(car, CarResponse.class);
         verify(driverRepository).save(notAvailableDriver);
-        assertTrue(notAvailableDriver.getAvailable());
+        assertTrue(notAvailableDriver.isAvailable());
     }
 
     @Test
@@ -580,7 +580,7 @@ class DriverServiceTest {
 
         verify(driverRepository).findById(availableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertTrue(availableDriver.getAvailable());
+        assertTrue(availableDriver.isAvailable());
     }
 
     @Test
@@ -598,7 +598,7 @@ class DriverServiceTest {
 
         verify(driverRepository, times(2)).findById(notAvailableDriver.getId());
         verifyNoMoreInteractions(driverRepository);
-        assertFalse(notAvailableDriver.getAvailable());
+        assertFalse(notAvailableDriver.isAvailable());
     }
 
     @Test
@@ -705,9 +705,6 @@ class DriverServiceTest {
         List<RideResponse> expectedList = TestUtil.getRideResponseList();
         PageResponse<RideResponse> expectedPageResponse = TestUtil.getPageRideResponse();
 
-        doReturn(Optional.of(driver))
-                .when(driverRepository)
-                .findById(driver.getId());
         doReturn(expectedPageResponse)
                 .when(rideService)
                 .getRidesByDriverId(driver.getId(), TestUtil.DEFAULT_PAGE,
@@ -717,27 +714,10 @@ class DriverServiceTest {
                 driverService.getDriverRides(driver.getId(), TestUtil.DEFAULT_PAGE,
                         TestUtil.DEFAULT_PAGE_SIZE, TestUtil.DEFAULT_PAGE_SORT);
 
-        verify(driverRepository).findById(driver.getId());
         verify(rideService).getRidesByDriverId(driver.getId(), TestUtil.DEFAULT_PAGE,
                 TestUtil.DEFAULT_PAGE_SIZE, TestUtil.DEFAULT_PAGE_SORT);
         assertNotNull(result);
         assertEquals(result.getTotalElements(), expectedList.size());
         assertEquals(expectedPageResponse, result);
-    }
-
-    @Test
-    void givenNonExistingDriver_whenGetDriverRides_thenReturnPageResponseRideResponse() {
-        doReturn(Optional.empty())
-                .when(driverRepository)
-                .findById(TestUtil.DEFAULT_ID);
-
-        assertThrows(
-                DriverNotFoundException.class,
-                () -> driverService.getDriverRides(TestUtil.DEFAULT_ID, TestUtil.DEFAULT_PAGE,
-                        TestUtil.DEFAULT_PAGE_SIZE, TestUtil.DEFAULT_PAGE_SORT)
-        );
-
-        verify(driverRepository).findById(TestUtil.DEFAULT_ID);
-        verifyNoMoreInteractions(driverRepository);
     }
 }

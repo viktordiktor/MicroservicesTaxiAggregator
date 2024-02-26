@@ -72,6 +72,7 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse createDriver(DriverRequest driverRequest) {
         checkDriverExists(driverRequest);
         Driver driver = modelMapper.map(driverRequest, Driver.class);
+        driver.setAvailable(true);
         Driver savedDriver = driverRepository.save(driver);
         log.info("Driver created with id: {}", savedDriver.getId());
         return modelMapper.map(savedDriver, DriverResponse.class);
@@ -136,7 +137,7 @@ public class DriverServiceImpl implements DriverService {
 
     private Driver getNotAvailableDriver(Long driverId) {
         Driver driver = getOrThrow(driverId);
-        if (driver.getAvailable()) {
+        if (driver.isAvailable()) {
             throw new DriverNoRidesException();
         }
         return driver;
@@ -144,7 +145,7 @@ public class DriverServiceImpl implements DriverService {
 
     private Driver getAvailableDriver(Long driverId) {
         Driver driver = getOrThrow(driverId);
-        if (!driver.getAvailable()) {
+        if (!driver.isAvailable()) {
             throw new DriverIsNotAvailableException();
         }
         return driver;
@@ -194,6 +195,15 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public PageResponse<RideResponse> getDriverRides(Long driverId, int pageNumber, int pageSize, String sortField) {
         return rideService.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
+    }
+
+    @Override
+    public void deleteCar(Long driverId) {
+        Driver driver = getOrThrow(driverId);
+        Long carId = driver.getCar().getId();
+        driver.setCar(null);
+        carService.deleteCar(carId);
+        driverRepository.save(driver);
     }
 
     public Driver getOrThrow(Long id) {

@@ -50,7 +50,7 @@ public class CarServiceTest {
     void givenValidParams_whenGetCars_thenReturnPageResponseCarResponse() {
         List<Car> expectedList = TestUtil.getDefaultCarList();
         Page<Car> carsPage = new PageImpl<>(expectedList);
-        List<CarResponse> expectedResponses = TestUtil.getCarResponseList(modelMapper);
+        List<CarResponse> expectedResponses = TestUtil.getCarResponseList(modelMapper, expectedList);
 
         doReturn(carsPage)
                 .when(carRepository)

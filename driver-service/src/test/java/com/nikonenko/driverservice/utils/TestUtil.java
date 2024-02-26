@@ -4,10 +4,17 @@ import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
 import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
+import com.nikonenko.driverservice.dto.ExceptionResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.RatingDriverResponse;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
+import com.nikonenko.driverservice.exceptions.CarNotFoundException;
+import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
+import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
+import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
+import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.driverservice.exceptions.WrongSortFieldException;
 import com.nikonenko.driverservice.models.Car;
 import com.nikonenko.driverservice.models.Driver;
 import com.nikonenko.driverservice.models.RatingDriver;
@@ -15,6 +22,8 @@ import com.nikonenko.driverservice.models.feign.RidePaymentMethod;
 import com.nikonenko.driverservice.models.feign.RideStatus;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -31,12 +40,14 @@ public class TestUtil {
     public final int DEFAULT_TOTAL_PAGE_SIZE = 1;
     public final Long DEFAULT_ID = 1L;
     public final Long SECOND_ID = 2L;
+    public final Long NOT_EXISTING_ID = 999L;
     public final String DEFAULT_USERNAME = "USERNAME1";
     public final String SECOND_USERNAME = "USERNAME2";
     public final String DEFAULT_PHONE = "+375111111111";
     public final String SECOND_PHONE = "+375222222222";
-    public final String DEFAULT_CAR_NUMBER = "1111-AA1";
-    public final String SECOND_CAR_NUMBER = "2222-AA2";
+    public final String DEFAULT_CAR_NUMBER = "1111AA1";
+    public final String SECOND_CAR_NUMBER = "2222AA2";
+    public final String EXISTING_CAR_NUMBER = "1234AA1";
     public final String DEFAULT_CAR_MODEL = "Model1";
     public final String SECOND_CAR_MODEL = "Model2";
     public final String DEFAULT_CAR_COLOR = "Color1";
@@ -53,6 +64,12 @@ public class TestUtil {
     public final String DEFAULT_END_ADDRESS = "address2";
     public final RideStatus DEFAULT_RIDE_STATUS = RideStatus.OPENED;
     public final RidePaymentMethod DEFAULT_PAYMENT_METHOD = RidePaymentMethod.BY_CARD;
+    public final String DEFAULT_CARS_ID_PATH = "/api/v1/cars/{id}";
+    public final String DEFAULT_CARS_PATH = "/api/v1/cars";
+    public final String ID_PARAMETER = "id";
+    public final String PAGE_NUMBER_PARAMETER = "pageNumber";
+    public final String PAGE_SIZE_PARAMETER = "pageSize";
+    public final String SORT_FIELD_PARAMETER = "sortField";
 
     public List<Driver> getDriverList() {
         return List.of(getDefaultDriver(), getSecondDriver());
@@ -238,10 +255,18 @@ public class TestUtil {
         return List.of(getDefaultCar());
     }
 
-    public List<CarResponse> getCarResponseList(ModelMapper modelMapper) {
-        return getDefaultCarList().stream()
+    public List<CarResponse> getCarResponseList(ModelMapper modelMapper, List<Car> carList) {
+        return carList.stream()
                 .map(car -> modelMapper.map(car, CarResponse.class))
                 .collect(Collectors.toList());
+    }
+
+    public CarRequest getCarRequestWithExistingNumberRequest() {
+        return CarRequest.builder()
+                .number(EXISTING_CAR_NUMBER)
+                .model(DEFAULT_CAR_MODEL)
+                .color(DEFAULT_CAR_COLOR)
+                .build();
     }
 
     public Set<RatingDriver> getDefaultRatingSet() {
@@ -288,6 +313,37 @@ public class TestUtil {
                 .objectList(getRideResponseList())
                 .totalElements(getRideResponseList().size())
                 .totalPages(DEFAULT_TOTAL_PAGE_SIZE)
+                .build();
+    }
+
+    public ExceptionResponse getNotFoundExceptionResponse() {
+        return getBasicExceptionResponse(new CarNotFoundException(), HttpStatus.NOT_FOUND);
+    }
+
+    public ExceptionResponse getWrongPageableParameterExceptionResponse() {
+        return getBasicExceptionResponse(new WrongPageableParameterException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getUsernameAlreadyExistsExceptionResponse() {
+        return getBasicExceptionResponse(new UsernameAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getPhoneAlreadyExistsExceptionResponse() {
+        return getBasicExceptionResponse(new PhoneAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getWrongSortFieldExceptionResponse() {
+        return getBasicExceptionResponse(new WrongSortFieldException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getCarNumberAlreadyExistsExceptionResponse() {
+        return getBasicExceptionResponse(new CarNumberAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+    }
+
+    private ExceptionResponse getBasicExceptionResponse(Exception ex, HttpStatus status) {
+        return ExceptionResponse.builder()
+                .message(ex.getMessage())
+                .httpStatus(status)
                 .build();
     }
 }
