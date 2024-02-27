@@ -4,14 +4,14 @@ spring:
   data:
     mongodb:
       database: rides-db
-      host: mongodb
+      host: localhost
       port: 27017
       authentication-database: admin
   application:
     name: RIDE-SERVICE
   kafka:
+    bootstrap-servers: localhost:9092
     consumer:
-      bootstrap-servers: broker:29092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -24,7 +24,6 @@ spring:
       passenger-review-name: passenger-review-topic
       driver-review-name: driver-review-topic
     producer:
-      bootstrap-servers: broker:29092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
@@ -36,12 +35,13 @@ spring:
 mongock:
   migration-scan-package:
     - com.nikonenko.rideservice.migrations
+
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-server:8761/eureka/
+      defaultZone: http://eureka@localhost:8761/eureka/
 server:
-  port: 0
+  port: 8082
 
 feign:
   client:
