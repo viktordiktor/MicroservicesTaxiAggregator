@@ -1,0 +1,6 @@
+DELETE FROM rating_drivers;
+ALTER TABLE rating_drivers AUTO_INCREMENT = 1;
+DELETE FROM drivers;
+ALTER TABLE drivers AUTO_INCREMENT = 1;
+DELETE FROM cars;
+ALTER TABLE cars AUTO_INCREMENT = 1;

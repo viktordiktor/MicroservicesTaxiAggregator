@@ -34,12 +34,12 @@ public class Driver {
     private String username;
     @Column(name = "phone", unique = true)
     private String phone;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     private Set<RatingDriver> ratingSet;
-    @Column(name = "available", columnDefinition = "boolean default true")
-    private Boolean available;
+    @Column(name = "available")
+    private boolean available;
 }

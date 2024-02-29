@@ -23,6 +23,8 @@
         <mongock.version>5.4.0</mongock.version>
         <cloud-deps.version>4.1.0</cloud-deps.version>
         <circuit-breaker.version>3.1.0</circuit-breaker.version>
+        <testcontainers.version>1.19.6</testcontainers.version>
+        <rest-assured.version>5.4.0</rest-assured.version>
     </properties>
     <repositories>
         <repository>
@@ -105,6 +107,18 @@
             <groupId>io.mongock</groupId>
             <artifactId>mongodb-springdata-v4-driver</artifactId>
             <version>${mongock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
         </dependency>
 
 

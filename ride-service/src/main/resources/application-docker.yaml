@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      database: rides-db
+      host: mongodb
+      port: 27017
+      authentication-database: admin
+  kafka:
+    bootstrap-servers: broker:29092
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+server:
+  port: 0

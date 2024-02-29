@@ -68,8 +68,9 @@ public class RideController {
         return rideService.getRidesByDriver(driverId, pageNumber, pageSize, sortField);
     }
 
-    @DeleteMapping("/{rideId}")
-    public CloseRideResponse closeRide(@PathVariable String rideId) {
-        return rideService.closeRide(rideId);
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public CloseRideResponse closeRide(@PathVariable String id) {
+        return rideService.closeRide(id);
     }
 }

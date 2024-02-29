@@ -170,8 +170,10 @@ public class PassengerServiceImpl implements PassengerService {
     public PassengerResponse editPassenger(Long id, PassengerRequest passengerRequest) {
         checkPassengerExists(passengerRequest);
         Passenger editingPassenger = getOrThrow(id);
+        Set<RatingPassenger> passengerRating = editingPassenger.getRatingSet();
         editingPassenger = modelMapper.map(passengerRequest, Passenger.class);
         editingPassenger.setId(id);
+        editingPassenger.setRatingSet(passengerRating);
         passengerRepository.save(editingPassenger);
         log.info("Passenger edited with id: {}", id);
         return modelMapper.map(editingPassenger, PassengerResponse.class);

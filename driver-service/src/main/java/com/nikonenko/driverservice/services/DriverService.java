@@ -34,4 +34,6 @@ public interface DriverService {
     void sendReviewToPassenger(String rideId, RatingFromDriverRequest request);
 
     PageResponse<RideResponse> getDriverRides(Long driverId, int pageNumber, int pageSize, String sortField);
+
+    void deleteCar(Long driverId);
 }

@@ -1,35 +1,47 @@
 package com.nikonenko.rideservice.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.maps.model.LatLng;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
+import com.nikonenko.rideservice.dto.ExceptionResponse;
+import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.ReviewRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.dto.feign.drivers.CarResponse;
 import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeResponse;
 import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeReturnResponse;
+import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
+import com.nikonenko.rideservice.exceptions.RideNotFoundException;
+import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
+import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
+import com.nikonenko.rideservice.integration.config.LocalDateTimeAdapter;
 import com.nikonenko.rideservice.models.Ride;
 import com.nikonenko.rideservice.models.RideAction;
 import com.nikonenko.rideservice.models.RidePaymentMethod;
 import com.nikonenko.rideservice.models.RideStatus;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
-
+import org.springframework.http.HttpStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @UtilityClass
 public class TestUtil {
     public static final String DEFAULT_RIDE_ID = "ride1";
+    public static final String NOT_EXISTING_RIDE_ID = "ride32193912";
     public static final Long DEFAULT_PASSENGER_ID = 1L;
     public static final Long DEFAULT_DRIVER_ID = 1L;
     public static final String DEFAULT_START_ADDRESS = "address1";
     public static final String DEFAULT_END_ADDRESS = "address2";
-    public static final LocalDateTime DEFAULT_DATETIME = LocalDateTime.MIN;
+    public static final LocalDateTime DEFAULT_DATETIME = LocalDateTime.of(2024, 2, 27, 12, 12, 12);
     public static final String DEFAULT_CHARGE_ID = "charge1";
     public static final Double DEFAULT_DISTANCE = 10.0;
     public static final RideStatus OPENED_STATUS = RideStatus.OPENED;
@@ -53,6 +65,20 @@ public class TestUtil {
     public static final BigDecimal DEFAULT_RETURN_AMOUNT = BigDecimal.ZERO;
     public static final RideAction RIDE_ACTION_ACCEPT = RideAction.ACCEPT;
     public static final RideAction RIDE_ACTION_FINISH = RideAction.FINISH;
+    public final String DEFAULT_ID_PATH = "/api/v1/rides/{id}";
+    public final String DEFAULT_PATH = "/api/v1/rides";
+    public final String DEFAULT_OPEN_PATH = "/api/v1/rides/open";
+    public final String DEFAULT_BY_PASSENGER_PATH = "/api/v1/rides/by-passenger/{passengerId}";
+    public final String DEFAULT_BY_DRIVER_PATH = "/api/v1/rides/by-driver/{driverId}";
+    public final String DEFAULT_DISTANCE_PATH = "/api/v1/rides/distance";
+    public final String ID_PARAMETER = "id";
+    public final String PASSENGER_ID_PARAMETER = "passengerId";
+    public final String DRIVER_ID_PARAMETER = "driverId";
+    public final String PAGE_NUMBER_PARAMETER = "pageNumber";
+    public final String PAGE_SIZE_PARAMETER = "pageSize";
+    public final String SORT_FIELD_PARAMETER = "sortField";
+    public final String START_GEO_PARAMETER = "startGeo";
+    public final String END_GEO_PARAMETER = "endGeo";
     public static final int DEFAULT_RATING = 5;
     public static final String DEFAULT_COMMENT = "comment1";
     public static final boolean SUCCESS_TRUE = true;
@@ -70,6 +96,19 @@ public class TestUtil {
                 .chargeId(DEFAULT_CHARGE_ID)
                 .distance(DEFAULT_DISTANCE)
                 .status(OPENED_STATUS)
+                .paymentMethod(RidePaymentMethod.BY_CARD)
+                .build();
+    }
+
+    public RideResponse getCreateRideResponseByCash() {
+        return RideResponse.builder()
+                .id(DEFAULT_RIDE_ID)
+                .passengerId(DEFAULT_PASSENGER_ID)
+                .startAddress(DEFAULT_START_ADDRESS)
+                .endAddress(DEFAULT_END_ADDRESS)
+                .distance(DEFAULT_DISTANCE)
+                .status(OPENED_STATUS)
+                .paymentMethod(RidePaymentMethod.BY_CASH)
                 .build();
     }
 
@@ -261,6 +300,49 @@ public class TestUtil {
                 .rideId(DEFAULT_RIDE_ID)
                 .rating(DEFAULT_RATING)
                 .comment(DEFAULT_COMMENT)
+                .build();
+    }
+
+    public void assertEqualsJsonPageResponse(List<RideResponse> responses, PageResponse<RideResponse> result) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
+        assertEquals(gson.toJson(responses), gson.toJson(result.getObjectList()));
+    }
+
+    public void assertEqualsAllRideResponseFieldsWithoutId(RideResponse response, RideResponse result) {
+        assertEquals(response.getDistance(), result.getDistance());
+        assertEquals(response.getDriverId(), result.getDriverId());
+        assertEquals(response.getCar(), result.getCar());
+        assertEquals(response.getStartAddress(), result.getStartAddress());
+        assertEquals(response.getEndAddress(), result.getEndAddress());
+        assertEquals(response.getStartDate(), result.getStartDate());
+        assertEquals(response.getEndDate(), result.getEndDate());
+        assertEquals(response.getStatus(), result.getStatus());
+        assertEquals(response.getChargeId(), result.getChargeId());
+        assertEquals(response.getPaymentMethod(), result.getPaymentMethod());
+    }
+
+    public ExceptionResponse getNotFoundExceptionResponse() {
+        return getBasicExceptionResponse(new RideNotFoundException(), HttpStatus.NOT_FOUND);
+    }
+
+    public ExceptionResponse getWrongPageableParameterExceptionResponse() {
+        return getBasicExceptionResponse(new WrongPageableParameterException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getWrongSortFieldExceptionResponse() {
+        return getBasicExceptionResponse(new WrongSortFieldException(), HttpStatus.BAD_REQUEST);
+    }
+
+    public ExceptionResponse getRideIsNotOpenedExceptionResponse() {
+        return getBasicExceptionResponse(new RideIsNotOpenedException(), HttpStatus.BAD_REQUEST);
+    }
+
+    private ExceptionResponse getBasicExceptionResponse(Exception ex, HttpStatus status) {
+        return ExceptionResponse.builder()
+                .message(ex.getMessage())
+                .httpStatus(status)
                 .build();
     }
 }

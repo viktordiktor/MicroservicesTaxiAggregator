@@ -19,6 +19,8 @@
         <liquibase.version>4.24.0</liquibase.version>
         <cloud-deps.version>4.1.0</cloud-deps.version>
         <circuit-breaker.version>3.1.0</circuit-breaker.version>
+        <testcontainers.version>1.19.6</testcontainers.version>
+        <rest-assured.version>5.4.0</rest-assured.version>
     </properties>
     <dependencies>
         <dependency>
@@ -38,7 +40,6 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <version>${cloud-deps.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -68,7 +69,6 @@
             <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
             <version>${circuit-breaker.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
@@ -78,6 +78,18 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

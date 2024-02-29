@@ -20,6 +20,8 @@
         <cloud-deps.version>4.1.0</cloud-deps.version>
         <google-maps.version>2.2.0</google-maps.version>
         <circuit-breaker.version>3.1.0</circuit-breaker.version>
+        <testcontainers.version>1.19.6</testcontainers.version>
+        <rest-assured.version>5.4.0</rest-assured.version>
     </properties>
     <dependencies>
         <dependency>
@@ -84,6 +86,20 @@
             <artifactId>google-maps-services</artifactId>
             <version>${google-maps.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
 
 
     </dependencies>

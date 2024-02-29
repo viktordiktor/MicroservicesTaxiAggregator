@@ -10,6 +10,7 @@ import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.ReviewRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
+import com.nikonenko.driverservice.exceptions.CarNotFoundException;
 import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotAddedCarException;
@@ -72,6 +73,7 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse createDriver(DriverRequest driverRequest) {
         checkDriverExists(driverRequest);
         Driver driver = modelMapper.map(driverRequest, Driver.class);
+        driver.setAvailable(true);
         Driver savedDriver = driverRepository.save(driver);
         log.info("Driver created with id: {}", savedDriver.getId());
         return modelMapper.map(savedDriver, DriverResponse.class);
@@ -81,8 +83,10 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse editDriver(Long id, DriverRequest driverRequest) {
         checkDriverExists(driverRequest);
         Driver editingDriver = getOrThrow(id);
+        Set<RatingDriver> driverRating = editingDriver.getRatingSet();
         editingDriver = modelMapper.map(driverRequest, Driver.class);
         editingDriver.setId(id);
+        editingDriver.setRatingSet(driverRating);
         driverRepository.save(editingDriver);
         log.info("Driver edited with id: {}", id);
         return modelMapper.map(editingDriver, DriverResponse.class);
@@ -136,7 +140,7 @@ public class DriverServiceImpl implements DriverService {
 
     private Driver getNotAvailableDriver(Long driverId) {
         Driver driver = getOrThrow(driverId);
-        if (driver.getAvailable()) {
+        if (driver.isAvailable()) {
             throw new DriverNoRidesException();
         }
         return driver;
@@ -144,7 +148,7 @@ public class DriverServiceImpl implements DriverService {
 
     private Driver getAvailableDriver(Long driverId) {
         Driver driver = getOrThrow(driverId);
-        if (!driver.getAvailable()) {
+        if (!driver.isAvailable()) {
             throw new DriverIsNotAvailableException();
         }
         return driver;
@@ -186,14 +190,26 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponse addCarToDriver(Long id, CarRequest carRequest) {
         Driver driver = getOrThrow(id);
-        carService.createCar(carRequest);
-        driver.setCar(modelMapper.map(carRequest, Car.class));
+        CarResponse carResponse = carService.createCar(carRequest);
+        driver.setCar(modelMapper.map(carResponse, Car.class));
         return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
     }
 
     @Override
     public PageResponse<RideResponse> getDriverRides(Long driverId, int pageNumber, int pageSize, String sortField) {
         return rideService.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
+    }
+
+    @Override
+    public void deleteCar(Long driverId) {
+        Driver driver = getOrThrow(driverId);
+        if (driver.getCar() == null) {
+            throw new CarNotFoundException();
+        }
+        Long carId = driver.getCar().getId();
+        driver.setCar(null);
+        carService.deleteCar(carId);
+        driverRepository.save(driver);
     }
 
     public Driver getOrThrow(Long id) {

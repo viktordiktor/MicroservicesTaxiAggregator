@@ -33,7 +33,7 @@ public class Passenger {
     private String username;
     @Column(name = "phone", unique = true)
     private String phone;
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "passenger_id")
     private Set<RatingPassenger> ratingSet;
 }
