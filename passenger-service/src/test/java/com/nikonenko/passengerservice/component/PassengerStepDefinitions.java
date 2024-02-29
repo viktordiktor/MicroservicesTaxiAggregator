@@ -155,7 +155,7 @@ public class PassengerStepDefinitions {
     }
 
     @Then("PhoneAlreadyExistsException should thrown for username {string} and phone {string}")
-    public void PhoneAlreadyExistsExceptionShouldThrownForUsernameAndPhone(String existingUsername, String phone) {
+    public void PhoneAlreadyExistsExceptionShouldThrownForUsernameAndPhone(String username, String existingPhone) {
         PhoneAlreadyExistsException expected = new PhoneAlreadyExistsException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
