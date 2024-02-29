@@ -45,7 +45,7 @@ public class TestUtil {
     public final Long UPDATING_ID = 3L;
     public final Long CREATION_ID = 4L;
     public final Long NOT_EXISTING_ID = 999L;
-    public final String DEFAULT_USERNAME = "USERNAME1";
+    public final String DEFAULT_USERNAME = "viktordiktor";
     public final String SECOND_USERNAME = "USERNAME2";
     public final String EXISTING_USERNAME = "FANAT_UBER";
     public final String DEFAULT_PHONE = "+375111111111";
@@ -206,6 +206,13 @@ public class TestUtil {
         return DriverRequest.builder()
                 .username(DEFAULT_USERNAME)
                 .phone(DEFAULT_PHONE)
+                .build();
+    }
+
+    public DriverRequest getDriverRequestWithParameters(String username, String phone) {
+        return DriverRequest.builder()
+                .username(username)
+                .phone(phone)
                 .build();
     }
 
