@@ -42,10 +42,28 @@ Feature: Passenger Service
   Scenario: Delete Passenger by existing ID
     Given Passenger with ID 1 exists
     When deletePassenger method is called with ID 1
-    Then Should return No Content for ID 1
+    Then Should return No Content for ID 1 and delete Passenger
   Scenario: Delete Passenger by not existing ID
     Given Passenger with ID 999 not exists
     When deletePassenger method is called with ID 999
+    Then PassengerNotFoundException should thrown for ID 999
+    
+  Scenario: Update Passenger rating by existing passenger ID and rating and comment
+    Given Passenger with ID 1 exists and rating 5 and comment "Super :)"
+    When createReview method is called with RatingToPassengerRequest of passenger ID 1 and rating 5 and comment "Super :)"
+    Then Should return No Content for ID 1 and rating 5 and comment "Super :)"
+  Scenario: Update Passenger rating by not existing ID and rating and comment
+    Given Passenger with ID 999 not exists and rating 5 and comment "Super :)"
+    When createReview method is called with RatingToPassengerRequest of passenger ID 999 and rating 5 and comment "Super :)"
+    Then PassengerNotFoundException should thrown for ID 999
+
+  Scenario: Create Customer by existing passenger ID and username and phone and amount
+    Given Passenger with ID 1 exists and CustomerDataRequest of username "viktordiktor" and phone "+375111111111" and amount "20.52"
+    When createCustomerByPassenger method is called with Passenger ID 1 and CustomerDataRequest of username "viktordiktor" and phone "+375111111111" and amount "20.52"
+    Then Should return No Content and send Customer Creation Request for Passenger ID 1 and username "viktordiktor" and phone "+375111111111" and amount "20.52"
+  Scenario: Create Customer by existing passenger ID and username and phone and amount
+    Given Passenger with ID 999 not exists and CustomerDataRequest of username "viktordiktor" and phone "+375111111111" and amount "20.52"
+    When createCustomerByPassenger method is called with Passenger ID 999 and CustomerDataRequest of username "viktordiktor" and phone "+375111111111" and amount "20.52"
     Then PassengerNotFoundException should thrown for ID 999
 
 
