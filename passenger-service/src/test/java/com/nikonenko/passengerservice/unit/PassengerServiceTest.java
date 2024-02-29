@@ -71,10 +71,10 @@ public class PassengerServiceTest {
     @Test
     void givenValidParams_whenGetPassengers_thenReturnPageResponsePassengerResponse() {
         List<Passenger> expectedList = TestUtil.getPassengerList();
-        Page<Passenger> driversPage = new PageImpl<>(expectedList);
+        Page<Passenger> passengersPage = new PageImpl<>(expectedList);
         List<PassengerResponse> expectedResponses = TestUtil.getPassengerResponseList(modelMapper, expectedList);
 
-        doReturn(driversPage)
+        doReturn(passengersPage)
                 .when(passengerRepository)
                 .findAll(PageRequest.of(TestUtil.DEFAULT_PAGE,
                         TestUtil.DEFAULT_PAGE_SIZE, Sort.by(TestUtil.DEFAULT_PAGE_SORT)));
@@ -86,7 +86,7 @@ public class PassengerServiceTest {
         verify(passengerRepository).findAll(any(Pageable.class));
         assertNotNull(result);
         assertEquals(result.getTotalElements(), expectedList.size());
-        assertEquals(result.getTotalPages(), driversPage.getTotalPages());
+        assertEquals(result.getTotalPages(), passengersPage.getTotalPages());
         assertThat(result.getObjectList()).containsExactlyElementsOf(expectedResponses);
     }
 
@@ -180,7 +180,7 @@ public class PassengerServiceTest {
     void givenExistingPassenger_whenEditPassenger_thenUpdatePassenger() {
         PassengerResponse response = TestUtil.getUpdatePassengerResponse();
         PassengerRequest request = TestUtil.getUpdatePassengerRequest();
-        Passenger driver = TestUtil.getDefaultPassenger();
+        Passenger passenger = TestUtil.getDefaultPassenger();
         Passenger editPassenger = TestUtil.getSecondPassenger();
 
         doReturn(false)
@@ -189,7 +189,7 @@ public class PassengerServiceTest {
         doReturn(false)
                 .when(passengerRepository)
                 .existsByPhone(editPassenger.getPhone());
-        doReturn(Optional.of(driver))
+        doReturn(Optional.of(passenger))
                 .when(passengerRepository)
                 .findById(TestUtil.DEFAULT_ID);
         doReturn(editPassenger)
@@ -269,16 +269,16 @@ public class PassengerServiceTest {
 
     @Test
     void givenExistingPassenger_whenDeletePassenger_thenDeletePassenger() {
-        Passenger driver = TestUtil.getDefaultPassenger();
+        Passenger passenger = TestUtil.getDefaultPassenger();
 
-        doReturn(Optional.of(driver))
+        doReturn(Optional.of(passenger))
                 .when(passengerRepository)
-                .findById(driver.getId());
+                .findById(passenger.getId());
 
-        passengerService.deletePassenger(driver.getId());
+        passengerService.deletePassenger(passenger.getId());
 
-        verify(passengerRepository).findById(driver.getId());
-        verify(passengerRepository).delete(driver);
+        verify(passengerRepository).findById(passenger.getId());
+        verify(passengerRepository).delete(passenger);
     }
 
     @Test
@@ -298,17 +298,17 @@ public class PassengerServiceTest {
 
     @Test
     void givenExistingPassenger_whenCreateReview_thenCreateReview() {
-        Passenger driver = TestUtil.getDefaultPassenger();
+        Passenger passenger = TestUtil.getDefaultPassenger();
         RatingToPassengerRequest request = TestUtil.getRatingToPassengerRequest();
 
-        doReturn(Optional.of(driver))
+        doReturn(Optional.of(passenger))
                 .when(passengerRepository)
                 .findById(request.getPassengerId());
 
         passengerService.createReview(request);
 
         verify(passengerRepository).findById(request.getPassengerId());
-        assertEquals(3, driver.getRatingSet().size());
+        assertEquals(3, passenger.getRatingSet().size());
     }
 
     @Test
