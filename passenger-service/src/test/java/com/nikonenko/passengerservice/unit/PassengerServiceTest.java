@@ -180,7 +180,7 @@ public class PassengerServiceTest {
     void givenExistingPassenger_whenEditPassenger_thenUpdatePassenger() {
         PassengerResponse response = TestUtil.getUpdatePassengerResponse();
         PassengerRequest request = TestUtil.getUpdatePassengerRequest();
-        Passenger driver = TestUtil.getDefaultPassenger();
+        Passenger passenger = TestUtil.getDefaultPassenger();
         Passenger editPassenger = TestUtil.getSecondPassenger();
 
         doReturn(false)
@@ -189,7 +189,7 @@ public class PassengerServiceTest {
         doReturn(false)
                 .when(passengerRepository)
                 .existsByPhone(editPassenger.getPhone());
-        doReturn(Optional.of(driver))
+        doReturn(Optional.of(passenger))
                 .when(passengerRepository)
                 .findById(TestUtil.DEFAULT_ID);
         doReturn(editPassenger)

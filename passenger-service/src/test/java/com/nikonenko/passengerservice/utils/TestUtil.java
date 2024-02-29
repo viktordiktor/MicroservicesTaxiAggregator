@@ -55,7 +55,7 @@ public class TestUtil {
     public final Long CREATION_ID = 4L;
     public final String CREATION_PHONE = "+375191911919";
     public final String EXISTING_PHONE = "+375111111111";
-    public final String CREATION_USERNAME = "CREATION_USERNAME";
+    public final String CREATION_USERNAME = "viktordiktor";
     public final String EXISTING_USERNAME = "JohnDoe";
     public final Integer DEFAULT_RATING = 5;
     public final String DEFAULT_RATING_COMMENT = "Comment1";
@@ -111,10 +111,32 @@ public class TestUtil {
                 .build();
     }
 
+    public Passenger getNotSavedCreationPassenger() {
+        return Passenger.builder()
+                .phone(CREATION_PHONE)
+                .username(CREATION_USERNAME)
+                .build();
+    }
+
+    public Passenger getSavedCreationPassenger() {
+        return Passenger.builder()
+                .id(CREATION_ID)
+                .phone(CREATION_PHONE)
+                .username(CREATION_USERNAME)
+                .build();
+    }
+
     public PassengerRequest getDefaultPassengerRequest() {
         return PassengerRequest.builder()
                 .phone(DEFAULT_PHONE)
                 .username(DEFAULT_USERNAME)
+                .build();
+    }
+
+    public PassengerRequest getPassengerRequestWithParameters(String username, String phone) {
+        return PassengerRequest.builder()
+                .phone(phone)
+                .username(username)
                 .build();
     }
 
