@@ -25,6 +25,7 @@
         <circuit-breaker.version>3.1.0</circuit-breaker.version>
         <testcontainers.version>1.19.6</testcontainers.version>
         <rest-assured.version>5.4.0</rest-assured.version>
+        <cucumber.version>7.15.0</cucumber.version>
     </properties>
     <repositories>
         <repository>
@@ -120,8 +121,22 @@
             <version>${rest-assured.version}</version>
             <scope>test</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
