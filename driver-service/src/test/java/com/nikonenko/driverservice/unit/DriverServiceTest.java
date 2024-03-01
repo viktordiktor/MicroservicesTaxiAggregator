@@ -664,7 +664,7 @@ class DriverServiceTest {
                 .createCar(carRequest);
         doReturn(car)
                 .when(modelMapper)
-                .map(carRequest, Car.class);
+                .map(carResponse, Car.class);
         doReturn(driver)
                 .when(driverRepository)
                 .save(driver);
@@ -676,7 +676,6 @@ class DriverServiceTest {
 
         verify(driverRepository).findById(driver.getId());
         verify(carService).createCar(carRequest);
-        verify(modelMapper).map(carRequest, Car.class);
         verify(driverRepository).save(driver);
         verify(modelMapper).map(driver, DriverResponse.class);
         assertEquals(driver.getCar(), car);
