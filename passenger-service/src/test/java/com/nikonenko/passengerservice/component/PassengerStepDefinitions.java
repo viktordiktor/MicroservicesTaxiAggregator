@@ -74,12 +74,12 @@ public class PassengerStepDefinitions {
     }
 
     @Given("Passenger with ID {long} not exists")
-    public void passengerWithIdNotExists(long id) {
+    public void passengerWithIdNotExists(Long id) {
         assertTrue(passengerRepository.findById(id).isEmpty());
     }
 
     @Then("PassengerNotFoundException should be thrown for ID {long}")
-    public void passengerNotFoundExceptionThrownForId(long id) {
+    public void passengerNotFoundExceptionThrownForId(Long id) {
         PassengerNotFoundException expected = new PassengerNotFoundException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
