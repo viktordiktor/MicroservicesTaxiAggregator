@@ -78,7 +78,7 @@ public class PassengerStepDefinitions {
         assertTrue(passengerRepository.findById(id).isEmpty());
     }
 
-    @Then("PassengerNotFoundException should thrown for ID {long}")
+    @Then("PassengerNotFoundException should be thrown for ID {long}")
     public void passengerNotFoundExceptionThrownForId(long id) {
         PassengerNotFoundException expected = new PassengerNotFoundException();
 
@@ -138,7 +138,7 @@ public class PassengerStepDefinitions {
         assertTrue(passengerRepository.existsByUsername(existingUsername));
     }
 
-    @Then("UsernameAlreadyExistsException should thrown for username {string} and phone {string}")
+    @Then("UsernameAlreadyExistsException should be thrown for username {string} and phone {string}")
     public void UsernameAlreadyExistsExceptionShouldThrownForUsernameAndPhone(String existingUsername, String phone) {
         UsernameAlreadyExistsException expected = new UsernameAlreadyExistsException();
 
@@ -154,7 +154,7 @@ public class PassengerStepDefinitions {
         assertTrue(passengerRepository.existsByPhone(existingPhone));
     }
 
-    @Then("PhoneAlreadyExistsException should thrown for username {string} and phone {string}")
+    @Then("PhoneAlreadyExistsException should be thrown for username {string} and phone {string}")
     public void PhoneAlreadyExistsExceptionShouldThrownForUsernameAndPhone(String username, String existingPhone) {
         PhoneAlreadyExistsException expected = new PhoneAlreadyExistsException();
 
