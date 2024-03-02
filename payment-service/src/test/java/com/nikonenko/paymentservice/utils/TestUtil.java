@@ -69,10 +69,27 @@ public class TestUtil {
                 .build();
     }
 
+    public CardRequest getCardRequestWithParameters(String cardNumber,
+                                                    Integer expMonth, Integer expYear, Integer cvc) {
+        return CardRequest.builder()
+                .cardNumber(cardNumber)
+                .expirationMonth(expMonth)
+                .expirationYear(expYear)
+                .cvc(cvc)
+                .build();
+    }
+
     public TokenResponse getTokenResponse() {
         return TokenResponse.builder()
                 .token(DEFAULT_TOKEN)
                 .cardNumber(DEFAULT_CARD_NUMBER)
+                .build();
+    }
+
+    public TokenResponse getTokenResponseWithCardNumber(String cardNumber) {
+        return TokenResponse.builder()
+                .token(DEFAULT_TOKEN)
+                .cardNumber(cardNumber)
                 .build();
     }
 
@@ -82,6 +99,16 @@ public class TestUtil {
                 "exp_month", DEFAULT_EXP_MONTH,
                 "exp_year" , DEFAULT_EXP_YEAR,
                 "cvc", DEFAULT_CVC
+        );
+    }
+
+    public Map<String, Object> getCardParamsWithParameters(String cardNumber,
+                                                           Integer expMonth, Integer expYear, Integer cvc) {
+        return  Map.of(
+                "number", cardNumber,
+                "exp_month", expMonth,
+                "exp_year" , expYear,
+                "cvc", cvc
         );
     }
 
@@ -99,10 +126,25 @@ public class TestUtil {
                 .build();
     }
 
+    public ChargeRequest getChargeRequestWithParameters(String token, String currency, String amount) {
+        return ChargeRequest.builder()
+                .amount(new BigDecimal(amount))
+                .currency(currency)
+                .stripeToken(token)
+                .build();
+    }
+
     public ChargeResponse getInitialChargeResponse() {
         return ChargeResponse.builder()
                 .chargeId(DEFAULT_CHARGE_ID)
                 .amount(DEFAULT_AMOUNT)
+                .build();
+    }
+
+    public ChargeResponse getInitialChargeResponseWithAmount(String amount) {
+        return ChargeResponse.builder()
+                .chargeId(DEFAULT_CHARGE_ID)
+                .amount(new BigDecimal(amount))
                 .build();
     }
 
@@ -123,6 +165,14 @@ public class TestUtil {
         return chargeParams;
     }
 
+    public Map<String, Object> getChargeParamsWithParams(String token, String currency, String amount) {
+        Map<String, Object> chargeParams = new HashMap<>();
+        chargeParams.put("amount", (long) (new BigDecimal(amount).doubleValue() * 100));
+        chargeParams.put("currency", currency);
+        chargeParams.put("source", token);
+        return chargeParams;
+    }
+
     public Charge getCharge() {
         Charge charge = new Charge();
         charge.setId(DEFAULT_CHARGE_ID);
@@ -135,10 +185,41 @@ public class TestUtil {
         return charge;
     }
 
+    public Charge getChargeWithChargeId(String chargeId) {
+        Charge charge = new Charge();
+        charge.setId(chargeId);
+        charge.setPaid(true);
+        charge.setAmount(DEFAULT_AMOUNT.longValue());
+        Charge.Outcome outcome = new Charge.Outcome();
+        outcome.setSellerMessage(DEFAULT_MESSAGE);
+        charge.setOutcome(outcome);
+        charge.setStatus(DEFAULT_MESSAGE);
+        return charge;
+    }
+
+    public Charge getChargeWithAmount(String amount) {
+        Charge charge = new Charge();
+        charge.setId(DEFAULT_CHARGE_ID);
+        charge.setPaid(true);
+        charge.setAmount(new BigDecimal(amount).longValue());
+        Charge.Outcome outcome = new Charge.Outcome();
+        outcome.setSellerMessage(DEFAULT_MESSAGE);
+        charge.setOutcome(outcome);
+        charge.setStatus(DEFAULT_MESSAGE);
+        return charge;
+    }
+
     public CouponRequest getCouponRequest() {
         return CouponRequest.builder()
                 .monthDuration(DEFAULT_MONTH_DURATION)
                 .percent(DEFAULT_PERCENT)
+                .build();
+    }
+
+    public CouponRequest getCouponRequestWithParameters(Long monthDuration, String percent) {
+        return CouponRequest.builder()
+                .monthDuration(monthDuration)
+                .percent(new BigDecimal(percent))
                 .build();
     }
 
@@ -155,6 +236,14 @@ public class TestUtil {
         coupon.setId(DEFAULT_COUPON_ID);
         coupon.setDurationInMonths(DEFAULT_MONTH_DURATION);
         coupon.setPercentOff(DEFAULT_PERCENT);
+        return coupon;
+    }
+
+    public Coupon getCouponWithParameters(Long monthDuration, String percent) {
+        Coupon coupon = new Coupon();
+        coupon.setId(DEFAULT_COUPON_ID);
+        coupon.setDurationInMonths(monthDuration);
+        coupon.setPercentOff(new BigDecimal(percent));
         return coupon;
     }
 

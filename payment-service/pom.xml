@@ -20,6 +20,7 @@
         <dotenv.version>4.0.0</dotenv.version>
         <liquibase.version>4.24.0</liquibase.version>
         <cloud-deps.version>4.1.0</cloud-deps.version>
+        <cucumber.version>7.15.0</cucumber.version>
     </properties>
     <dependencies>
         <dependency>
@@ -82,6 +83,22 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
         </dependency>
     </dependencies>
 
