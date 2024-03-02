@@ -1,5 +1,49 @@
 Feature: Payment Service
 
+  Scenario: Create Customer that not exists by Passenger
+    Given Customer not exists with Username "viktordiktor" and phone "+375292547777" and Passenger ID 1 and Amount "9.9"
+    When createCustomer method is called with Username "viktordiktor" and phone "+375292547777" and Passenger ID 1 and Amount "9.9"
+    Then CustomerCreationResponse should contains Username "viktordiktor" and Phone "+375292547777"
+  Scenario: Create Customer that exists by Passenger
+    Given Customer exists with Passenger ID 2
+    When createCustomer method is called with Username "viktordiktor" and phone "+375292547777" and Passenger ID 2 and Amount "9.9"
+    Then CustomerAlreadyExistsException should be thrown for Customer with Passenger ID 2
+
+  Scenario: Create Customer Charge with Enough Funds and Existing Customer
+    Given Customer enough funds charge with Amount "50.5" and Passenger ID 1 and Currency "usd"
+    When createCustomerCharge method is called with Amount "50.5" and Passenger ID 1 and Currency "usd"
+    Then CustomerChargeResponse should contains Amount "50.5" and Passenger ID 1 and Currency "usd"
+    And CustomerChargeResponse should be successful for Customer With Passenger ID 1
+  Scenario: Create Customer Charge with Not Enough Funds and Existing Customer
+    Given Customer not enough funds charge with Amount "50.5" and Passenger ID 2 and Currency "usd"
+    When createCustomerCharge method is called with Amount "50.5" and Passenger ID 2 and Currency "usd"
+    Then InsufficientFundsException should be Thrown for Customer With Passenger ID 2
+  Scenario: Create Customer Charge with not Existing Customer
+    Given Customer not exists with Passenger ID 3
+    When createCustomerCharge method is called with Amount "50.5" and Passenger ID 3 and Currency "usd"
+    Then CustomerNotFoundException should be thrown
+
+  Scenario: Get Customer Charge by Charge ID with existing Customer
+    Given Charge ID "charge1" and Customer exists
+    When getCustomerCharge method is called with Charge ID "charge1"
+    Then CustomerChargeResponse should contains charge with Charge ID "charge1"
+  Scenario: Get Customer Charge by Charge ID with not existing Customer
+    Given Charge ID "charge2" and Customer not exists
+    When getCustomerCharge method is called with Charge ID "charge2"
+    Then CustomerNotFoundException should be thrown
+
+  Scenario: Calculate Ride Price With Coupon
+    Given Ride Length 9.58 and Ride DateTime "2024-03-02T10:30:00" and Coupon "coupon1"
+    When calculateRidePriceMethod is called with Ride Length 9.58 and Ride DateTime "2024-03-02T10:30:00" and Coupon "coupon1"
+    Then CustomerCalculateRideResponse should contains Ride Length 9.58 and Ride DateTime "2024-03-02T10:30:00"
+    And CustomerCalculateRideResponse should contains Coupon "coupon1"
+    And CustomerCalculateRideResponse should contains Not Null Ride Price
+  Scenario: Calculate Ride Price Without Coupon
+    Given Ride Length 9.58 and Ride DateTime "2024-03-02T10:30:00"
+    When calculateRidePriceMethod is called with Ride Length 9.58 and Ride DateTime "2024-03-02T10:30:00" and Coupon "null"
+    Then CustomerCalculateRideResponse should contains Ride Length 9.58 and Ride DateTime "2024-03-02T10:30:00"
+    And CustomerCalculateRideResponse should contains Not Null Ride Price
+
   Scenario: Generate Token by Card
     Given CardRequest of Card Number "4242424242424242" and Exp Month 12 and Exp Year 24 and CVC 111
     When generateTokenByCard is called with Card Request of Card Number "4242424242424242" and Exp Month 12 and Exp Year 24 and CVC 111

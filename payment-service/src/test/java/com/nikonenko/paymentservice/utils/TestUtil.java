@@ -239,6 +239,12 @@ public class TestUtil {
         return coupon;
     }
 
+    public Coupon getCouponWithId(String couponId) {
+        Coupon coupon = getCoupon();
+        coupon.setId(couponId);
+        return coupon;
+    }
+
     public Coupon getCouponWithParameters(Long monthDuration, String percent) {
         Coupon coupon = new Coupon();
         coupon.setId(DEFAULT_COUPON_ID);
@@ -253,6 +259,16 @@ public class TestUtil {
                 .username(DEFAULT_USERNAME)
                 .phone(DEFAULT_PHONE)
                 .amount(DEFAULT_CUSTOMER_AMOUNT)
+                .build();
+    }
+
+    public CustomerCreationRequest getCustomerCreationRequestWithParameters(String username, String phone,
+                                                                            Long passengerId, String amount) {
+        return CustomerCreationRequest.builder()
+                .passengerId(passengerId)
+                .username(username)
+                .phone(phone)
+                .amount(new BigDecimal(amount))
                 .build();
     }
 
@@ -273,11 +289,35 @@ public class TestUtil {
         return customer;
     }
 
+    public Customer getCustomerWithZeroBalance() {
+        Customer customer = getCustomer();
+        customer.setBalance(0L);
+        return customer;
+    }
+
+    public Customer getCustomerWithParameters(String username, String phone, String amount) {
+        Customer customer = new Customer();
+        customer.setId(DEFAULT_CUSTOMER_ID);
+        customer.setPhone(phone);
+        customer.setName(username);
+        customer.setBalance((long)new BigDecimal(amount).doubleValue() * 100);
+        return customer;
+    }
+
     public CustomerChargeRequest getCustomerChargeRequest() {
         return CustomerChargeRequest.builder()
                 .amount(DEFAULT_CHARGE_AMOUNT)
                 .passengerId(DEFAULT_PASSENGER_ID)
                 .currency(DEFAULT_CURRENCY)
+                .build();
+    }
+
+    public CustomerChargeRequest getCustomerChargeRequestWithParameters(String amount,
+                                                                        Long passengerId, String currency) {
+        return CustomerChargeRequest.builder()
+                .amount(new BigDecimal(amount))
+                .passengerId(passengerId)
+                .currency(currency)
                 .build();
     }
 
@@ -306,6 +346,13 @@ public class TestUtil {
                 .build();
     }
 
+    public CustomerUser getCustomerUserWithPassengerId(Long passengerId) {
+        return CustomerUser.builder()
+                .customerId(DEFAULT_CUSTOMER_ID)
+                .passengerId(passengerId)
+                .build();
+    }
+
     public PaymentIntent getPaymentIntent() {
         PaymentIntent paymentIntent = new PaymentIntent();
         paymentIntent.setId(DEFAULT_CHARGE_ID);
@@ -318,6 +365,19 @@ public class TestUtil {
         paymentIntent.setPaymentMethod(DEFAULT_PAYMENT_METHOD);
         paymentIntent.setStatus(DEFAULT_MESSAGE);
         paymentIntent.setCurrency(DEFAULT_CURRENCY);
+        return paymentIntent;
+    }
+
+    public PaymentIntent getPaymentIntentWithId(String chargeId) {
+        PaymentIntent paymentIntent = getPaymentIntent();
+        paymentIntent.setId(chargeId);
+        return paymentIntent;
+    }
+
+    public PaymentIntent getPaymentIntentWithParameters(String amount, String currency) {
+        PaymentIntent paymentIntent = getPaymentIntent();
+        paymentIntent.setAmount((long)new BigDecimal(amount).doubleValue() * 100);
+        paymentIntent.setCurrency(currency);
         return paymentIntent;
     }
 
