@@ -87,10 +87,9 @@ public class TestUtil {
     }
 
     public TokenResponse getTokenResponseWithCardNumber(String cardNumber) {
-        return TokenResponse.builder()
-                .token(DEFAULT_TOKEN)
-                .cardNumber(cardNumber)
-                .build();
+        TokenResponse tokenResponse = getTokenResponse();
+        tokenResponse.setCardNumber(cardNumber);
+        return tokenResponse;
     }
 
     public Map<String, Object> getCardParams() {
@@ -142,10 +141,9 @@ public class TestUtil {
     }
 
     public ChargeResponse getInitialChargeResponseWithAmount(String amount) {
-        return ChargeResponse.builder()
-                .chargeId(DEFAULT_CHARGE_ID)
-                .amount(new BigDecimal(amount))
-                .build();
+        ChargeResponse initialChargeResponse = getInitialChargeResponse();
+        initialChargeResponse.setAmount(new BigDecimal(amount));
+        return initialChargeResponse;
     }
 
     public ChargeResponse getChargeResponse() {
@@ -186,26 +184,14 @@ public class TestUtil {
     }
 
     public Charge getChargeWithChargeId(String chargeId) {
-        Charge charge = new Charge();
+        Charge charge = getCharge();
         charge.setId(chargeId);
-        charge.setPaid(true);
-        charge.setAmount(DEFAULT_AMOUNT.longValue());
-        Charge.Outcome outcome = new Charge.Outcome();
-        outcome.setSellerMessage(DEFAULT_MESSAGE);
-        charge.setOutcome(outcome);
-        charge.setStatus(DEFAULT_MESSAGE);
         return charge;
     }
 
     public Charge getChargeWithAmount(String amount) {
-        Charge charge = new Charge();
-        charge.setId(DEFAULT_CHARGE_ID);
-        charge.setPaid(true);
+        Charge charge = getCharge();
         charge.setAmount(new BigDecimal(amount).longValue());
-        Charge.Outcome outcome = new Charge.Outcome();
-        outcome.setSellerMessage(DEFAULT_MESSAGE);
-        charge.setOutcome(outcome);
-        charge.setStatus(DEFAULT_MESSAGE);
         return charge;
     }
 
@@ -347,10 +333,9 @@ public class TestUtil {
     }
 
     public CustomerUser getCustomerUserWithPassengerId(Long passengerId) {
-        return CustomerUser.builder()
-                .customerId(DEFAULT_CUSTOMER_ID)
-                .passengerId(passengerId)
-                .build();
+        CustomerUser customerUser = getCustomerUser();
+        customerUser.setPassengerId(passengerId);
+        return customerUser;
     }
 
     public PaymentIntent getPaymentIntent() {

@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
@@ -63,7 +64,7 @@ public class RideStepDefinitions {
     public void findByIdMethodIsCalledWithId(String id) {
         try {
             actualResponse = rideService.getRideById(id);
-        } catch (RideNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -73,6 +74,7 @@ public class RideStepDefinitions {
         Ride ride = rideRepository.findById(id).get();
         RideResponse expected = modelMapper.map(ride, RideResponse.class);
 
+        assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
@@ -119,7 +121,7 @@ public class RideStepDefinitions {
         try {
             actualResponse = rideService.createRide(TestUtil
                     .getCreateRideRequestWithParameters(passengerId, startAddress, endAddress, chargeId));
-        } catch (ChargeIsNotSuccessException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -130,6 +132,7 @@ public class RideStepDefinitions {
         RideResponse expected = TestUtil
                 .getRideResponseWithParameters(passengerId, startAddress, endAddress, chargeId);
 
+        assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
@@ -183,7 +186,7 @@ public class RideStepDefinitions {
         try {
             actualResponse = rideService.createRide(TestUtil
                     .getCreateRideRequestWithParameters(passengerId, startAddress, endAddress, null));
-        } catch (ChargeIsNotSuccessException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -194,6 +197,7 @@ public class RideStepDefinitions {
         RideResponse expected = TestUtil
                 .getRideResponseWithParameters(passengerId, startAddress, endAddress, null);
 
+        assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
@@ -222,6 +226,7 @@ public class RideStepDefinitions {
     @Then("CloseRideResponse should contains Card Payment Method and CustomerChargeReturnResponse should not be null for Ride ID {string}")
     public void closeRideResponseShouldContainsCardPaymentMethodAndCustomerChargeReturnResponseShouldNotBeNull
                                                                                                     (String rideId) {
+        assertNull(exception);
         assertEquals(actualCloseRideResponse.getRidePaymentMethod(), TestUtil.PAYMENT_CARD);
         assertNotNull(actualCloseRideResponse.getCustomerChargeReturnResponse());
     }
@@ -237,6 +242,7 @@ public class RideStepDefinitions {
 
     @Then("CloseRideResponse should contains Cash Payment Method for Ride ID {string}")
     public void closeRideResponseShouldContainsCashPaymentMethod(String rideId) {
+        assertNull(exception);
         assertEquals(actualCloseRideResponse.getRidePaymentMethod(), TestUtil.PAYMENT_CASH);
     }
 
@@ -276,6 +282,7 @@ public class RideStepDefinitions {
 
     @Then("Ride with ID {string} should change status to ACCEPTED")
     public void rideWithIdShouldChangeStatusToAccepted(String rideId) {
+        assertNull(exception);
         assertEquals(actualRide.getStatus(), TestUtil.ACCEPTED_STATUS);
     }
 

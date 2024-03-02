@@ -41,6 +41,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -89,13 +90,14 @@ public class PaymentStepDefinitions {
         try {
             actualCustomerCreationResponse = paymentCustomerService.createCustomer(TestUtil
                     .getCustomerCreationRequestWithParameters(username, phone, passengerId, amount));
-        } catch (CustomerAlreadyExistsException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
     @Then("CustomerCreationResponse should contains Username {string} and Phone {string}")
     public void customerCreationResponseShouldContainsUsernameAndPhone(String username, String phone) {
+        assertNull(exception);
         assertEquals(actualCustomerCreationResponse.getUsername(), username);
         assertEquals(actualCustomerCreationResponse.getPhone(), phone);
     }
@@ -147,6 +149,7 @@ public class PaymentStepDefinitions {
     @Then("CustomerChargeResponse should contains Amount {string} and Passenger ID {long} and Currency {string}")
     public void customerChargeResponseShouldContainsAmountAndPassengerIdAndCurrency(String amount,
                                                                                     Long passengerId, String currency) {
+        assertNull(exception);
         assertEquals(actualCustomerChargeResponse.getAmount(), new BigDecimal(amount));
         assertEquals(actualCustomerChargeResponse.getPassengerId(), passengerId);
         assertEquals(actualCustomerChargeResponse.getCurrency(), currency);
@@ -217,6 +220,7 @@ public class PaymentStepDefinitions {
 
     @Then("CustomerChargeResponse should contains charge with Charge ID {string}")
     public void customerChargeResponseShouldContainsChargeWithChargeId(String chargeId) {
+        assertNull(exception);
         assertEquals(actualCustomerChargeResponse.getId(), chargeId);
     }
 
@@ -259,6 +263,7 @@ public class PaymentStepDefinitions {
     @Then("CustomerCalculateRideResponse should contains Ride Length {double} and Ride DateTime {string}")
     public void customerCalculateRideResponseShouldContainsRideLengthAndRideDateTime(Double rideLength,
                                                                                       String rideDateTime) {
+        assertNull(exception);
         assertEquals(actualCustomerCalculateRideResponse.getRideLength(), rideLength);
         assertEquals(actualCustomerCalculateRideResponse.getRideDateTime(), LocalDateTime.parse(rideDateTime));
     }
@@ -309,6 +314,7 @@ public class PaymentStepDefinitions {
     public void tokenResponseShouldContainsTokenResponseWithTokenAndCardNumber(String cardNumber) {
         TokenResponse expected = TestUtil.getTokenResponseWithCardNumber(cardNumber);
 
+        assertNull(exception);
         assertEquals(expected, actualTokenResponse);
     }
 
@@ -343,6 +349,7 @@ public class PaymentStepDefinitions {
 
     @Then("ChargeResponse should contains amount {string} for token {string}")
     public void chargeResponseShouldContainsAmountForToken(String amount, String token) {
+        assertNull(exception);
         assertEquals(actualChargeResponse.getAmount(), new BigDecimal(amount));
     }
 
@@ -371,6 +378,7 @@ public class PaymentStepDefinitions {
 
     @Then("ChargeResponse should contains Charge ID {string}")
     public void chargeResponseShouldContainsChargeId(String chargeId) {
+        assertNull(exception);
         assertEquals(actualChargeResponse.getChargeId(), chargeId);
     }
 
@@ -391,6 +399,7 @@ public class PaymentStepDefinitions {
 
     @Then("CouponResponse should contains Month Duration {long} and Percent {string}")
     public void couponResponseShouldContainsMonthDurationAndPercent(Long monthDuration, String percent) {
+        assertNull(exception);
         assertEquals(actualCouponResponse.getMonthDuration(), monthDuration);
         assertEquals(actualCouponResponse.getPercent(), new BigDecimal(percent));
     }

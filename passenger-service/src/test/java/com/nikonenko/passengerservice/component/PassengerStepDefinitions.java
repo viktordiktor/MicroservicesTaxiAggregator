@@ -61,7 +61,7 @@ public class PassengerStepDefinitions {
     public void findByIdMethodIsCalledWithId(Long id) {
         try {
             actualResponse = passengerService.getPassengerById(id);
-        } catch (PassengerNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -70,6 +70,8 @@ public class PassengerStepDefinitions {
     public void passengerResponseShouldContainsPassengerWithId(Long id) {
         Passenger passenger = passengerRepository.findById(id).get();
         PassengerResponse expected = modelMapper.map(passenger, PassengerResponse.class);
+
+        assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
@@ -126,6 +128,7 @@ public class PassengerStepDefinitions {
     public void passengerResponseShouldContainsPassengerWithUsernameAndPhone(String username, String phone) {
         PassengerResponse expected = TestUtil.getCreationPassengerResponse();
 
+        assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
@@ -208,6 +211,7 @@ public class PassengerStepDefinitions {
                                                                                   String username, String phone) {
         PassengerResponse expected = TestUtil.getUpdatePassengerResponse();
 
+        assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
@@ -245,7 +249,7 @@ public class PassengerStepDefinitions {
     public void deletePassengerMethodIsCalledWithId(Long id) {
         try {
             passengerService.deletePassenger(id);
-        } catch (PassengerNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -271,7 +275,7 @@ public class PassengerStepDefinitions {
             (Long id, int rating, String comment) {
         try {
             passengerService.createReview(TestUtil.getRatingToPassengerRequestWithParameters(id, rating, comment));
-        } catch (PassengerNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -308,7 +312,7 @@ public class PassengerStepDefinitions {
         try {
             passengerService.createCustomerByPassenger(id,
                     TestUtil.getCustomerDataRequestWithParameters(username, phone, amount));
-        } catch (PassengerNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -319,6 +323,7 @@ public class PassengerStepDefinitions {
         verify(passengerRepository).findById(id);
         verify(customerCreationRequestProducer).sendCustomerCreationRequest(TestUtil
                 .getCustomerCreationRequestWithParameters(id, username, phone, amount));
+        assertNull(exception);
     }
 
     @Given("Passenger with ID {long} not exists and CustomerDataRequest of username {string} and phone {string} and amount {string}")

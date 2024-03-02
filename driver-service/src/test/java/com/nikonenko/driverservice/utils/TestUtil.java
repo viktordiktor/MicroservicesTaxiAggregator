@@ -193,14 +193,9 @@ public class TestUtil {
     }
 
     public DriverResponse getDriverResponseWithCarParameters(String number, String model, String color) {
-        return DriverResponse.builder()
-                .id(DEFAULT_ID)
-                .username(DEFAULT_USERNAME)
-                .car(getCarResponseWithParameters(number, model, color))
-                .phone(DEFAULT_PHONE)
-                .ratingSet(getDefaultRatingSetResponse())
-                .available(FALSE_AVAILABLE)
-                .build();
+        DriverResponse driverResponse = getDefaultDriverResponse();
+        driverResponse.setCar(getCarResponseWithParameters(number, model, color));
+        return driverResponse;
     }
 
     public DriverResponse getUpdateDriverResponse() {
@@ -276,14 +271,6 @@ public class TestUtil {
                 .build();
     }
 
-    public Car getNotSavedCarWithParameters(String number, String model, String color) {
-        return Car.builder()
-                .number(number)
-                .model(model)
-                .color(color)
-                .build();
-    }
-
     public Car getSavedCarWithParameters(String number, String model, String color) {
         return Car.builder()
                 .id(DEFAULT_ID)
@@ -327,11 +314,9 @@ public class TestUtil {
     }
 
     public CarRequest getCarRequestWithNumber(String number) {
-        return CarRequest.builder()
-                .color(DEFAULT_CAR_COLOR)
-                .model(DEFAULT_CAR_MODEL)
-                .number(number)
-                .build();
+        CarRequest carRequest = getDefaultCarRequest();
+        carRequest.setNumber(number);
+        return carRequest;
     }
 
     public CarRequest getUpdateCarRequest() {

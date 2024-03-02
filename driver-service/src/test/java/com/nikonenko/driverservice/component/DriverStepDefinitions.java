@@ -81,7 +81,7 @@ public class DriverStepDefinitions {
     public void getDriverByIdMethodIsCalledWithId(Long id) {
         try {
             actualDriverResponse = driverService.getDriverById(id);
-        } catch (DriverNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -90,6 +90,8 @@ public class DriverStepDefinitions {
     public void driverResponseShouldContainsDriverWithId(Long id) {
         Driver driver = driverRepository.findById(id).get();
         DriverResponse expected = modelMapper.map(driver, DriverResponse.class);
+
+        assertNull(exception);
         assertEquals(expected, actualDriverResponse);
     }
 
@@ -146,6 +148,7 @@ public class DriverStepDefinitions {
     public void driverResponseShouldContainsDriverWithUsernameAndPhone(String username, String phone) {
         DriverResponse expected = TestUtil.getCreationDriverResponse();
 
+        assertNull(exception);
         assertEquals(expected, actualDriverResponse);
     }
 
@@ -228,6 +231,7 @@ public class DriverStepDefinitions {
                                                                             String username, String phone) {
         DriverResponse expected = TestUtil.getUpdateDriverResponse();
 
+        assertNull(exception);
         assertEquals(expected, actualDriverResponse);
     }
 
@@ -265,7 +269,7 @@ public class DriverStepDefinitions {
     public void deleteDriverMethodIsCalledWithId(Long id) {
         try {
             driverService.deleteDriver(id);
-        } catch (DriverNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -303,6 +307,7 @@ public class DriverStepDefinitions {
 
     @Then("Should return No Content And send request to Ride Service for Driver ID {long} and Ride ID {string}")
     public void shouldReturnNoContentAndSendRequestToRideServiceForDriverIdAndRideId(Long driverId, String rideId) {
+        assertNull(exception);
         verify(rideStatusRequestProducer).sendChangeRideStatusRequest(any(ChangeRideStatusRequest.class));
     }
 
@@ -388,7 +393,7 @@ public class DriverStepDefinitions {
             (Long id, int rating, String comment) {
         try {
             driverService.createReview(TestUtil.getRatingToDriverRequestWithParameters(id, rating, comment));
-        } catch (DriverNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -432,7 +437,7 @@ public class DriverStepDefinitions {
         try {
             actualDriverResponse = driverService.addCarToDriver(driverId,
                     TestUtil.getCarRequestWithParameters(number, model, color));
-        } catch (DriverNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -442,6 +447,7 @@ public class DriverStepDefinitions {
                                                                                 String model, String color) {
         DriverResponse expected = TestUtil.getDriverResponseWithCarParameters(number, model, color);
 
+        assertNull(exception);
         assertEquals(expected, actualDriverResponse);
     }
 
@@ -465,7 +471,7 @@ public class DriverStepDefinitions {
     public void getCarByIdMethodIsCalledWithId(Long id) {
         try {
             actualCarResponse = carService.getCarById(id);
-        } catch (CarNotFoundException ex) {
+        } catch (RuntimeException ex) {
             exception = ex;
         }
     }
@@ -474,6 +480,8 @@ public class DriverStepDefinitions {
     public void carResponseShouldContainsCarWithId(Long id) {
         Car car = carRepository.findById(id).get();
         CarResponse expected = modelMapper.map(car, CarResponse.class);
+
+        assertNull(exception);
         assertEquals(expected, actualCarResponse);
     }
 
@@ -531,6 +539,7 @@ public class DriverStepDefinitions {
     public void CarResponseShouldContainsCarWithUsernameAndPhoneAndID(Long id, String number) {
         CarResponse expected = TestUtil.getUpdateCarResponse();
 
+        assertNull(exception);
         assertEquals(expected, actualCarResponse);
     }
 
