@@ -200,7 +200,7 @@ public class RideStepDefinitions {
     @Given("Ride with ID {string} exists and opened by card")
     public void rideWithIdExistsAndOpenedByCard(String rideId) {
         CustomerChargeReturnResponse chargeReturnResponse = TestUtil.getCustomerChargeReturnResponse();
-        Ride ride = TestUtil.getOpenedByCardRideWithParameter(rideId);
+        Ride ride = TestUtil.getOpenedByCardRideWithRideId(rideId);
 
         doReturn(Optional.of(ride))
                 .when(rideRepository)
@@ -228,7 +228,7 @@ public class RideStepDefinitions {
 
     @Given("Ride with ID {string} exists and opened by cash")
     public void rideWithIdExistsAndOpenedByCash(String rideId) {
-        Ride ride = TestUtil.getOpenedByCashRideWithParameter(rideId);
+        Ride ride = TestUtil.getOpenedByCashRideWithRideId(rideId);
 
         doReturn(Optional.of(ride))
                 .when(rideRepository)
@@ -242,7 +242,7 @@ public class RideStepDefinitions {
 
     @Given("Ride with ID {string} exists and not opened")
     public void rideWithIdExistsAndNotOpened(String rideId) {
-        Ride ride = TestUtil.getFinishedRideWithParameter(rideId);
+        Ride ride = TestUtil.getFinishedRideWithRideId(rideId);
 
         doReturn(Optional.of(ride))
                 .when(rideRepository)
@@ -258,7 +258,7 @@ public class RideStepDefinitions {
 
     @Given("ChangeRideRequest with Action {string} and existing Ride ID {string}")
     public void changeRideRequestWithActionAndExistingRideId(String rideAction, String rideId) {
-        actualRide = TestUtil.getOpenedByCashRideWithParameter(rideId);
+        actualRide = TestUtil.getOpenedByCashRideWithRideId(rideId);
 
         doReturn(Optional.of(actualRide))
                 .when(rideRepository)
@@ -281,7 +281,7 @@ public class RideStepDefinitions {
 
     @Given("ChangeRideRequest with invalid Action {string} and existing Ride ID {string}")
     public void changeRideRequestWithInvalidActionAndExistingRideId(String rideAction, String rideId) {
-        actualRide = TestUtil.getOpenedByCashRideWithParameter(rideId);
+        actualRide = TestUtil.getOpenedByCashRideWithRideId(rideId);
 
         doReturn(Optional.of(actualRide))
                 .when(rideRepository)

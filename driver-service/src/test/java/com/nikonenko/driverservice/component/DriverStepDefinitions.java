@@ -492,7 +492,7 @@ public class DriverStepDefinitions {
     @Given("Car with ID {long} exists and Car with number {string} not exists")
     public void carWithIdExistsAndCarWithUsernameAndPhoneNotExists(Long id, String number) {
         CarResponse response = TestUtil.getUpdateCarResponse();
-        CarRequest request = TestUtil.getCarRequestWithParameter(number);
+        CarRequest request = TestUtil.getCarRequestWithNumber(number);
         Car car = TestUtil.getDefaultCar();
         Car editCar = TestUtil.getSecondCar();
 
@@ -521,7 +521,7 @@ public class DriverStepDefinitions {
     public void editCarMethodIsCalledWithIdAndCarRequestOfUsernameAndPhone(Long id, String number) {
         try {
             actualCarResponse =
-                    carService.editCar(id, TestUtil.getCarRequestWithParameter(number));
+                    carService.editCar(id, TestUtil.getCarRequestWithNumber(number));
         } catch (RuntimeException ex) {
             exception = ex;
         }

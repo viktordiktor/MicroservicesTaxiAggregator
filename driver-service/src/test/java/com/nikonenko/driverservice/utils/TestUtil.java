@@ -326,7 +326,7 @@ public class TestUtil {
                 .build();
     }
 
-    public CarRequest getCarRequestWithParameter(String number) {
+    public CarRequest getCarRequestWithNumber(String number) {
         return CarRequest.builder()
                 .color(DEFAULT_CAR_COLOR)
                 .model(DEFAULT_CAR_MODEL)

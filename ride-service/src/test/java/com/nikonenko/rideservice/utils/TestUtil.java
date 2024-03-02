@@ -186,7 +186,7 @@ public class TestUtil {
                 .build();
     }
 
-    public Ride getOpenedByCashRideWithParameter(String rideId) {
+    public Ride getOpenedByCashRideWithRideId(String rideId) {
         return Ride.builder()
                 .id(rideId)
                 .passengerId(DEFAULT_PASSENGER_ID)
@@ -201,7 +201,7 @@ public class TestUtil {
                 .build();
     }
 
-    public Ride getOpenedByCardRideWithParameter(String rideId) {
+    public Ride getOpenedByCardRideWithRideId(String rideId) {
         return Ride.builder()
                 .id(rideId)
                 .passengerId(DEFAULT_PASSENGER_ID)
@@ -294,7 +294,7 @@ public class TestUtil {
                 .build();
     }
 
-    public Ride getFinishedRideWithParameter(String rideId) {
+    public Ride getFinishedRideWithRideId(String rideId) {
         return Ride.builder()
                 .id(rideId)
                 .passengerId(DEFAULT_PASSENGER_ID)
