@@ -27,5 +27,4 @@ public class RideByPassengerRequest {
     @ValidEnum(value = RidePaymentMethod.class, message = ValidationList.WRONG_ENUM_FORMAT)
     private RidePaymentMethod ridePaymentMethod;
     private String coupon;
-    private String currency;
 }

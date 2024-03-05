@@ -41,11 +41,6 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentFeignClient.calculateRidePrice(calculateRideRequest);
     }
 
-    @Override
-    public CustomerCreationResponse createCustomer(CustomerCreationRequest customerCreationRequest) {
-        return paymentFeignClient.createCustomer(customerCreationRequest);
-    }
-
     public CustomerChargeResponse fallbackPaymentService(CustomerChargeRequest customerChargeRequest, Exception ex) {
         log.info("Exception during createCharge request to Payment Service: {}", ex.getMessage());
         return CustomerChargeResponse.builder()

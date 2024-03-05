@@ -65,6 +65,12 @@ public class RideServiceImpl implements RideService {
                                                           int pageNumber, int pageSize, String sortField) {
         Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
         Page<Ride> page = rideRepository.findAllByPassengerIdIs(passengerId, pageable);
+        log.info("in method");
+        log.info("passenger ID is {}", passengerId);
+        log.info("all passengers size {}", rideRepository.findAll());
+        for(Ride ride : page) {
+            log.info(ride.getId());
+        }
         return getPageRides(page);
     }
 

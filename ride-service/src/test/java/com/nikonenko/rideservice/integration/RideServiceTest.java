@@ -16,7 +16,6 @@ import com.nikonenko.rideservice.repositories.RideRepository;
 import com.nikonenko.rideservice.utils.TestUtil;
 import io.restassured.http.ContentType;
 import org.bson.Document;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -47,6 +46,7 @@ public class RideServiceTest extends ContainerConfiguration {
 
     @BeforeEach
     void setUp() {
+        mongoTemplate.dropCollection("rides");
         Document rideDocument = new Document()
                 .append("_id", TestUtil.DEFAULT_RIDE_ID)
                 .append("driverId", TestUtil.DEFAULT_DRIVER_ID)
@@ -62,11 +62,6 @@ public class RideServiceTest extends ContainerConfiguration {
                 .append("car", TestUtil.DEFAULT_CAR_RESPONSE);
         mongoTemplate.createCollection("rides")
                 .insertOne(rideDocument);
-    }
-
-    @AfterEach
-    void tearDown() {
-        mongoTemplate.dropCollection("rides");
     }
 
     @Test
