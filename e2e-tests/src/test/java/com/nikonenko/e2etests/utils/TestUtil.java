@@ -2,10 +2,13 @@ package com.nikonenko.e2etests.utils;
 
 import com.google.maps.model.LatLng;
 import com.nikonenko.e2etests.dto.CalculateDistanceRequest;
+import com.nikonenko.e2etests.dto.CarResponse;
+import com.nikonenko.e2etests.dto.ChangeRideStatusRequest;
 import com.nikonenko.e2etests.dto.CreateRideRequest;
 import com.nikonenko.e2etests.dto.CustomerCalculateRideRequest;
 import com.nikonenko.e2etests.dto.CustomerChargeRequest;
 import com.nikonenko.e2etests.dto.CustomerCreationRequest;
+import com.nikonenko.e2etests.models.RideAction;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -69,6 +72,15 @@ public class TestUtil {
                 .startAddress(startAddress)
                 .endAddress(endAddress)
                 .passengerId(passengerId)
+                .build();
+    }
+
+    public ChangeRideStatusRequest getChangeRideStatusRequest(String rideId, String action, Long driverId) {
+        return ChangeRideStatusRequest.builder()
+                .car(new CarResponse())
+                .rideId(rideId)
+                .rideAction(RideAction.valueOf(action))
+                .driverId(driverId)
                 .build();
     }
 }

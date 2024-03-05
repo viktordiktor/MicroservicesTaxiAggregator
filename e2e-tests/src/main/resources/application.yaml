@@ -8,10 +8,12 @@ spring:
     producer:
       payment-customer-topic:
         name: payment-customer-topic
+      status-producer-topic:
+        name: ride-status-topic
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: CustomerCreationRequest:com.nikonenko.e2etests.dto.CustomerCreationRequest
+        spring.json.type.mapping: CustomerCreationRequest:com.nikonenko.e2etests.dto.CustomerCreationRequest, ChangeRideStatusRequest:com.nikonenko.e2etests.dto.ChangeRideStatusRequest
 
 
 feign:

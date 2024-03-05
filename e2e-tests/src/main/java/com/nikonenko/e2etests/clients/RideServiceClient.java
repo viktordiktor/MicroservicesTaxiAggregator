@@ -33,4 +33,7 @@ public interface RideServiceClient {
 
     @DeleteMapping("/{rideId}")
     CloseRideResponse closeRide(@PathVariable String rideId);
+
+    @GetMapping("/{rideId}")
+    RideResponse getRide(@PathVariable String rideId);
 }

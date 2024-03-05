@@ -13,6 +13,16 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.producer.payment-customer-topic.name}")
     private String paymentCustomerProducerTopicName;
 
+    @Value("${spring.kafka.producer.status-producer-topic.name}")
+    private String rideStatusProducerTopicName;
+
+    @Bean
+    public NewTopic rideStatusProducerTopicName() {
+        return TopicBuilder
+                .name(rideStatusProducerTopicName)
+                .build();
+    }
+
     @Bean
     public NewTopic paymentCustomerProducerTopicName() {
         return TopicBuilder

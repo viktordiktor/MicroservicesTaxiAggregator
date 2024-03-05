@@ -15,7 +15,9 @@ import com.nikonenko.e2etests.dto.CustomerExistsResponse;
 import com.nikonenko.e2etests.dto.PageResponse;
 import com.nikonenko.e2etests.dto.RideResponse;
 import com.nikonenko.e2etests.kafka.producer.CustomerCreationRequestProducer;
+import com.nikonenko.e2etests.kafka.producer.RideStatusRequestProducer;
 import com.nikonenko.e2etests.models.RidePaymentMethod;
+import com.nikonenko.e2etests.models.RideStatus;
 import com.nikonenko.e2etests.utils.TestUtil;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -40,6 +42,7 @@ public class EndToEndStepDefinitions {
     private final RideServiceClient rideServiceClient;
     private final PaymentServiceClient paymentServiceClient;
     private final CustomerCreationRequestProducer customerCreationRequestProducer;
+    private final RideStatusRequestProducer rideStatusRequestProducer;
 
     private Long passengerId;
     private Long driverId;
@@ -273,5 +276,21 @@ public class EndToEndStepDefinitions {
     @And("CloseRideResponse should not contains CustomerChargeReturnResponse")
     public void closeRideResponseShouldNptContainsCustomerChargeReturnResponse() {
         assertNull(closeRideResponse.getCustomerChargeReturnResponse());
+    }
+
+    @When("sendChangeRideStatusRequest method is called with Ride Action {string}")
+    public void sendChangeRideStatusRequestMethodIsCalledWithRideAction(String action) {
+        rideStatusRequestProducer
+                .sendChangeRideStatusRequest(TestUtil.getChangeRideStatusRequest(rideResponse.getId(), action, driverId));
+    }
+
+    @Then("Ride should change status to {string}")
+    public void rideShouldChangeStatusTo(String status) {
+        await()
+                .pollInterval(Duration.ofSeconds(3))
+                .atMost(10, SECONDS)
+                .untilAsserted(() -> {
+                    assertEquals(RideStatus.valueOf(status), rideServiceClient.getRide(rideResponse.getId()).getStatus());
+                });
     }
 }

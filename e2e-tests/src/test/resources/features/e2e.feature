@@ -92,3 +92,28 @@ Feature: End to End Tests
     Then CloseRideResponse should Cash Payment Method
     And CloseRideResponse should not contains CustomerChargeReturnResponse
 
+  Scenario: Passenger opening Ride by Cash and then Driver accept, start and finish Ride
+    Given StartGeo "37.1234,122.5678" and EndGeo "37.1234,123.5678"
+    When calculateDistance method is called with StartGeo "37.1234,122.5678" and EngGeo "37.1234,123.5678"
+    Then CalculateDistanceResponse should contains Not Null Distance
+    And CalculateDistanceResponse should not contains Error Message
+
+    Given Ride Length 9.99 and Ride DateTime "2024-03-02T10:30:00" and Valid Coupon "TGdq2KcD"
+    When calculateRidePrice method is called with Ride Length 9.99 and Ride DateTime "2024-03-02T10:30:00" and Coupon "coupon1"
+    Then CustomerCalculateRideResponse should contains Not Null Price
+    And CustomerCalculateRideResponse should not contains Error Message
+
+    Given Valid CreateRideRequest by Cash of Start Address "address1" and End Address "address2" and Passenger with ID 3
+    When createRideRequest method is called with createRideRequest
+    Then Ride Response should contains Not Null ID
+    And Ride Response should Not have Error Message
+    And Ride Response should have By Cash Payment method
+
+    Given Driver with ID 1 exists
+    When sendChangeRideStatusRequest method is called with Ride Action "ACCEPT"
+    Then Ride should change status to "ACCEPTED"
+    When sendChangeRideStatusRequest method is called with Ride Action "START"
+    Then Ride should change status to "STARTED"
+    When sendChangeRideStatusRequest method is called with Ride Action "FINISH"
+    Then Ride should change status to "FINISHED"
+
