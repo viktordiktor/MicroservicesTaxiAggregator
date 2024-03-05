@@ -227,6 +227,4 @@ public class DriverServiceImpl implements DriverService {
             throw new UsernameAlreadyExistsException();
         }
     }
-
-
 }
