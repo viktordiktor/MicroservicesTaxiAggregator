@@ -69,7 +69,7 @@ public class RideController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public CloseRideResponse closeRide(@PathVariable String id) {
         return rideService.closeRide(id);
     }
