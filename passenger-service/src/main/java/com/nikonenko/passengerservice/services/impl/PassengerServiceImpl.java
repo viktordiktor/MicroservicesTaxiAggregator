@@ -97,8 +97,7 @@ public class PassengerServiceImpl implements PassengerService {
         CustomerChargeResponse chargeResponse = null;
         if (rideByPassengerRequest.getRidePaymentMethod() == RidePaymentMethod.BY_CARD) {
             checkCustomerExists(passengerId);
-            chargeResponse = createCharge(passengerId, calculatePriceResponse.getPrice(),
-                    rideByPassengerRequest.getCurrency());
+            chargeResponse = createCharge(passengerId, calculatePriceResponse.getPrice());
             if (!chargeResponse.isSuccess()) {
                 return RideResponse.builder().errorMessage(ExceptionList.CHARGE_IS_NOT_SUCCESS.getValue()).build();
             }
@@ -139,12 +138,12 @@ public class PassengerServiceImpl implements PassengerService {
         log.info("Customer exists");
     }
 
-    private CustomerChargeResponse createCharge(Long passengerId, BigDecimal amount, String currency) {
+    private CustomerChargeResponse createCharge(Long passengerId, BigDecimal amount) {
         log.info("\nRequest for Charge...");
         CustomerChargeRequest chargeRequest = CustomerChargeRequest.builder()
                 .passengerId(passengerId)
                 .amount(amount)
-                .currency(currency)
+                .currency("usd")
                 .build();
         CustomerChargeResponse chargeResponse = paymentService.createCharge(chargeRequest);
         log.info("Got Charge: {}", chargeResponse.getId());

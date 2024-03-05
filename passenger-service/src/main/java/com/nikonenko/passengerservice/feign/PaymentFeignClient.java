@@ -5,8 +5,6 @@ import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideReq
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideResponse;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeResponse;
-import com.nikonenko.passengerservice.dto.feign.payment.CustomerCreationRequest;
-import com.nikonenko.passengerservice.dto.feign.payment.CustomerCreationResponse;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerExistsResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
@@ -28,7 +26,4 @@ public interface PaymentFeignClient {
     @GetMapping("/customers/ride-price")
     CustomerCalculateRideResponse calculateRidePrice(
             @SpringQueryMap CustomerCalculateRideRequest calculateRideRequest);
-
-    @PostMapping("/customers")
-    CustomerCreationResponse createCustomer(@RequestBody CustomerCreationRequest customerCreationRequest);
 }

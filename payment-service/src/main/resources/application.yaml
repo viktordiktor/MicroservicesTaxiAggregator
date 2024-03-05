@@ -2,9 +2,9 @@ spring:
   messages:
     basename: validation
   datasource:
-    url: ${MYSQL_JDBC_URL:jdbc:mysql://mysqldb:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false}
-    username: ${MYSQL_USERNAME:user}
-    password: ${MYSQL_PASSWORD:pass}
+    url: jdbc:mysql://localhost:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
+    username: root
+    password: pass
   application:
     name: PAYMENT-SERVICE
   jpa:
@@ -20,8 +20,8 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
   kafka:
+    bootstrap-servers: localhost:9092
     consumer:
-      bootstrap-servers: broker:29092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -40,7 +40,7 @@ api:
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-server:8761/eureka/
+      defaultZone: http://eureka@localhost:8761/eureka/
 
 server:
-  port: 0
+  port: 8083

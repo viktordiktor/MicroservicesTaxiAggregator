@@ -1,6 +1,5 @@
 package com.nikonenko.rideservice.migrations;
 
-import com.nikonenko.rideservice.dto.feign.drivers.CarResponse;
 import com.nikonenko.rideservice.models.RidePaymentMethod;
 import com.nikonenko.rideservice.models.RideStatus;
 import io.mongock.api.annotations.ChangeUnit;
@@ -27,9 +26,9 @@ public class CreateRidesCollectionChangeUnit {
                 .append("endDate", LocalDateTime.parse("2024-01-01T11:30:00"))
                 .append("chargeId", null)
                 .append("distance", 10.5)
-                .append("status", RideStatus.FINISHED.name())
+                .append("status", RideStatus.OPENED.name())
                 .append("ridePaymentMethod", RidePaymentMethod.BY_CASH.name())
-                .append("car", CarResponse.builder().id(1L).color("Red").number("AA-1234").model("Toyota Corolla"));
+                .append("car", null);
         mongoTemplate.createCollection("rides")
                 .insertOne(rideDocument);
     }
