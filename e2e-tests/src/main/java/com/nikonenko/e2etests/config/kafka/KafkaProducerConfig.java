@@ -16,6 +16,12 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.producer.status-producer-topic.name}")
     private String rideStatusProducerTopicName;
 
+    @Value("${spring.kafka.producer.driver-review-topic.name}")
+    private String driverReviewProducerTopicName;
+
+    @Value("${spring.kafka.producer.passenger-review-topic.name}")
+    private String passengerReviewProducerTopicName;
+
     @Bean
     public NewTopic rideStatusProducerTopicName() {
         return TopicBuilder
@@ -27,6 +33,20 @@ public class KafkaProducerConfig {
     public NewTopic paymentCustomerProducerTopicName() {
         return TopicBuilder
                 .name(paymentCustomerProducerTopicName)
+                .build();
+    }
+
+    @Bean
+    public NewTopic driverReviewProducerTopicName() {
+        return TopicBuilder
+                .name(driverReviewProducerTopicName)
+                .build();
+    }
+
+    @Bean
+    public NewTopic passengerReviewProducerTopicName() {
+        return TopicBuilder
+                .name(passengerReviewProducerTopicName)
                 .build();
     }
 }

@@ -1,2 +1,2 @@
 DELETE FROM customers_users
-WHERE passenger_id = 1
+WHERE passenger_id = 2

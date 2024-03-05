@@ -8,6 +8,7 @@ import com.nikonenko.e2etests.dto.CreateRideRequest;
 import com.nikonenko.e2etests.dto.CustomerCalculateRideRequest;
 import com.nikonenko.e2etests.dto.CustomerChargeRequest;
 import com.nikonenko.e2etests.dto.CustomerCreationRequest;
+import com.nikonenko.e2etests.dto.ReviewRequest;
 import com.nikonenko.e2etests.models.RideAction;
 import lombok.experimental.UtilityClass;
 
@@ -81,6 +82,14 @@ public class TestUtil {
                 .rideId(rideId)
                 .rideAction(RideAction.valueOf(action))
                 .driverId(driverId)
+                .build();
+    }
+
+    public ReviewRequest getReviewRequest(String id, Integer rating, String comment) {
+        return ReviewRequest.builder()
+                .rideId(id)
+                .rating(rating)
+                .comment(comment)
                 .build();
     }
 }

@@ -1,5 +1,7 @@
 package com.nikonenko.e2etests;
 
+import com.nikonenko.e2etests.clients.DriverServiceClient;
+import com.nikonenko.e2etests.clients.PassengerServiceClient;
 import com.nikonenko.e2etests.clients.PaymentServiceClient;
 import com.nikonenko.e2etests.clients.RideServiceClient;
 import com.nikonenko.e2etests.dto.CalculateDistanceRequest;
@@ -15,6 +17,8 @@ import com.nikonenko.e2etests.dto.CustomerExistsResponse;
 import com.nikonenko.e2etests.dto.PageResponse;
 import com.nikonenko.e2etests.dto.RideResponse;
 import com.nikonenko.e2etests.kafka.producer.CustomerCreationRequestProducer;
+import com.nikonenko.e2etests.kafka.producer.DriverReviewRequestProducer;
+import com.nikonenko.e2etests.kafka.producer.PassengerReviewRequestProducer;
 import com.nikonenko.e2etests.kafka.producer.RideStatusRequestProducer;
 import com.nikonenko.e2etests.models.RidePaymentMethod;
 import com.nikonenko.e2etests.models.RideStatus;
@@ -41,8 +45,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EndToEndStepDefinitions {
     private final RideServiceClient rideServiceClient;
     private final PaymentServiceClient paymentServiceClient;
+    private final DriverServiceClient driverServiceClient;
+    private final PassengerServiceClient passengerServiceClient;
     private final CustomerCreationRequestProducer customerCreationRequestProducer;
     private final RideStatusRequestProducer rideStatusRequestProducer;
+    private final DriverReviewRequestProducer driverReviewRequestProducer;
+    private final PassengerReviewRequestProducer passengerReviewRequestProducer;
 
     private Long passengerId;
     private Long driverId;
@@ -174,10 +182,7 @@ public class EndToEndStepDefinitions {
         await()
                 .pollInterval(Duration.ofSeconds(3))
                 .atMost(10, SECONDS)
-                .untilAsserted(() -> {
-                    customerExistsResponse = paymentServiceClient.isCustomerExists(passengerId);
-                    assertTrue(customerExistsResponse.isExists());
-                });
+                .untilAsserted(() -> assertTrue(paymentServiceClient.isCustomerExists(passengerId).isExists()));
     }
 
     @Then("CustomerExistsResponse should be True")
@@ -289,8 +294,42 @@ public class EndToEndStepDefinitions {
         await()
                 .pollInterval(Duration.ofSeconds(3))
                 .atMost(10, SECONDS)
-                .untilAsserted(() -> {
-                    assertEquals(RideStatus.valueOf(status), rideServiceClient.getRide(rideResponse.getId()).getStatus());
-                });
+                .untilAsserted(() -> assertEquals(RideStatus.valueOf(status),
+                        rideServiceClient.getRide(rideResponse.getId()).getStatus()));
+    }
+
+    @When("sendRatingDriverRequest method is called with Rating {int} and Comment {string}")
+    public void sendRatingDriverRequestMethodIsCalledWithRatingAndComment(Integer rating, String comment) {
+        passengerReviewRequestProducer
+                .sendRatingDriverRequest(TestUtil.getReviewRequest(rideResponse.getId(), rating, comment));
+    }
+
+    @Then("Driver should contains new Review")
+    public void driverShouldContainsNewReview() {
+        int reviewsSize = driverServiceClient.getDriver(driverId).getRatingSet().size();
+        log.info("Review Size: {}", reviewsSize);
+        await()
+                .pollInterval(Duration.ofSeconds(3))
+                .atMost(10, SECONDS)
+                .untilAsserted(() -> assertEquals(reviewsSize + 1,
+                        driverServiceClient.getDriver(driverId).getRatingSet().size()));
+    }
+
+
+    @When("sendRatingPassengerRequest method is called with Rating {int} and Comment {string}")
+    public void sendRatingPassengerRequestMethodIsCalledWithRatingAndComment(Integer rating, String comment) {
+        driverReviewRequestProducer
+                .sendRatingPassengerRequest(TestUtil.getReviewRequest(rideResponse.getId(), rating, comment));
+    }
+
+    @Then("Passenger should contains new Review")
+    public void passengerShouldContainsNewReview() {
+        int reviewsSize = passengerServiceClient.getPassenger(passengerId).getRatingSet().size();
+        log.info("Review Size: {}", reviewsSize);
+        await()
+                .pollInterval(Duration.ofSeconds(3))
+                .atMost(10, SECONDS)
+                .untilAsserted(() -> assertEquals(reviewsSize + 1,
+                        passengerServiceClient.getPassenger(passengerId).getRatingSet().size()));
     }
 }
