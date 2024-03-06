@@ -12,7 +12,7 @@ spring:
             - name: CircuitBreaker
               args:
                 name: driver-service-circuit
-                fallbackUri: forward:/fallback/driver-service
+                fallbackUri: redirect:/fallback/driver-service
         - id: driver-service-cars
           uri: lb://DRIVER-SERVICE
           predicates:
@@ -21,7 +21,7 @@ spring:
             - name: CircuitBreaker
               args:
                 name: driver-service-circuit
-                fallbackUri: forward:/fallback/driver-service
+                fallbackUri: redirect:/fallback/driver-service
         - id: passenger-service
           uri: lb://PASSENGER-SERVICE
           predicates:
@@ -30,7 +30,7 @@ spring:
             - name: CircuitBreaker
               args:
                 name: passenger-service-circuit
-                fallbackUri: forward:/fallback/passenger-service
+                fallbackUri: redirect:/fallback/passenger-service
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
@@ -39,7 +39,7 @@ spring:
             - name: CircuitBreaker
               args:
                 name: payment-service-circuit
-                fallbackUri: forward:/fallback/payment-service
+                fallbackUri: redirect:/fallback/payment-service
         - id: ride-service
           uri: lb://RIDE-SERVICE
           predicates:
@@ -48,7 +48,7 @@ spring:
             - name: CircuitBreaker
               args:
                 name: ride-service-circuit
-                fallbackUri: forward:/fallback/ride-service
+                fallbackUri: redirect:/fallback/ride-service
         - id: eureka-server
           uri: http://eureka@discovery-server:8761
           predicates:
