@@ -96,12 +96,12 @@ public class DriverStepDefinitions {
     }
 
     @Given("Driver with ID {long} not exists")
-    public void driverWithIdNotExists(long id) {
+    public void driverWithIdNotExists(Long id) {
         assertTrue(driverRepository.findById(id).isEmpty());
     }
 
     @Then("DriverNotFoundException should be thrown for ID {long}")
-    public void driverNotFoundExceptionThrownForId(long id) {
+    public void driverNotFoundExceptionThrownForId(Long id) {
         DriverNotFoundException expected = new DriverNotFoundException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
@@ -333,7 +333,7 @@ public class DriverStepDefinitions {
     }
 
     @Then("DriverIsNotAvailableException should be thrown for ID {long}")
-    public void driverIsNotAvailableExceptionShouldBeThrownForId(long id) {
+    public void driverIsNotAvailableExceptionShouldBeThrownForId(Long id) {
         DriverIsNotAvailableException expected = new DriverIsNotAvailableException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
@@ -354,7 +354,7 @@ public class DriverStepDefinitions {
     }
 
     @Then("DriverNoRidesException should be thrown for ID {long}")
-    public void driverNoRidesExceptionShouldBeThrownForId(long id) {
+    public void driverNoRidesExceptionShouldBeThrownForId(Long id) {
         DriverNoRidesException expected = new DriverNoRidesException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
@@ -486,12 +486,12 @@ public class DriverStepDefinitions {
     }
 
     @Given("Car with ID {long} not exists")
-    public void carWithIdNotExists(long id) {
+    public void carWithIdNotExists(Long id) {
         assertTrue(carRepository.findById(id).isEmpty());
     }
 
     @Then("CarNotFoundException should be thrown for ID {long}")
-    public void carNotFoundExceptionThrownForId(long id) {
+    public void carNotFoundExceptionThrownForId(Long id) {
         CarNotFoundException expected = new CarNotFoundException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
