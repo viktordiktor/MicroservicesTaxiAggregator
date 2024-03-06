@@ -8,22 +8,47 @@ spring:
           uri: lb://DRIVER-SERVICE
           predicates:
             - Path=/api/v1/drivers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: driver-service-circuit
+                fallbackUri: forward:/fallback/driver-service
         - id: driver-service-cars
           uri: lb://DRIVER-SERVICE
           predicates:
             - Path=/api/v1/cars/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: driver-service-circuit
+                fallbackUri: forward:/fallback/driver-service
         - id: passenger-service
           uri: lb://PASSENGER-SERVICE
           predicates:
             - Path=/api/v1/passengers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: passenger-service-circuit
+                fallbackUri: forward:/fallback/passenger-service
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/v1/payments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: payment-service-circuit
+                fallbackUri: forward:/fallback/payment-service
         - id: ride-service
           uri: lb://RIDE-SERVICE
           predicates:
             - Path=/api/v1/rides/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ride-service-circuit
+                fallbackUri: forward:/fallback/ride-service
         - id: eureka-server
           uri: http://eureka@discovery-server:8761
           predicates:
