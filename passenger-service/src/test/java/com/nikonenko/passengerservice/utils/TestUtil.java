@@ -68,7 +68,7 @@ public class TestUtil {
     public final RidePaymentMethod PAYMENT_CASH = RidePaymentMethod.BY_CASH;
     public final Double DEFAULT_DISTANCE = 1.0;
     public final String DEFAULT_CHARGE_ID = "charge1";
-    public final String DEFAULT_CURRENCY = "USD";
+    public final String DEFAULT_CURRENCY = "usd";
     public final boolean DEFAULT_SUCCESS = true;
     public final String DEFAULT_RIDE_ID = "ride1";
     public final LocalDateTime DEFAULT_DATE = LocalDateTime.now();
@@ -220,7 +220,6 @@ public class TestUtil {
                 .startGeo(DEFAULT_START_GEO)
                 .endGeo(DEFAULT_END_GEO)
                 .ridePaymentMethod(PAYMENT_CARD)
-                .currency(DEFAULT_CURRENCY)
                 .build();
     }
 
