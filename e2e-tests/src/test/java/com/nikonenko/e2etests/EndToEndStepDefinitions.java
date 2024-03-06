@@ -54,7 +54,7 @@ public class EndToEndStepDefinitions {
 
     private Long passengerId;
     private Long driverId;
-    private String rideId;
+    private RuntimeException exception;
     private PageResponse<RideResponse> actualPageRideResponse;
     private CalculateDistanceRequest calculateDistanceRequest;
     private CalculateDistanceResponse calculateDistanceResponse;
@@ -117,8 +117,8 @@ public class EndToEndStepDefinitions {
         calculateDistanceRequest = TestUtil.createCalculateDistanceRequest(startGeo, endGeo);
     }
 
-    @When("calculateDistance method is called with StartGeo {string} and EngGeo {string}")
-    public void calculateDistanceMethodIsCalledWithStartGeoAndEngGeo(String startGeo, String endGeo) {
+    @When("calculateDistance method is called with CalculateDistanceRequest")
+    public void calculateDistanceMethodIsCalledWithCalculateDistanceRequest() {
         calculateDistanceResponse = rideServiceClient.calculateDistance(calculateDistanceRequest);
     }
 
@@ -137,9 +137,8 @@ public class EndToEndStepDefinitions {
         calculateRideRequest = TestUtil.getCalculateRideRequest(rideLength, rideDateTime, coupon);
     }
 
-    @When("calculateRidePrice method is called with Ride Length {double} and Ride DateTime {string} and Coupon {string}")
-    public void calculateRidePriceMethodIsCalledWithRideLengthAndRideDateTimeAndCoupon
-                                                            (Double rideLength, String rideDateTime, String coupon) {
+    @When("calculateRidePrice method is called with CalculateRideRequest")
+    public void calculateRidePriceMethodIsCalledWithCalculateRideRequest() {
         calculateRideResponse = paymentServiceClient.calculateRidePrice(calculateRideRequest);
     }
 
@@ -165,7 +164,7 @@ public class EndToEndStepDefinitions {
     }
 
     @Given("Username {string} and phone {string} and Existing Passenger ID {long} and Amount {string}")
-    @Sql("classpath:db/delete-exist-passenger.sql")
+    @Sql("classpath:db/delete-exist-customer-users.sql")
     public void usernameAndPhoneAndExistingPassengerIdAndAmount(String username, String phone,
                                                                 Long passengerId, String amount) {
         this.passengerId = passengerId;
@@ -198,7 +197,11 @@ public class EndToEndStepDefinitions {
 
     @When("customerCharge method is called with customerChargeRequest")
     public void customerChargeMethodIsCalledWithCustomerChargeRequest() {
-        customerChargeResponse = paymentServiceClient.customerCharge(customerChargeRequest);
+        try {
+            customerChargeResponse = paymentServiceClient.customerCharge(customerChargeRequest);
+        } catch (RuntimeException ex) {
+            exception = ex;
+        }
     }
 
     @Then("Customer Charge should have Not Null ID")
@@ -213,6 +216,7 @@ public class EndToEndStepDefinitions {
 
     @And("Customer Charge should Not have Error Message")
     public void customerChargeShouldNotHaveErrorMessage() {
+        assertNull(exception);
         assertNull(customerChargeResponse.getErrorMessage());
     }
 
@@ -242,14 +246,9 @@ public class EndToEndStepDefinitions {
         assertEquals(rideResponse.getPaymentMethod(), RidePaymentMethod.BY_CARD);
     }
 
-    @Given("Valid Ride ID")
-    public void validRideIDCreatedByCard() {
-        rideId = rideResponse.getId();
-    }
-
     @When("closeRide method is called with Ride ID")
     public void closeRideMethodIsCalledWithRideId() {
-        closeRideResponse = rideServiceClient.closeRide(rideId);
+        closeRideResponse = rideServiceClient.closeRide(rideResponse.getId());
     }
 
     @Then("CloseRideResponse should Card Payment Method")
@@ -331,5 +330,10 @@ public class EndToEndStepDefinitions {
                 .atMost(10, SECONDS)
                 .untilAsserted(() -> assertEquals(reviewsSize + 1,
                         passengerServiceClient.getPassenger(passengerId).getRatingSet().size()));
+    }
+
+    @Then("FeignClientException should be Thrown with message {string}")
+    public void feignClientExceptionShouldBeThrownWithMessage(String exceptionMessage) {
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 }

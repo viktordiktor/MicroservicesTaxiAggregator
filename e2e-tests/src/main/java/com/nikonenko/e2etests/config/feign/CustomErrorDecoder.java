@@ -1,28 +1,45 @@
 package com.nikonenko.e2etests.config.feign;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nikonenko.e2etests.exceptions.FeignClientBadRequestException;
-import feign.FeignException;
 import feign.Response;
-import feign.RetryableException;
 import feign.codec.ErrorDecoder;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDateTime;
 
+@Slf4j
 public class CustomErrorDecoder implements ErrorDecoder {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ErrorDecoder defaultErrorDecoder = new Default();
+
+    public CustomErrorDecoder() {
+        objectMapper.registerModule(new JavaTimeModule());
+    }
+
     @Override
-    public Exception decode(String s, Response response) {
-        FeignException exception = FeignException.errorStatus(s, response);
-        int status = response.status();
-        if (status >= 500) {
-            return new RetryableException(
-                    response.status(),
-                    exception.getMessage(),
-                    response.request().httpMethod(),
-                    exception,
-                    (Long) null,
-                    response.request());
+    public Exception decode(String methodKey, Response response) {
+        try (InputStream bodyInputStream = response.body().asInputStream()) {
+            ExceptionResponse exceptionResponse = objectMapper.readValue(bodyInputStream, ExceptionResponse.class);
+            if (exceptionResponse.getHttpStatus().is4xxClientError()) {
+                log.info("Received client exception with Status Code: {}", exceptionResponse.getHttpStatus());
+                return new FeignClientBadRequestException(exceptionResponse.getMessage());
+            }
+        } catch (IOException e) {
+            log.error("Error decoding response body", e);
         }
-        if (status == 400) {
-            return new FeignClientBadRequestException(exception.getMessage());
-        }
-        return exception;
+
+        return defaultErrorDecoder.decode(methodKey, response);
+    }
+
+    @Data
+    static class ExceptionResponse {
+        private String message;
+        private HttpStatus httpStatus;
+        private LocalDateTime timestamp;
     }
 }
