@@ -2,15 +2,13 @@ package com.nikonenko.e2etests.config.feign;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nikonenko.e2etests.dto.ExceptionResponse;
 import com.nikonenko.e2etests.exceptions.FeignClientBadRequestException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
 
 @Slf4j
 public class CustomErrorDecoder implements ErrorDecoder {
@@ -34,12 +32,5 @@ public class CustomErrorDecoder implements ErrorDecoder {
         }
 
         return defaultErrorDecoder.decode(methodKey, response);
-    }
-
-    @Data
-    static class ExceptionResponse {
-        private String message;
-        private HttpStatus httpStatus;
-        private LocalDateTime timestamp;
     }
 }
