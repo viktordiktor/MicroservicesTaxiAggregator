@@ -44,6 +44,37 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka-exporter
+    command: [ "--kafka.server=broker:29092" ]
+    restart: unless-stopped
+    ports:
+      - '9308:9308'
+    depends_on:
+      - broker
+
   discovery-server:
     image: discovery-server:latest
     container_name: discovery-server
@@ -51,6 +82,7 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
     restart: always
 
   api-gateway:
@@ -63,6 +95,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
     depends_on:
       - discovery-server
       - broker
@@ -73,6 +106,7 @@ services:
     image: payment-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
     depends_on:
       - discovery-server
       - api-gateway
@@ -85,6 +119,7 @@ services:
     image: passenger-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
     depends_on:
       - discovery-server
       - api-gateway
@@ -97,6 +132,7 @@ services:
     image: driver-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
     depends_on:
       - discovery-server
       - api-gateway
@@ -109,6 +145,7 @@ services:
     image: ride-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
     depends_on:
       - discovery-server
       - api-gateway

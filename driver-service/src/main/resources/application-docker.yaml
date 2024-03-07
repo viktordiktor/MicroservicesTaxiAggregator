@@ -9,5 +9,3 @@ eureka:
   client:
     service-url:
       defaultZone: http://discovery-server:8761/eureka/
-server:
-  port: 0

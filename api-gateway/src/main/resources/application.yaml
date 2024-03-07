@@ -67,3 +67,24 @@ eureka:
   client:
     service-url:
       defaultZone: http://discovery-server:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus", "health" ]
+    metrics:
+      tags:
+        application: ${spring.application.name}
+    endpoint:
+      health:
+        show-details: always
+      metrics:
+        enabled: true
+    health:
+      circuitbreakers:
+        enabled: true
+    prometheus:
+      metrics:
+        export:
+          enabled: true

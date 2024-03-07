@@ -78,3 +78,16 @@ resilience4j:
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
       paymentRetry: *retryConfig
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus", "health"]
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
