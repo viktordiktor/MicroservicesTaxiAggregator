@@ -55,7 +55,7 @@ public class TestUtil {
     public final Long CREATION_ID = 4L;
     public final String CREATION_PHONE = "+375191911919";
     public final String EXISTING_PHONE = "+375111111111";
-    public final String CREATION_USERNAME = "CREATION_USERNAME";
+    public final String CREATION_USERNAME = "viktordiktor";
     public final String EXISTING_USERNAME = "JohnDoe";
     public final Integer DEFAULT_RATING = 5;
     public final String DEFAULT_RATING_COMMENT = "Comment1";
@@ -94,6 +94,14 @@ public class TestUtil {
                 .build();
     }
 
+    public Passenger getPassengerWithParameters(Long id, String username, String phone) {
+        return Passenger.builder()
+                .id(id)
+                .phone(username)
+                .username(phone)
+                .build();
+    }
+
     public Passenger getSecondPassenger() {
         return Passenger.builder()
                 .id(SECOND_ID)
@@ -111,10 +119,32 @@ public class TestUtil {
                 .build();
     }
 
+    public Passenger getNotSavedCreationPassenger() {
+        return Passenger.builder()
+                .phone(CREATION_PHONE)
+                .username(CREATION_USERNAME)
+                .build();
+    }
+
+    public Passenger getSavedCreationPassenger() {
+        return Passenger.builder()
+                .id(CREATION_ID)
+                .phone(CREATION_PHONE)
+                .username(CREATION_USERNAME)
+                .build();
+    }
+
     public PassengerRequest getDefaultPassengerRequest() {
         return PassengerRequest.builder()
                 .phone(DEFAULT_PHONE)
                 .username(DEFAULT_USERNAME)
+                .build();
+    }
+
+    public PassengerRequest getPassengerRequestWithParameters(String username, String phone) {
+        return PassengerRequest.builder()
+                .phone(phone)
+                .username(username)
                 .build();
     }
 
@@ -196,11 +226,27 @@ public class TestUtil {
                 .build();
     }
 
+    public RatingToPassengerRequest getRatingToPassengerRequestWithParameters(Long id, int rating, String comment) {
+        return RatingToPassengerRequest.builder()
+                .passengerId(id)
+                .rating(rating)
+                .comment(comment)
+                .build();
+    }
+
     public CustomerDataRequest getCustomerDataRequest() {
         return CustomerDataRequest.builder()
                 .username(DEFAULT_USERNAME)
                 .phone(DEFAULT_PHONE)
                 .amount(DEFAULT_AMOUNT)
+                .build();
+    }
+
+    public CustomerDataRequest getCustomerDataRequestWithParameters(String username, String phone, String amount) {
+        return CustomerDataRequest.builder()
+                .username(username)
+                .phone(phone)
+                .amount(new BigDecimal(amount))
                 .build();
     }
 
@@ -210,6 +256,16 @@ public class TestUtil {
                 .username(DEFAULT_USERNAME)
                 .phone(DEFAULT_PHONE)
                 .amount(DEFAULT_AMOUNT)
+                .build();
+    }
+
+    public CustomerCreationRequest getCustomerCreationRequestWithParameters
+                                                            (Long id, String username, String phone, String amount) {
+        return CustomerCreationRequest.builder()
+                .passengerId(id)
+                .username(username)
+                .phone(phone)
+                .amount(new BigDecimal(amount))
                 .build();
     }
 

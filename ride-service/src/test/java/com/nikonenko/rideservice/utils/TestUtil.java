@@ -100,6 +100,16 @@ public class TestUtil {
                 .build();
     }
 
+    public RideResponse getRideResponseWithParameters(Long passengerId, String startAddress,
+                                                          String endAddress, String chargeId) {
+        RideResponse rideResponse = getRideResponse();
+        rideResponse.setPassengerId(passengerId);
+        rideResponse.setStartAddress(startAddress);
+        rideResponse.setEndAddress(endAddress);
+        rideResponse.setChargeId(chargeId);
+        return rideResponse;
+    }
+
     public RideResponse getCreateRideResponseByCash() {
         return RideResponse.builder()
                 .id(DEFAULT_RIDE_ID)
@@ -140,6 +150,16 @@ public class TestUtil {
                 .build();
     }
 
+    public Ride getNotSavedRideWithParameters(Long passengerId, String startAddress,
+                                              String endAddress, String chargeId) {
+        Ride ride = getNotSavedRide();
+        ride.setPassengerId(passengerId);
+        ride.setStartAddress(startAddress);
+        ride.setEndAddress(endAddress);
+        ride.setChargeId(chargeId);
+        return ride;
+    }
+
     public Ride getOpenedByCardRide() {
         return Ride.builder()
                 .id(DEFAULT_RIDE_ID)
@@ -154,6 +174,28 @@ public class TestUtil {
                 .status(OPENED_STATUS)
                 .paymentMethod(PAYMENT_CARD)
                 .build();
+    }
+
+    public Ride getOpenedByCashRideWithRideId(String rideId) {
+        Ride ride = getOpenedByCashRide();
+        ride.setId(rideId);
+        return ride;
+    }
+
+    public Ride getOpenedByCardRideWithRideId(String rideId) {
+        Ride ride = getOpenedByCardRide();
+        ride.setId(rideId);
+        return ride;
+    }
+
+    public Ride getOpenedRideWithParameters(Long passengerId, String startAddress,
+                                                  String endAddress, String chargeId) {
+        Ride ride = getOpenedByCardRide();
+        ride.setPassengerId(passengerId);
+        ride.setStartAddress(startAddress);
+        ride.setEndAddress(endAddress);
+        ride.setChargeId(chargeId);
+        return ride;
     }
 
     public Ride getOpenedByCashRide() {
@@ -216,6 +258,12 @@ public class TestUtil {
                 .build();
     }
 
+    public Ride getFinishedRideWithRideId(String rideId) {
+        Ride finishedRide = getFinishedRide();
+        finishedRide.setId(rideId);
+        return finishedRide;
+    }
+
     public CalculateDistanceResponse getCalculateDistanceResponse() {
         return CalculateDistanceResponse.builder()
                 .startGeo(DEFAULT_START_LATLNG)
@@ -231,6 +279,17 @@ public class TestUtil {
                 .endAddress(DEFAULT_END_ADDRESS)
                 .distance(DEFAULT_DISTANCE)
                 .chargeId(DEFAULT_CHARGE_ID)
+                .build();
+    }
+
+    public CreateRideRequest getCreateRideRequestWithParameters(Long passengerId, String startAddress,
+                                                                      String endAddress, String chargeId) {
+        return CreateRideRequest.builder()
+                .passengerId(passengerId)
+                .startAddress(startAddress)
+                .endAddress(endAddress)
+                .distance(DEFAULT_DISTANCE)
+                .chargeId(chargeId)
                 .build();
     }
 
@@ -291,6 +350,15 @@ public class TestUtil {
                 .rideId(DEFAULT_RIDE_ID)
                 .driverId(DEFAULT_DRIVER_ID)
                 .rideAction(RIDE_ACTION_FINISH)
+                .car(DEFAULT_CAR_RESPONSE)
+                .build();
+    }
+
+    public ChangeRideStatusRequest getChangeRideStatusRequestWithParameters(String rideId, String rideAction) {
+        return ChangeRideStatusRequest.builder()
+                .rideId(rideId)
+                .driverId(DEFAULT_DRIVER_ID)
+                .rideAction(RideAction.valueOf(rideAction))
                 .car(DEFAULT_CAR_RESPONSE)
                 .build();
     }
