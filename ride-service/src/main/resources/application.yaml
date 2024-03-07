@@ -41,7 +41,7 @@ eureka:
     service-url:
       defaultZone: http://eureka@localhost:8761/eureka/
 server:
-  port: 8082
+  port: 8084
 
 feign:
   client:

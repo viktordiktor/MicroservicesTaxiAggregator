@@ -1,0 +1,39 @@
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enable: false
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      payment-customer-topic:
+        name: payment-customer-topic
+      status-producer-topic:
+        name: ride-status-topic
+      driver-review-topic:
+        name: driver-review-topic
+      passenger-review-topic:
+        name: passenger-review-topic
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: CustomerCreationRequest:com.nikonenko.e2etests.dto.CustomerCreationRequest, ChangeRideStatusRequest:com.nikonenko.e2etests.dto.ChangeRideStatusRequest, ReviewRequest:com.nikonenko.e2etests.dto.ReviewRequest
+
+
+feign:
+  okhttp:
+    enabled=true:
+  client:
+    config:
+      ride:
+        name: RIDE-SERVICE
+        url: http://localhost:8084/api/v1/rides
+      payment:
+        name: PAYMENT-SERVICE
+        url: http://localhost:8083/api/v1/payments
+      passenger:
+        name: PASSENGER-SERVICE
+        url: http://localhost:8081/api/v1/passengers
+      driver:
+        name: DRIVER-SERVICE
+        url: http://localhost:8082/api/v1/drivers
