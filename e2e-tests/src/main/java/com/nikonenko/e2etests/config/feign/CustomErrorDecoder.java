@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nikonenko.e2etests.dto.ExceptionResponse;
 import com.nikonenko.e2etests.exceptions.FeignClientBadRequestException;
+import com.nikonenko.e2etests.utils.LogList;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +25,10 @@ public class CustomErrorDecoder implements ErrorDecoder {
         try (InputStream bodyInputStream = response.body().asInputStream()) {
             ExceptionResponse exceptionResponse = objectMapper.readValue(bodyInputStream, ExceptionResponse.class);
             if (exceptionResponse.getHttpStatus().is4xxClientError()) {
-                log.info("Received client exception with Status Code: {}", exceptionResponse.getHttpStatus());
                 return new FeignClientBadRequestException(exceptionResponse.getMessage());
             }
-        } catch (IOException e) {
-            log.error("Error decoding response body", e);
+        } catch (IOException ex) {
+            log.error(LogList.LOG_DECODE_ERROR, ex.getMessage());
         }
 
         return defaultErrorDecoder.decode(methodKey, response);

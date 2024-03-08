@@ -1,6 +1,7 @@
 package com.nikonenko.rideservice.kafka.producer;
 
 import com.nikonenko.rideservice.dto.RatingToDriverRequest;
+import com.nikonenko.rideservice.utils.LogList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ public class UpdateDriverRatingRequestProducer {
     private final KafkaTemplate<String, RatingToDriverRequest> kafkaTemplate;
 
     public void sendRatingDriverRequest(RatingToDriverRequest request) {
-        log.info("Sending message {}", request);
+        log.info(LogList.LOG_KAFKA_SEND_MESSAGE, request);
         Message<RatingToDriverRequest> message = MessageBuilder
                 .withPayload(request)
                 .setHeader(KafkaHeaders.TOPIC, ratingTopic)

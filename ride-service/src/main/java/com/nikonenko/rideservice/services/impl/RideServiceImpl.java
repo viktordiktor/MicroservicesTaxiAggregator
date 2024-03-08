@@ -26,6 +26,7 @@ import com.nikonenko.rideservice.models.RideStatus;
 import com.nikonenko.rideservice.repositories.RideRepository;
 import com.nikonenko.rideservice.services.RideService;
 import com.nikonenko.rideservice.services.feign.PaymentService;
+import com.nikonenko.rideservice.utils.LogList;
 import com.nikonenko.rideservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,14 +109,14 @@ public class RideServiceImpl implements RideService {
 
         if (createRideRequest.getChargeId() != null && !createRideRequest.getChargeId().isEmpty()) {
             checkChargeSuccess(createRideRequest.getChargeId());
-            log.info("Charge success");
+            log.info(LogList.LOG_SUCCESS_CHARGE);
         }
 
         ride.setStatus(RideStatus.OPENED);
         ride.setPaymentMethod(getPaymentMethod(createRideRequest));
 
         Ride savedRide = rideRepository.save(ride);
-        log.info("Created ride with id: {}", savedRide.getId());
+        log.info(LogList.LOG_CREATE_RIDE, savedRide.getId());
         return modelMapper.map(savedRide, RideResponse.class);
     }
 
@@ -142,7 +143,7 @@ public class RideServiceImpl implements RideService {
             customerChargeReturnResponse = returnCharge(ride);
         }
         rideRepository.delete(ride);
-        log.info("Deleted ride with id: {}", rideId);
+        log.info(LogList.LOG_DELETE_RIDE, rideId);
         return CloseRideResponse.builder()
                 .ridePaymentMethod(ride.getPaymentMethod())
                 .customerChargeReturnResponse(customerChargeReturnResponse)
@@ -174,7 +175,6 @@ public class RideServiceImpl implements RideService {
     }
 
     private Ride getFinishedRide(ReviewRequest request) {
-        log.info("Request with ride id: {}", request.getRideId());
         Ride ride = getOrThrow(request.getRideId());
         if (ride.getStatus() != RideStatus.FINISHED) {
             throw new RideIsNotFinishedException();
@@ -200,8 +200,8 @@ public class RideServiceImpl implements RideService {
         ride.setDriverId(request.getDriverId());
         ride.setStatus(RideStatus.ACCEPTED);
         ride.setCar(request.getCar());
-        log.info("Accepting ride with id: {}...", ride.getId());
         rideRepository.save(ride);
+        log.info(LogList.LOG_ACCEPT_RIDE, ride.getId());
     }
 
     public void rejectRide(ChangeRideStatusRequest request) {
@@ -209,8 +209,8 @@ public class RideServiceImpl implements RideService {
         checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setDriverId(null);
         ride.setStatus(RideStatus.OPENED);
-        log.info("Rejecting ride with id: {}...", ride.getId());
         rideRepository.save(ride);
+        log.info(LogList.LOG_REJECT_RIDE, ride.getId());
     }
 
     public void startRide(ChangeRideStatusRequest request) {
@@ -218,8 +218,8 @@ public class RideServiceImpl implements RideService {
         checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setStartDate(LocalDateTime.now());
         ride.setStatus(RideStatus.STARTED);
-        log.info("Starting ride with id: {}...", ride.getId());
         rideRepository.save(ride);
+        log.info(LogList.LOG_START_RIDE, ride.getId());
     }
 
     public void finishRide(ChangeRideStatusRequest request) {
@@ -227,8 +227,8 @@ public class RideServiceImpl implements RideService {
         checkRideAttributes(ride, request.getDriverId(), RideStatus.STARTED, new RideIsNotStartedException());
         ride.setEndDate(LocalDateTime.now());
         ride.setStatus(RideStatus.FINISHED);
-        log.info("Finishing ride with id: {}...", ride.getId());
         rideRepository.save(ride);
+        log.info(LogList.LOG_FINISH_RIDE, ride.getId());
     }
 
     public void checkRideAttributes(Ride ride, Long driverId, RideStatus rideStatus, RuntimeException ex) {

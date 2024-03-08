@@ -13,6 +13,7 @@ import com.nikonenko.passengerservice.models.feign.RidePaymentMethod;
 import com.nikonenko.passengerservice.models.feign.RideStatus;
 import com.nikonenko.passengerservice.services.feign.RideService;
 import com.nikonenko.passengerservice.utils.ExceptionList;
+import com.nikonenko.passengerservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class RideServiceImpl implements RideService {
     }
 
     public CalculateDistanceResponse fallbackRideService(CalculateDistanceRequest customerChargeRequest, Exception ex) {
-        log.info("Exception during getRideDistance request to Ride Service: {}", ex.getMessage());
+        log.info(LogList.LOG_GET_RIDE_DISTANCE_FEIGN_ERROR, ex.getMessage());
         return CalculateDistanceResponse.builder()
                 .distance(0.0)
                 .startGeo(new LatLng())
@@ -61,7 +62,7 @@ public class RideServiceImpl implements RideService {
     }
 
     public RideResponse fallbackRideService(CreateRideRequest createRideRequest, Exception ex) {
-        log.info("Exception during createRide request to Ride Service: {}", ex.getMessage());
+        log.info(LogList.LOG_CREATE_RIDE_FEIGN_ERROR, createRideRequest.getPassengerId(), ex.getMessage());
         return RideResponse.builder()
                 .chargeId("")
                 .distance(0.0)
@@ -76,7 +77,7 @@ public class RideServiceImpl implements RideService {
     }
 
     public CloseRideResponse fallbackRideService(String rideId, Exception ex) {
-        log.info("Exception during closeRide request to Ride Service: {}", ex.getMessage());
+        log.info(LogList.LOG_CLOSE_RIDE_FEIGN_ERROR, rideId, ex.getMessage());
         return CloseRideResponse.builder()
                 .customerChargeReturnResponse(new CustomerChargeReturnResponse())
                 .ridePaymentMethod(RidePaymentMethod.BY_CASH)
@@ -85,7 +86,7 @@ public class RideServiceImpl implements RideService {
     }
 
     public PageResponse<RideResponse> fallbackRideService(Long passengerId, Exception ex) {
-        log.info("Exception during getRidesByPassengerId request to Ride Service: {}", ex.getMessage());
+        log.info(LogList.LOG_GET_RIDES_BY_PASSENGER_ID_FEIGN_ERROR, passengerId, ex.getMessage());
         return PageResponse.<RideResponse>builder()
                 .objectList(Collections.emptyList())
                 .totalElements(0)

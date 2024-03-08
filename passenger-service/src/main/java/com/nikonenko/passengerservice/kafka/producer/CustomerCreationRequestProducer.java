@@ -1,6 +1,7 @@
 package com.nikonenko.passengerservice.kafka.producer;
 
 import com.nikonenko.passengerservice.dto.CustomerCreationRequest;
+import com.nikonenko.passengerservice.utils.LogList;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class CustomerCreationRequestProducer {
     private final KafkaTemplate<String, CustomerCreationRequest> kafkaTemplate;
 
     public void sendCustomerCreationRequest(@Valid CustomerCreationRequest request) {
-        log.info("Sending message {}", request);
+        log.info(LogList.LOG_KAFKA_SEND_MESSAGE, request);
         Message<CustomerCreationRequest> message = MessageBuilder
                 .withPayload(request)
                 .setHeader(KafkaHeaders.TOPIC, customerTopic)

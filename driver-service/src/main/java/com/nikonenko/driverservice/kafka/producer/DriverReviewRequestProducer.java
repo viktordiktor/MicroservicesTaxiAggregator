@@ -1,6 +1,7 @@
 package com.nikonenko.driverservice.kafka.producer;
 
 import com.nikonenko.driverservice.dto.ReviewRequest;
+import com.nikonenko.driverservice.utils.LogList;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class DriverReviewRequestProducer {
     private final KafkaTemplate<String, ReviewRequest> kafkaTemplate;
 
     public void sendRatingPassengerRequest(@Valid ReviewRequest request) {
-        log.info("Sending message {}", request);
+        log.info(LogList.LOG_KAFKA_SEND_MESSAGE, request);
         Message<ReviewRequest> message = MessageBuilder
                 .withPayload(request)
                 .setHeader(KafkaHeaders.TOPIC, ratingTopic)

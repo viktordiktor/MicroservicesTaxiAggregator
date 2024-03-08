@@ -1,6 +1,7 @@
 package com.nikonenko.e2etests.kafka.producer;
 
 import com.nikonenko.e2etests.dto.CustomerCreationRequest;
+import com.nikonenko.e2etests.utils.LogList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ public class CustomerCreationRequestProducer {
     private final KafkaTemplate<String, CustomerCreationRequest> kafkaTemplate;
 
     public void sendCustomerCreationRequest(CustomerCreationRequest request) {
-        log.info("Sending message {}", request);
+        log.info(LogList.LOG_KAFKA_SEND_MESSAGE, request);
         Message<CustomerCreationRequest> message = MessageBuilder
                 .withPayload(request)
                 .setHeader(KafkaHeaders.TOPIC, customerTopic)

@@ -37,7 +37,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -64,9 +63,10 @@ public class StripeUtil {
 
     public Token stripeCreateToken(Map<String, Object> cardParams) {
         try {
-            log.info("Creating new token..");
-            return Token.create(Map.of("card", cardParams),
+            Token token = Token.create(Map.of("card", cardParams),
                     getRequestOptions(publicKey));
+            log.info(LogList.LOG_CREATE_TOKEN, token.getId());
+            return token;
         } catch (StripeException ex) {
             throw new CreateTokenFailedException(ex.getMessage());
         }
@@ -82,8 +82,9 @@ public class StripeUtil {
 
     public Charge stripeChargeCreation(Map<String, Object> chargeParams) {
         try {
-            log.info("Creating new charge..");
-            return Charge.create(chargeParams, getRequestOptions(secretKey));
+            Charge charge = Charge.create(chargeParams, getRequestOptions(secretKey));
+            log.info(LogList.LOG_CREATE_CHARGE, charge.getId());
+            return charge;
         } catch (StripeException ex) {
             throw new CreateChargeFailedException(ex.getMessage());
         }
@@ -91,8 +92,9 @@ public class StripeUtil {
 
     public Charge stripeReceivingCharge(String chargeId) {
         try {
-            log.info("Retrieving charge..");
-            return Charge.retrieve(chargeId, getRequestOptions(secretKey));
+            Charge charge = Charge.retrieve(chargeId, getRequestOptions(secretKey));
+            log.info(LogList.LOG_RETRIEVE_CHARGE, chargeId);
+            return charge;
         } catch (StripeException ex) {
             throw new RetrieveChargeFailedException(ex.getMessage());
         }
@@ -108,8 +110,9 @@ public class StripeUtil {
 
     public Coupon stripeCouponCreation(CouponCreateParams params) {
         try {
-            log.info("Creating coupon..");
-            return Coupon.create(params, getRequestOptions(secretKey));
+            Coupon coupon = Coupon.create(params, getRequestOptions(secretKey));
+            log.info(LogList.LOG_CREATE_COUPON, coupon.getId());
+            return coupon;
         } catch (StripeException ex) {
             throw new CreateCouponFailedException(ex.getMessage());
         }
@@ -123,8 +126,8 @@ public class StripeUtil {
 
     public Coupon retrieveCoupon(String couponId, LocalDateTime localDateTime) {
         try {
-            log.info("Retrieving coupon with id: {}", couponId);
             Coupon coupon = Coupon.retrieve(couponId, getRequestOptions(secretKey));
+            log.info(LogList.LOG_RETRIEVE_COUPON, couponId);
             checkCouponActive(coupon, localDateTime);
             return coupon;
         } catch (StripeException ex) {
@@ -139,8 +142,9 @@ public class StripeUtil {
                     .setName(customerRequest.getUsername())
                     .setBalance((long) customerRequest.getAmount().doubleValue() * 100)
                     .build();
-            log.info("Creating new customer..");
-            return Customer.create(customerCreateParams, getRequestOptions(secretKey));
+            Customer customer = Customer.create(customerCreateParams, getRequestOptions(secretKey));
+            log.info(LogList.LOG_CREATE_CUSTOMER, customer.getId());
+            return customer;
         } catch (StripeException ex) {
             throw new CreateCustomerException(ex.getMessage());
         }
@@ -152,11 +156,10 @@ public class StripeUtil {
                     "type", "card",
                     "card", Map.of("token", "tok_visa")
             );
-            log.info("Creating new payment..");
             PaymentMethod paymentMethod = PaymentMethod.create(paymentParams,
                     getRequestOptions(secretKey));
-            log.info("Attaching customer to payment with id: {}", paymentMethod.getId());
             paymentMethod.attach(Map.of("customer", customerId), getRequestOptions(secretKey));
+            log.info(LogList.LOG_CREATE_PAYMENT_METHOD, paymentMethod.getId());
         } catch (StripeException ex){
             throw new CreatePaymentFailedException(ex.getMessage());
         }
@@ -164,8 +167,9 @@ public class StripeUtil {
 
     public Customer stripeCustomerRetrieving(String customerId) {
         try {
-            log.info("Retrieving customer with id: {}", customerId);
-            return Customer.retrieve(customerId, getRequestOptions(secretKey));
+            Customer customer = Customer.retrieve(customerId, getRequestOptions(secretKey));
+            log.info(LogList.LOG_RETRIEVE_CUSTOMER, customerId);
+            return customer;
         } catch (StripeException ex) {
             throw new RetrieveCustomerFailedException(ex.getMessage());
         }
@@ -177,8 +181,9 @@ public class StripeUtil {
                 .setPaymentMethod("pm_card_visa")
                 .build();
         try {
-            log.info("Confirming intent with id: {}", intent.getId());
-            return intent.confirm(params, getRequestOptions(secretKey));
+            PaymentIntent confirmedIntent = intent.confirm(params, getRequestOptions(secretKey));
+            log.info(LogList.LOG_CONFIRM_INTENT, confirmedIntent.getId());
+            return confirmedIntent;
         } catch (StripeException ex) {
             throw new ConfirmIntentFailedException(ex.getMessage());
         }
@@ -186,7 +191,6 @@ public class StripeUtil {
 
     public PaymentIntent stripeIntentCreation(CustomerChargeRequest request, String customerId) {
         try {
-            log.info("Creating new intent..");
             PaymentIntent intent = PaymentIntent.create(Map.of("amount",
                             (long) (request.getAmount().doubleValue() * 100),
                             "currency", request.getCurrency(),
@@ -194,6 +198,7 @@ public class StripeUtil {
                             "automatic_payment_methods", createAutomaticPaymentMethods()),
                     getRequestOptions(secretKey));
             intent.setPaymentMethod(customerId);
+            log.info(LogList.LOG_CREATE_INTENT, intent.getId());
             return intent;
         } catch (StripeException ex) {
             throw new CreateIntentFailedException(ex.getMessage());
@@ -212,8 +217,9 @@ public class StripeUtil {
 
     public PaymentIntent stripeIntentRetrieving(String intentId) {
         try {
-            log.info("Retrieving intent...");
-            return PaymentIntent.retrieve(intentId, getRequestOptions(secretKey));
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(intentId, getRequestOptions(secretKey));
+            log.info(LogList.LOG_RETRIEVE_INTENT, paymentIntent.getId());
+            return paymentIntent;
         } catch (StripeException ex) {
             throw new RetrieveIntentFailedException(ex.getMessage());
         }
@@ -228,8 +234,8 @@ public class StripeUtil {
 
     public void stripeCustomerUpdating(Customer customer, CustomerUpdateParams params) {
         try {
-            log.info("Updating customer with id: {}", customer.getId());
             customer.update(params, getRequestOptions(secretKey));
+            log.info(LogList.LOG_UPDATE_CUSTOMER, customer.getId());
         } catch (StripeException ex) {
             throw new UpdateCustomerFailedException(ex.getMessage());
         }
@@ -240,7 +246,7 @@ public class StripeUtil {
                 LocalDateTime.ofInstant(Instant.ofEpochSecond(coupon.getCreated()),
                         TimeZone.getDefault().toZoneId())
                         .plusMonths(coupon.getDurationInMonths());
-        log.info("Coupon expiration date: {}\nRequest date: {}", couponExpiration, requestDateTime);
+        log.info(LogList.LOG_COUPON_EXP_DATE, couponExpiration, requestDateTime);
         if (couponExpiration.isBefore(requestDateTime)) {
             throw new ExpiredCouponException();
         }

@@ -1,6 +1,7 @@
 package com.nikonenko.driverservice.kafka.producer;
 
 import com.nikonenko.driverservice.dto.ChangeRideStatusRequest;
+import com.nikonenko.driverservice.utils.LogList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ public class RideStatusRequestProducer {
     private final KafkaTemplate<String, ChangeRideStatusRequest> kafkaTemplate;
 
     public void sendChangeRideStatusRequest(ChangeRideStatusRequest request) {
-        log.info("Sending message {}", request);
+        log.info(LogList.LOG_KAFKA_SEND_MESSAGE, request);
         Message<ChangeRideStatusRequest> message = MessageBuilder
                 .withPayload(request)
                 .setHeader(KafkaHeaders.TOPIC, driverTopic)

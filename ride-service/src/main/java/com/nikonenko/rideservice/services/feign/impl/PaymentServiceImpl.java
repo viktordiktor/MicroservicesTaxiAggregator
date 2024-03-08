@@ -5,6 +5,7 @@ import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeReturnResponse
 import com.nikonenko.rideservice.feign.PaymentFeignClient;
 import com.nikonenko.rideservice.services.feign.PaymentService;
 import com.nikonenko.rideservice.utils.ExceptionList;
+import com.nikonenko.rideservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public CustomerChargeReturnResponse fallbackReturnChargePaymentService(String chargeId, Exception ex) {
-        log.info("Exception during returnCharge request to Payment Service: {}", ex.getMessage());
+        log.info(LogList.LOG_RETURN_CHARGE_FEIGN_ERROR, chargeId, ex.getMessage());
         return CustomerChargeReturnResponse.builder()
                 .id("")
                 .paymentId("")
@@ -43,7 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public CustomerChargeResponse fallbackGetChargeByIdPaymentService(String chargeId, Exception ex) {
-        log.info("Exception during getChargeById request to Payment Service: {}", ex.getMessage());
+        log.info(LogList.LOG_GET_CHARGE_BY_ID_FEIGN_ERROR, chargeId, ex.getMessage());
         return CustomerChargeResponse.builder()
                 .id("")
                 .amount(BigDecimal.ZERO)

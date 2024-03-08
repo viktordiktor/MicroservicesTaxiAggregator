@@ -32,6 +32,7 @@ import com.nikonenko.passengerservice.services.PassengerService;
 import com.nikonenko.passengerservice.services.feign.PaymentService;
 import com.nikonenko.passengerservice.services.feign.RideService;
 import com.nikonenko.passengerservice.utils.ExceptionList;
+import com.nikonenko.passengerservice.utils.LogList;
 import com.nikonenko.passengerservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +75,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse getPassengerById(Long id) {
-        return modelMapper.map(getOrThrow(id), PassengerResponse.class);
+        Passenger passenger = getOrThrow(id);
+        log.info(LogList.LOG_GET_PASSENGER, id);
+        return modelMapper.map(passenger, PassengerResponse.class);
     }
 
     @Override
@@ -82,7 +85,7 @@ public class PassengerServiceImpl implements PassengerService {
         checkPassengerExists(passengerRequest);
         Passenger passenger = modelMapper.map(passengerRequest, Passenger.class);
         Passenger savedPassenger = passengerRepository.save(passenger);
-        log.info("Passenger created with id: {}", savedPassenger.getId());
+        log.info(LogList.LOG_CREATE_PASSENGER, savedPassenger.getId());
         return modelMapper.map(savedPassenger, PassengerResponse.class);
     }
 
@@ -107,52 +110,47 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     private CalculateDistanceResponse getRideDistance(RideByPassengerRequest rideByPassengerRequest) {
-        log.info("Request for distance..");
         CalculateDistanceRequest distanceRequest = CalculateDistanceRequest.builder()
                 .startGeo(rideByPassengerRequest.getStartGeo())
                 .endGeo(rideByPassengerRequest.getEndGeo())
                 .build();
         CalculateDistanceResponse distanceResponse = rideService.getRideDistance(distanceRequest);
-        log.info("Got distance");
+        log.info(LogList.LOG_GET_DISTANCE, distanceResponse.getDistance());
         return distanceResponse;
     }
 
     private CustomerCalculateRideResponse calculateRidePrice(RideByPassengerRequest rideByPassengerRequest,
                                                              double distance) {
-        log.info("\nRequest for price...");
         CustomerCalculateRideRequest calculatePriceRequest = CustomerCalculateRideRequest.builder()
                 .rideLength(distance)
                 .coupon(rideByPassengerRequest.getCoupon())
                 .rideDateTime(LocalDateTime.now())
                 .build();
         CustomerCalculateRideResponse calculatePriceResponse = paymentService.calculateRidePrice(calculatePriceRequest);
-        log.info("Got price: {}", calculatePriceResponse.getPrice());
+        log.info(LogList.LOG_GET_PRICE, calculatePriceResponse.getPrice());
         return calculatePriceResponse;
     }
 
     private void checkCustomerExists(Long passengerId) {
-        log.info("\nRequest for check customer exists..");
         if (!paymentService.checkCustomerExists(passengerId).isExists()) {
             throw new NotFoundByPassengerException();
         }
-        log.info("Customer exists");
+        log.info(LogList.LOG_CUSTOMER_EXISTS);
     }
 
     private CustomerChargeResponse createCharge(Long passengerId, BigDecimal amount) {
-        log.info("\nRequest for Charge...");
         CustomerChargeRequest chargeRequest = CustomerChargeRequest.builder()
                 .passengerId(passengerId)
                 .amount(amount)
                 .currency("usd")
                 .build();
         CustomerChargeResponse chargeResponse = paymentService.createCharge(chargeRequest);
-        log.info("Got Charge: {}", chargeResponse.getId());
+        log.info(LogList.LOG_GET_CHARGE, chargeResponse.getId());
         return chargeResponse;
     }
 
     private RideResponse createRide(Long passengerId, RideByPassengerRequest rideByPassengerRequest,
                                     double distance, CustomerChargeResponse chargeResponse) {
-        log.info("\nRequest for Ride...");
         CreateRideRequest createRideRequest = CreateRideRequest.builder()
                 .passengerId(passengerId)
                 .distance(distance)
@@ -161,7 +159,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .chargeId(chargeResponse != null ? chargeResponse.getId() : null)
                 .build();
         RideResponse rideResponse = rideService.createRide(createRideRequest);
-        log.info("Created ride with id: {}", rideResponse.getId());
+        log.info(LogList.LOG_CREATE_RIDE, rideResponse.getId());
         return rideResponse;
     }
 
@@ -174,7 +172,7 @@ public class PassengerServiceImpl implements PassengerService {
         editingPassenger.setId(id);
         editingPassenger.setRatingSet(passengerRating);
         passengerRepository.save(editingPassenger);
-        log.info("Passenger edited with id: {}", id);
+        log.info(LogList.LOG_EDIT_PASSENGER, id);
         return modelMapper.map(editingPassenger, PassengerResponse.class);
     }
 
@@ -191,7 +189,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public void deletePassenger(Long id) {
         passengerRepository.delete(getOrThrow(id));
-        log.info("Passenger deleted with id: {}", id);
+        log.info(LogList.LOG_DELETE_PASSENGER, id);
     }
 
     @Override
@@ -217,7 +215,7 @@ public class PassengerServiceImpl implements PassengerService {
         modifiedRatingSet.add(addingRating);
 
         passenger.setRatingSet(modifiedRatingSet);
-        log.info("Review added to passenger with id: {}", request.getPassengerId());
+        log.info(LogList.LOG_ADD_RATING, request.getPassengerId());
         passengerRepository.save(passenger);
     }
 
@@ -241,11 +239,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     public void checkPassengerExists(PassengerRequest passengerRequest) {
         if (passengerRepository.existsByPhone(passengerRequest.getPhone())) {
-            log.info("Passenger with phone {} already exists!", passengerRequest.getPhone());
             throw new PhoneAlreadyExistsException();
         }
         if (passengerRepository.existsByUsername(passengerRequest.getUsername())) {
-            log.info("Passenger with username {} already exists!", passengerRequest.getUsername());
             throw new UsernameAlreadyExistsException();
         }
     }
