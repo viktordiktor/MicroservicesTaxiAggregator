@@ -33,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public CustomerChargeReturnResponse fallbackReturnChargePaymentService(String chargeId, Exception ex) {
-        log.info(LogList.LOG_RETURN_CHARGE_FEIGN_ERROR, chargeId, ex.getMessage());
+        log.error(LogList.LOG_RETURN_CHARGE_FEIGN_ERROR, chargeId, ex.getMessage());
         return CustomerChargeReturnResponse.builder()
                 .id("")
                 .paymentId("")
@@ -44,7 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public CustomerChargeResponse fallbackGetChargeByIdPaymentService(String chargeId, Exception ex) {
-        log.info(LogList.LOG_GET_CHARGE_BY_ID_FEIGN_ERROR, chargeId, ex.getMessage());
+        log.error(LogList.LOG_GET_CHARGE_BY_ID_FEIGN_ERROR, chargeId, ex.getMessage());
         return CustomerChargeResponse.builder()
                 .id("")
                 .amount(BigDecimal.ZERO)
