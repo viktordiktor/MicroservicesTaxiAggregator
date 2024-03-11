@@ -5,6 +5,7 @@ import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import com.nikonenko.driverservice.feign.RideFeignClient;
 import com.nikonenko.driverservice.services.feign.RideService;
 import com.nikonenko.driverservice.utils.ExceptionList;
+import com.nikonenko.driverservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class RideServiceImpl implements RideService {
     }
 
     public PageResponse<RideResponse> fallbackRideService(Long driverId, Exception ex) {
-        log.info("Exception during getRidesByDriverId request to Ride Service: {}", ex.getMessage());
+        log.error(LogList.LOG_GET_RIDES_BY_DRIVER_ID_FEIGN_ERROR, driverId, ex.getMessage());
         return PageResponse.<RideResponse>builder()
                 .objectList(Collections.emptyList())
                 .totalElements(0)

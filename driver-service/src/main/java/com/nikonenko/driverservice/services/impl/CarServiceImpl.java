@@ -8,6 +8,7 @@ import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
 import com.nikonenko.driverservice.models.Car;
 import com.nikonenko.driverservice.repositories.CarRepository;
 import com.nikonenko.driverservice.services.CarService;
+import com.nikonenko.driverservice.utils.LogList;
 import com.nikonenko.driverservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,13 +43,15 @@ public class CarServiceImpl implements CarService {
         checkCarExists(carRequest);
         Car car = modelMapper.map(carRequest, Car.class);
         Car savedCar = carRepository.save(car);
-        log.info("Car created with id: {}", savedCar.getId());
+        log.info(LogList.LOG_CREATE_CAR, savedCar.getId());
         return modelMapper.map(savedCar, CarResponse.class);
     }
 
     @Override
     public CarResponse getCarById(Long id) {
-        return modelMapper.map(getOrThrow(id), CarResponse.class);
+        Car car = getOrThrow(id);
+        log.info(LogList.LOG_GET_CAR, id);
+        return modelMapper.map(car, CarResponse.class);
     }
 
     @Override
@@ -60,24 +61,22 @@ public class CarServiceImpl implements CarService {
         editingCar = modelMapper.map(carRequest, Car.class);
         editingCar.setId(id);
         carRepository.save(editingCar);
-        log.info("Car edited with id: {}", id);
+        log.info(LogList.LOG_EDIT_CAR, id);
         return modelMapper.map(editingCar, CarResponse.class);
     }
 
     @Override
     public void deleteCar(Long id) {
         carRepository.delete(getOrThrow(id));
-        log.info("Car deleted with id: {}", id);
+        log.info(LogList.LOG_DELETE_CAR, id);
     }
 
     public Car getOrThrow(Long id) {
-        Optional<Car> optionalCar = carRepository.findById(id);
-        return optionalCar.orElseThrow(CarNotFoundException::new);
+        return carRepository.findById(id).orElseThrow(CarNotFoundException::new);
     }
 
     public void checkCarExists(CarRequest carRequest) {
         if (carRepository.existsByNumber(carRequest.getNumber())) {
-            log.info("Car with number {} already exists!", carRequest.getNumber());
             throw new CarNumberAlreadyExistsException();
         }
     }

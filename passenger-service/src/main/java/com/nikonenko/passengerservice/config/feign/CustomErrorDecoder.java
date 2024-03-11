@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nikonenko.passengerservice.dto.ExceptionResponse;
 import com.nikonenko.passengerservice.exceptions.BadRequestByPassengerException;
+import com.nikonenko.passengerservice.utils.LogList;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;
@@ -35,11 +36,10 @@ public class CustomErrorDecoder implements ErrorDecoder {
                         response.request());
             }
             if (exceptionResponse.getHttpStatus().is4xxClientError()) {
-                log.info("Received client exception with Status Code: {}", exceptionResponse.getHttpStatus());
                 return new BadRequestByPassengerException(exceptionResponse.getMessage());
             }
-        } catch (IOException e) {
-            log.error("Error decoding response body", e);
+        } catch (IOException ex) {
+            log.error(LogList.LOG_DECODE_ERROR, ex.getMessage());
         }
 
         return defaultErrorDecoder.decode(methodKey, response);

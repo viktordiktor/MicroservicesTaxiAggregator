@@ -306,7 +306,6 @@ public class EndToEndStepDefinitions {
     @Then("Driver should contains new Review")
     public void driverShouldContainsNewReview() {
         int reviewsSize = driverServiceClient.getDriver(driverId).getRatingSet().size();
-        log.info("Review Size: {}", reviewsSize);
         await()
                 .pollInterval(Duration.ofSeconds(3))
                 .atMost(10, SECONDS)
@@ -324,7 +323,6 @@ public class EndToEndStepDefinitions {
     @Then("Passenger should contains new Review")
     public void passengerShouldContainsNewReview() {
         int reviewsSize = passengerServiceClient.getPassenger(passengerId).getRatingSet().size();
-        log.info("Review Size: {}", reviewsSize);
         await()
                 .pollInterval(Duration.ofSeconds(3))
                 .atMost(10, SECONDS)

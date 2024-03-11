@@ -12,6 +12,7 @@ import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
+@Slf4j
 public class RestExceptionHandler {
     @ExceptionHandler(RideNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleNotFoundException(RuntimeException ex) {
+        log.error(LogList.LOG_NOT_FOUND_ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
@@ -43,6 +46,7 @@ public class RestExceptionHandler {
             errorMessages.add(fieldError.getDefaultMessage());
         }
 
+        log.error(LogList.LOG_METHOD_ARGUMENT_ERROR, errorMessages);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errorMessages);
@@ -55,6 +59,7 @@ public class RestExceptionHandler {
             ChargeIsNotSuccessException.class, WrongPageableParameterException.class,
             BadRequestByRideException.class, WrongSortFieldException.class})
     public ResponseEntity<ExceptionResponse> handleBadRequestsExceptions(RuntimeException ex) {
+        log.error(LogList.LOG_BAD_REQUEST_ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));

@@ -10,6 +10,7 @@ import com.nikonenko.passengerservice.dto.feign.payment.CustomerExistsResponse;
 import com.nikonenko.passengerservice.feign.PaymentFeignClient;
 import com.nikonenko.passengerservice.services.feign.PaymentService;
 import com.nikonenko.passengerservice.utils.ExceptionList;
+import com.nikonenko.passengerservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public CustomerChargeResponse fallbackPaymentService(CustomerChargeRequest customerChargeRequest, Exception ex) {
-        log.info("Exception during createCharge request to Payment Service: {}", ex.getMessage());
+        log.error(LogList.LOG_CREATE_CHARGE_FEIGN_ERROR, customerChargeRequest.getPassengerId(), ex.getMessage());
         return CustomerChargeResponse.builder()
                 .id("")
                 .passengerId(0L)
@@ -53,7 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public CustomerExistsResponse fallbackPaymentService(Long passengerId, Exception ex) {
-        log.info("Exception during checkCustomerExists request to Payment Service: {}", ex.getMessage());
+        log.error(LogList.LOG_CHECK_CUSTOMER_EXISTS_FEIGN_ERROR, passengerId, ex.getMessage());
         return CustomerExistsResponse.builder()
                 .isExists(false)
                 .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
@@ -62,7 +63,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     public CustomerCalculateRideResponse fallbackPaymentService(CustomerCalculateRideRequest calculateRideRequest,
                                                                 Exception ex) {
-        log.info("Exception during calculateRidePrice request to Payment Service: {}", ex.getMessage());
+        log.error(LogList.LOG_CALCULATE_RIDE_PRICE_FEIGN_ERROR, ex.getMessage());
         return CustomerCalculateRideResponse.builder()
                 .rideLength(0.0)
                 .rideDateTime(LocalDateTime.now())
@@ -74,7 +75,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     public CustomerCreationResponse fallbackPaymentService(CustomerCreationRequest customerCreationRequest,
                                                            Exception ex) {
-        log.info("Exception during createCustomer request to Payment Service: {}", ex.getMessage());
+        log.error(LogList.LOG_CREATE_CUSTOMER_FEIGN_ERROR, customerCreationRequest.getPassengerId(), ex.getMessage());
         return CustomerCreationResponse.builder()
                 .id("")
                 .phone("")

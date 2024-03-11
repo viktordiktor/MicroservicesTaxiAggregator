@@ -8,6 +8,7 @@ import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.passengerservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.passengerservice.exceptions.WrongSortFieldException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
+@Slf4j
 public class RestExceptionHandler {
     @ExceptionHandler({PassengerNotFoundException.class, NotFoundByPassengerException.class})
     public ResponseEntity<ExceptionResponse> handleNotFoundException(RuntimeException ex) {
+        log.error(LogList.LOG_NOT_FOUND_ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
@@ -39,16 +42,25 @@ public class RestExceptionHandler {
             errorMessages.add(fieldError.getDefaultMessage());
         }
 
+        log.error(LogList.LOG_METHOD_ARGUMENT_ERROR, errorMessages);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errorMessages);
     }
 
-    @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class,
-            HttpMessageNotReadableException.class, PropertyReferenceException.class,
+    @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class})
+    public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(RuntimeException ex) {
+        log.error(LogList.LOG_CONFLICT_ERROR, ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.CONFLICT));
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class,
             WrongPageableParameterException.class, MethodArgumentTypeMismatchException.class,
             BadRequestByPassengerException.class, WrongSortFieldException.class})
-    public ResponseEntity<ExceptionResponse> handleUsernameAlreadyExistsException(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleBadRequestException(RuntimeException ex) {
+        log.error(LogList.LOG_BAD_REQUEST_ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));

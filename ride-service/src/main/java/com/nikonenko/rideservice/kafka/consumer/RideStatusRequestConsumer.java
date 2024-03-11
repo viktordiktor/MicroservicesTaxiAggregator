@@ -2,6 +2,7 @@ package com.nikonenko.rideservice.kafka.consumer;
 
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.services.RideService;
+import com.nikonenko.rideservice.utils.LogList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -15,7 +16,7 @@ public class RideStatusRequestConsumer {
 
     @KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${spring.kafka.consumer.status-topic-name}")
     public void handleChangeRideStatusRequest(ChangeRideStatusRequest request) {
-        log.info("Receiver request for Ride {}", request.getRideId());
+        log.info(LogList.LOG_KAFKA_RECEIVE_CHANGE_RIDE_STATUS, request.getRideId());
         rideService.changeRideStatus(request);
     }
 }

@@ -12,6 +12,7 @@ import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.driverservice.exceptions.WrongSortFieldException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
+@Slf4j
 public class RestExceptionHandler {
     @ExceptionHandler({DriverNotFoundException.class, CarNotFoundException.class})
     public ResponseEntity<ExceptionResponse> handleNotFoundException(RuntimeException ex) {
+        log.error(LogList.LOG_NOT_FOUND_ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
@@ -43,18 +46,28 @@ public class RestExceptionHandler {
             errorMessages.add(fieldError.getDefaultMessage());
         }
 
+        log.error(LogList.LOG_METHOD_ARGUMENT_ERROR, errorMessages);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errorMessages);
     }
 
     @ExceptionHandler({UsernameAlreadyExistsException.class, PhoneAlreadyExistsException.class,
-            CarNumberAlreadyExistsException.class, HttpMessageNotReadableException.class,
+            CarNumberAlreadyExistsException.class})
+    public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(RuntimeException ex) {
+        log.error(LogList.LOG_CONFLICT_ERROR, ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.CONFLICT));
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class,
             PropertyReferenceException.class, WrongPageableParameterException.class,
             MethodArgumentTypeMismatchException.class, DriverIsNotAvailableException.class,
             DriverNoRidesException.class, BadRequestByDriverException.class,
             DriverNotAddedCarException.class, WrongSortFieldException.class})
-    public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(RuntimeException ex) {
+    public ResponseEntity<ExceptionResponse> handleBadRequestException(RuntimeException ex) {
+        log.error(LogList.LOG_BAD_REQUEST_ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));

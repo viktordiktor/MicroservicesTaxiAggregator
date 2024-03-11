@@ -27,6 +27,7 @@ import com.nikonenko.driverservice.repositories.DriverRepository;
 import com.nikonenko.driverservice.services.CarService;
 import com.nikonenko.driverservice.services.DriverService;
 import com.nikonenko.driverservice.services.feign.RideService;
+import com.nikonenko.driverservice.utils.LogList;
 import com.nikonenko.driverservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,9 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public DriverResponse getDriverById(Long id) {
-        return modelMapper.map(getOrThrow(id), DriverResponse.class);
+        Driver driver = getOrThrow(id);
+        log.info(LogList.LOG_GET_DRIVER, id);
+        return modelMapper.map(driver, DriverResponse.class);
     }
 
     @Override
@@ -75,7 +78,7 @@ public class DriverServiceImpl implements DriverService {
         Driver driver = modelMapper.map(driverRequest, Driver.class);
         driver.setAvailable(true);
         Driver savedDriver = driverRepository.save(driver);
-        log.info("Driver created with id: {}", savedDriver.getId());
+        log.info(LogList.LOG_CREATE_DRIVER, savedDriver.getId());
         return modelMapper.map(savedDriver, DriverResponse.class);
     }
 
@@ -88,14 +91,14 @@ public class DriverServiceImpl implements DriverService {
         editingDriver.setId(id);
         editingDriver.setRatingSet(driverRating);
         driverRepository.save(editingDriver);
-        log.info("Driver edited with id: {}", id);
+        log.info(LogList.LOG_EDIT_DRIVER, id);
         return modelMapper.map(editingDriver, DriverResponse.class);
     }
 
     @Override
     public void deleteDriver(Long id) {
         driverRepository.delete(getOrThrow(id));
-        log.info("Driver deleted with id: {}", id);
+        log.info(LogList.LOG_DELETE_DRIVER, id);
     }
 
     @Override
@@ -185,6 +188,7 @@ public class DriverServiceImpl implements DriverService {
         driver.setRatingSet(modifiedRatingSet);
 
         driverRepository.save(driver);
+        log.info(LogList.LOG_ADD_RATING, driver.getId());
     }
 
     @Override
@@ -192,6 +196,7 @@ public class DriverServiceImpl implements DriverService {
         Driver driver = getOrThrow(id);
         CarResponse carResponse = carService.createCar(carRequest);
         driver.setCar(modelMapper.map(carResponse, Car.class));
+        log.info(LogList.LOG_ADD_CAR_FOR_DRIVER, id);
         return modelMapper.map(driverRepository.save(driver), DriverResponse.class);
     }
 
@@ -210,6 +215,7 @@ public class DriverServiceImpl implements DriverService {
         driver.setCar(null);
         carService.deleteCar(carId);
         driverRepository.save(driver);
+        log.info(LogList.LOG_DELETE_CAR_FOR_DRIVER, driverId);
     }
 
     public Driver getOrThrow(Long id) {
@@ -219,11 +225,9 @@ public class DriverServiceImpl implements DriverService {
 
     public void checkDriverExists(DriverRequest driverRequest) {
         if (driverRepository.existsByPhone(driverRequest.getPhone())) {
-            log.info("Driver with phone {} already exists!", driverRequest.getPhone());
             throw new PhoneAlreadyExistsException();
         }
         if (driverRepository.existsByUsername(driverRequest.getUsername())) {
-            log.info("Driver with username {} already exists!", driverRequest.getUsername());
             throw new UsernameAlreadyExistsException();
         }
     }

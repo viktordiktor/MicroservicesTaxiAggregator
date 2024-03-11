@@ -2,6 +2,7 @@ package com.nikonenko.rideservice.kafka.consumer;
 
 import com.nikonenko.rideservice.dto.ReviewRequest;
 import com.nikonenko.rideservice.services.RideService;
+import com.nikonenko.rideservice.utils.LogList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -14,8 +15,8 @@ public class PassengerReviewRequestConsumer {
     private final RideService rideService;
 
     @KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${spring.kafka.consumer.passenger-review-name}")
-    public void handleChangeRideStatusRequest(ReviewRequest request) {
-        log.info("Receiver request for Ride {}", request.getRideId());
+    public void handleChangeDriverRatingRequest(ReviewRequest request) {
+        log.info(LogList.LOG_KAFKA_RECEIVE_CHANGE_DRIVER_RATING, request.getRideId());
         rideService.changeDriverRating(request);
     }
 }

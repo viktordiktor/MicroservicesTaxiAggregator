@@ -1,0 +1,32 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'API-GATEWAY'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'API-GATEWAY:8080' ]
+  - job_name: 'PASSENGER-SERVICE'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'PASSENGER-SERVICE:8081' ]
+  - job_name: 'DRIVER-SERVICE'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'DRIVER-SERVICE:8082' ]
+  - job_name: 'PAYMENT-SERVICE'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'PAYMENT-SERVICE:8083' ]
+  - job_name: 'RIDE-SERVICE'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'RIDE-SERVICE:8084' ]
+  - job_name: 'kafka-exporter'
+    scrape_interval: 45s
+    scrape_timeout: 30s
+    metrics_path: "/metrics"
+    static_configs:
+      - targets:
+          - 'host.docker.internal:9308'
