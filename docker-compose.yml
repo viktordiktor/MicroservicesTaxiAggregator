@@ -52,6 +52,9 @@ services:
       - '9090:9090'
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - mysqldb
+      - mongodb
 
   grafana:
     image: grafana/grafana:latest
@@ -74,6 +77,56 @@ services:
       - '9308:9308'
     depends_on:
       - broker
+
+  elasticsearch:
+    image: elasticsearch:8.12.2
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - xpack.ml.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - xpack.security.http.ssl.enabled=false
+    ports:
+      - '9200:9200'
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: always
+
+  logstash:
+    image: logstash:8.12.2
+    container_name: logstash
+    volumes:
+      - ./monitoring/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./monitoring/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - '5000:5000'
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: kibana:8.12.2
+    container_name: kibana
+    ports:
+      - '5601:5601'
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    links:
+      - elasticsearch
+    depends_on:
+      - logstash
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - '9411:9411'
 
   discovery-server:
     image: discovery-server:latest
@@ -155,3 +208,6 @@ services:
 
 volumes:
   mysqldb:
+  elasticsearch_data:
+    driver: local
+

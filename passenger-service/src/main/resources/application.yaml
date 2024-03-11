@@ -74,7 +74,7 @@ resilience4j:
     instances:
       rideRetry: &retryConfig
         maxAttempts: 3
-        waitDuration: 10s
+        waitDuration: 30s
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
       paymentRetry: *retryConfig
@@ -91,3 +91,7 @@ management:
     metrics:
       export:
         enabled: true
+  tracing:
+    sampling:
+      rate: 1.0
+      probability: 1.0

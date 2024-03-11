@@ -57,3 +57,7 @@ management:
     metrics:
       export:
         enabled: true
+  tracing:
+    sampling:
+      rate: 1.0
+      probability: 1.0
