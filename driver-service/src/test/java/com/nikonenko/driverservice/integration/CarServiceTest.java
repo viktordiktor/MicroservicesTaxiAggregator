@@ -169,7 +169,7 @@ public class CarServiceTest extends ContainerConfiguration {
                 .when()
                 .put(TestUtil.DEFAULT_CARS_ID_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 

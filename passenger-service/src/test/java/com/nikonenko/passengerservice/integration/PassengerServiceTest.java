@@ -168,7 +168,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
                 .when()
                 .post(TestUtil.DEFAULT_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 
@@ -188,7 +188,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
                 .when()
                 .post(TestUtil.DEFAULT_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 
@@ -229,7 +229,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
                 .when()
                 .put(TestUtil.DEFAULT_ID_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 
@@ -250,7 +250,7 @@ public class PassengerServiceTest extends ContainerConfiguration {
                 .when()
                 .put(TestUtil.DEFAULT_ID_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 

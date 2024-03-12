@@ -404,11 +404,11 @@ public class TestUtil {
     }
 
     public ExceptionResponse getUsernameAlreadyExistsExceptionResponse() {
-        return getBasicExceptionResponse(new UsernameAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+        return getBasicExceptionResponse(new UsernameAlreadyExistsException(), HttpStatus.CONFLICT);
     }
 
     public ExceptionResponse getPhoneAlreadyExistsExceptionResponse() {
-        return getBasicExceptionResponse(new PhoneAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+        return getBasicExceptionResponse(new PhoneAlreadyExistsException(), HttpStatus.CONFLICT);
     }
 
     public ExceptionResponse getWrongSortFieldExceptionResponse() {

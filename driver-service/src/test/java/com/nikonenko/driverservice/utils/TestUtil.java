@@ -449,11 +449,11 @@ public class TestUtil {
     }
 
     public ExceptionResponse getUsernameAlreadyExistsExceptionResponse() {
-        return getBasicExceptionResponse(new UsernameAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+        return getBasicExceptionResponse(new UsernameAlreadyExistsException(), HttpStatus.CONFLICT);
     }
 
     public ExceptionResponse getPhoneAlreadyExistsExceptionResponse() {
-        return getBasicExceptionResponse(new PhoneAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+        return getBasicExceptionResponse(new PhoneAlreadyExistsException(), HttpStatus.CONFLICT);
     }
 
     public ExceptionResponse getWrongSortFieldExceptionResponse() {
@@ -461,7 +461,7 @@ public class TestUtil {
     }
 
     public ExceptionResponse getCarNumberAlreadyExistsExceptionResponse() {
-        return getBasicExceptionResponse(new CarNumberAlreadyExistsException(), HttpStatus.BAD_REQUEST);
+        return getBasicExceptionResponse(new CarNumberAlreadyExistsException(), HttpStatus.CONFLICT);
     }
 
     private ExceptionResponse getBasicExceptionResponse(Exception ex, HttpStatus status) {

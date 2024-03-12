@@ -4,7 +4,7 @@ import com.nikonenko.driverservice.dto.CarRequest;
 import com.nikonenko.driverservice.dto.CarResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.exceptions.CarNotFoundException;
-import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
+import com.nikonenko.driverservice.exceptions.CarNumberAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.driverservice.exceptions.WrongSortFieldException;
 import com.nikonenko.driverservice.models.Car;
@@ -158,7 +158,7 @@ public class CarServiceTest {
                 .when(carRepository)
                 .existsByNumber(request.getNumber());
         assertThrows(
-                PhoneAlreadyExistsException.class,
+                CarNumberAlreadyExistsException.class,
                 () -> carService.createCar(request)
         );
 
@@ -208,7 +208,7 @@ public class CarServiceTest {
                 .existsByNumber(request.getNumber());
 
         assertThrows(
-                PhoneAlreadyExistsException.class,
+                CarNumberAlreadyExistsException.class,
                 () -> carService.editCar(TestUtil.DEFAULT_ID, request)
         );
 

@@ -170,7 +170,7 @@ public class DriverServiceTest extends ContainerConfiguration {
                 .when()
                 .put(TestUtil.DEFAULT_DRIVERS_ID_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 
@@ -191,7 +191,7 @@ public class DriverServiceTest extends ContainerConfiguration {
                 .when()
                 .put(TestUtil.DEFAULT_DRIVERS_ID_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 
@@ -283,7 +283,7 @@ public class DriverServiceTest extends ContainerConfiguration {
                 .when()
                 .post(TestUtil.DEFAULT_DRIVER_CAR_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 
@@ -394,7 +394,7 @@ public class DriverServiceTest extends ContainerConfiguration {
                 .when()
                 .post(TestUtil.DEFAULT_DRIVERS_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 
@@ -414,7 +414,7 @@ public class DriverServiceTest extends ContainerConfiguration {
                 .when()
                 .post(TestUtil.DEFAULT_DRIVERS_PATH)
                 .then()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .statusCode(HttpStatus.CONFLICT.value())
                 .extract()
                 .as(ExceptionResponse.class);
 

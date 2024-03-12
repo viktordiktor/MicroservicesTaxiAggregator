@@ -340,7 +340,7 @@ public class RideServiceTest extends ContainerConfiguration {
                 .when()
                 .delete(TestUtil.DEFAULT_ID_PATH)
                 .then()
-                .statusCode(HttpStatus.NO_CONTENT.value())
+                .statusCode(HttpStatus.OK.value())
                 .extract();
     }
 
