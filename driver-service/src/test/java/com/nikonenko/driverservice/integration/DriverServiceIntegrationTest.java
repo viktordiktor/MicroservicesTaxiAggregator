@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                 "classpath:sql/insert-data.sql"
         }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-public class DriverServiceTest extends ContainerConfiguration {
+public class DriverServiceIntegrationTest extends ContainerConfiguration {
     @Autowired
     private DriverRepository driverRepository;
     @Autowired

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentCustomerServiceTest {
+public class PaymentCustomerServiceUnitTest {
     @Mock
     private CustomerUserRepository customerUserRepository;
     @Mock

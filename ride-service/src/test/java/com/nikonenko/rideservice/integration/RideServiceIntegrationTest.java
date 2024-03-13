@@ -34,7 +34,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
-public class RideServiceTest extends ContainerConfiguration {
+public class RideServiceIntegrationTest extends ContainerConfiguration {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired

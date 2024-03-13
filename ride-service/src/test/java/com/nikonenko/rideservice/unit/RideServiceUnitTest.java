@@ -49,7 +49,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class RideServiceTest {
+public class RideServiceUnitTest {
     @Mock
     private RideRepository rideRepository;
     @Mock

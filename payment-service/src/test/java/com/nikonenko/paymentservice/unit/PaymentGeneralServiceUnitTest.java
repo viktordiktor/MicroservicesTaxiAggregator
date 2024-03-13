@@ -29,7 +29,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentGeneralServiceTest {
+public class PaymentGeneralServiceUnitTest {
     @Mock
     private ModelMapper modelMapper;
     @Mock

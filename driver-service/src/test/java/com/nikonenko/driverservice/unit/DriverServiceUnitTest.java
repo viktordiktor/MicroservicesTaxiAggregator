@@ -53,7 +53,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DriverServiceTest {
+class DriverServiceUnitTest {
     @Mock
     private DriverRepository driverRepository;
     @Mock

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                 "classpath:sql/insert-data.sql"
         }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-public class CarServiceTest extends ContainerConfiguration {
+public class CarServiceIntegrationTest extends ContainerConfiguration {
     @Autowired
     private CarRepository carRepository;
     @Autowired

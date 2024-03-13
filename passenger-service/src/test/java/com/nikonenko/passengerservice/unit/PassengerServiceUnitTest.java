@@ -54,7 +54,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class PassengerServiceTest {
+public class PassengerServiceUnitTest {
     @Mock
     private PassengerRepository passengerRepository;
     @Mock

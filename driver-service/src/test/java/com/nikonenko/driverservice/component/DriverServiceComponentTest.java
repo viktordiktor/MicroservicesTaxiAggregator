@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.component;
+package com.nikonenko.driverservice.component;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -7,8 +7,8 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = "classpath:features",
-        glue = "com/nikonenko/passengerservice/component",
+        glue = "com/nikonenko/driverservice/component",
         snippets = CucumberOptions.SnippetType.UNDERSCORE
 )
-public class PassengerServiceTest {
+public class DriverServiceComponentTest {
 }
