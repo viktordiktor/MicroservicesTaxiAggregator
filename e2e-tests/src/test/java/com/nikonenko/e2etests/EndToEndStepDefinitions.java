@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.test.context.jdbc.Sql;
 import java.time.Duration;
+import java.util.UUID;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -52,8 +53,8 @@ public class EndToEndStepDefinitions {
     private final DriverReviewRequestProducer driverReviewRequestProducer;
     private final PassengerReviewRequestProducer passengerReviewRequestProducer;
 
-    private Long passengerId;
-    private Long driverId;
+    private UUID passengerId;
+    private UUID driverId;
     private RuntimeException exception;
     private PageResponse<RideResponse> actualPageRideResponse;
     private CalculateDistanceRequest calculateDistanceRequest;
@@ -68,9 +69,9 @@ public class EndToEndStepDefinitions {
     private RideResponse rideResponse;
     private CloseRideResponse closeRideResponse;
 
-    @Given("Passenger with ID {long} exists")
-    public void passengerWithIdExists(Long passengerId) {
-        this.passengerId = passengerId;
+    @Given("Passenger with ID {string} exists")
+    public void passengerWithIdExists(String passengerId) {
+        this.passengerId = UUID.fromString(passengerId);
     }
 
     @When("getRidesByPassengerId is called by Ride Service Client")
@@ -95,9 +96,9 @@ public class EndToEndStepDefinitions {
         }
     }
 
-    @Given("Driver with ID {long} exists")
-    public void driverWithIdExists(Long driverId) {
-        this.driverId = driverId;
+    @Given("Driver with ID {string} exists")
+    public void driverWithIdExists(String driverId) {
+        this.driverId = UUID.fromString(driverId);
     }
 
     @When("getRidesByDriverId is called by Ride Service Client")
@@ -163,12 +164,12 @@ public class EndToEndStepDefinitions {
         assertFalse(customerExistsResponse.isExists());
     }
 
-    @Given("Username {string} and phone {string} and Existing Passenger ID {long} and Amount {string}")
+    @Given("Username {string} and phone {string} and Existing Passenger ID {string} and Amount {string}")
     @Sql("classpath:db/delete-exist-customer-users.sql")
     public void usernameAndPhoneAndExistingPassengerIdAndAmount(String username, String phone,
-                                                                Long passengerId, String amount) {
-        this.passengerId = passengerId;
-        customerCreationRequest = TestUtil.createCustomerCreationRequest(username, phone, passengerId, amount);
+                                                                String passengerId, String amount) {
+        this.passengerId = UUID.fromString(passengerId);
+        customerCreationRequest = TestUtil.createCustomerCreationRequest(username, phone, this.passengerId, amount);
     }
 
     @When("sendCustomerCreationRequest method is called with CustomerCreationRequest")
@@ -261,10 +262,10 @@ public class EndToEndStepDefinitions {
         assertEquals(closeRideResponse.getCustomerChargeReturnResponse().getPaymentId(), rideResponse.getChargeId());
     }
 
-    @Given("Valid CreateRideRequest by Cash of Start Address {string} and End Address {string} and Passenger with ID {long}")
-    public void validCreateRideRequestByCash(String startAddress, String endAddress, Long passengerId) {
+    @Given("Valid CreateRideRequest by Cash of Start Address {string} and End Address {string} and Passenger with ID {string}")
+    public void validCreateRideRequestByCash(String startAddress, String endAddress, String passengerId) {
         createRideRequest = TestUtil.getCreateRideRequestByCash(calculateRideResponse.getRideLength(), startAddress,
-                endAddress, passengerId);
+                endAddress, UUID.fromString(passengerId));
     }
 
     @And("Ride Response should have By Cash Payment method")

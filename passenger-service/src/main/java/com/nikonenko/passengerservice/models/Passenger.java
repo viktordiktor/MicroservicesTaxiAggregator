@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Set;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,8 +28,8 @@ import java.util.Set;
 public class Passenger {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @Column(name = "username", unique = true)
     private String username;
     @Column(name = "phone", unique = true)

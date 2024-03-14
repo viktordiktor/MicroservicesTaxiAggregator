@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
         return CustomerChargeResponse.builder()
                 .id("")
                 .amount(BigDecimal.ZERO)
-                .passengerId(0L)
+                .passengerId(UUID.randomUUID())
                 .currency("")
                 .success(false)
                 .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())

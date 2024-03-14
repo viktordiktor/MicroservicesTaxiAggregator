@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CustomerChargeResponse {
     private String id;
-    private Long passengerId;
+    private UUID passengerId;
     private String currency;
     private BigDecimal amount;
     private boolean success;

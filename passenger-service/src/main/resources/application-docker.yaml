@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${MYSQL_JDBC_URL:jdbc:mysql://mysqldb:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false}
-    username: ${MYSQL_USERNAME:user}
-    password: ${MYSQL_PASSWORD:pass}
+    url: ${PGSQL_JDBC_URL:jdbc:postgresql://postgredb:5432/cabdb?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false}
+    username: ${PGSQL_USERNAME:def_user}
+    password: ${PGSQL_PASSWORD:pass}
   kafka:
     bootstrap-servers: broker:29092
 eureka:

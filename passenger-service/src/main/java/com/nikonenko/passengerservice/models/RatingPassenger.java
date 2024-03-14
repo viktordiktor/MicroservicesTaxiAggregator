@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -24,7 +26,7 @@ public class RatingPassenger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name="passenger_id")
-    private Long passengerId;
+    private UUID passengerId;
     @Column(nullable = false)
     private int rating;
     @Column

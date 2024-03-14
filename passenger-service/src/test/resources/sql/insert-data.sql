@@ -1,9 +1,9 @@
-INSERT INTO passengers (id, username, phone) VALUES
-                                                 (1, 'JohnDoe', '+375292547787'),
-                                                 (2, 'JaneSmith', '+375111111111'),
-                                                 (3, 'MikeJohnson', '+375444444444');
+INSERT INTO passengers (id, username, phone)
+VALUES ('11111111-1111-1111-1111-111111111111', 'JohnDoe', '+375292547787'),
+       ('22222222-2222-2222-2222-222222222222', 'JaneSmith', '+375111111111'),
+       ('33333333-3333-3333-3333-333333333333', 'MikeJohnson', '+375444444444');
 
-INSERT INTO rating_passengers (passenger_id, rating, comment) VALUES
-                                                                  (1, 1, null),
-                                                                  (1, 5, 'Cool!'),
-                                                                  (2, 3, 'Not bad');
+INSERT INTO rating_passengers (passenger_id, rating, comment)
+VALUES ('11111111-1111-1111-1111-111111111111', 1, null),
+       ('11111111-1111-1111-1111-111111111111', 5, 'Cool!'),
+       ('22222222-2222-2222-2222-222222222222', 3, 'Not bad');

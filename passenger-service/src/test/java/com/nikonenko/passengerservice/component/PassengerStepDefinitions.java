@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -41,47 +42,47 @@ public class PassengerStepDefinitions {
     private PassengerResponse actualResponse;
     private RuntimeException exception;
 
-    @Given("Passenger with ID {long} exists")
-    public void passengerWithIdExists(Long id) {
+    @Given("Passenger with ID {string} exists")
+    public void passengerWithIdExists(String id) {
         Passenger passenger = TestUtil.getDefaultPassenger();
         PassengerResponse expectedResponse = TestUtil.getDefaultPassengerResponse();
 
         doReturn(Optional.of(passenger))
                 .when(passengerRepository)
-                .findById(id);
+                .findById(UUID.fromString(id));
         doReturn(expectedResponse)
                 .when(modelMapper)
                 .map(passenger, PassengerResponse.class);
 
-        PassengerResponse result = passengerService.getPassengerById(id);
+        PassengerResponse result = passengerService.getPassengerById(UUID.fromString(id));
         assertEquals(expectedResponse, result);
     }
 
-    @When("getPassengerById method is called with ID {long}")
-    public void findByIdMethodIsCalledWithId(Long id) {
+    @When("getPassengerById method is called with ID {string}")
+    public void findByIdMethodIsCalledWithId(String id) {
         try {
-            actualResponse = passengerService.getPassengerById(id);
+            actualResponse = passengerService.getPassengerById(UUID.fromString(id));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("PassengerResponse should contains passenger with ID {long}")
-    public void passengerResponseShouldContainsPassengerWithId(Long id) {
-        Passenger passenger = passengerRepository.findById(id).get();
+    @Then("PassengerResponse should contains passenger with ID {string}")
+    public void passengerResponseShouldContainsPassengerWithId(String id) {
+        Passenger passenger = passengerRepository.findById(UUID.fromString(id)).get();
         PassengerResponse expected = modelMapper.map(passenger, PassengerResponse.class);
 
         assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
-    @Given("Passenger with ID {long} not exists")
-    public void passengerWithIdNotExists(Long id) {
-        assertTrue(passengerRepository.findById(id).isEmpty());
+    @Given("Passenger with ID {string} not exists")
+    public void passengerWithIdNotExists(String id) {
+        assertTrue(passengerRepository.findById(UUID.fromString(id)).isEmpty());
     }
 
-    @Then("PassengerNotFoundException should be thrown for ID {long}")
-    public void passengerNotFoundExceptionThrownForId(Long id) {
+    @Then("PassengerNotFoundException should be thrown for ID {string}")
+    public void passengerNotFoundExceptionThrownForId(String id) {
         PassengerNotFoundException expected = new PassengerNotFoundException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
@@ -164,8 +165,8 @@ public class PassengerStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("Passenger with ID {long} exists and Passenger with username {string} and phone {string} not exists")
-    public void passengerWithIdExistsAndPassengerWithUsernameAndPhoneNotExists(Long id, String username, String phone) {
+    @Given("Passenger with ID {string} exists and Passenger with username {string} and phone {string} not exists")
+    public void passengerWithIdExistsAndPassengerWithUsernameAndPhoneNotExists(String id, String username, String phone) {
         PassengerResponse response = TestUtil.getUpdatePassengerResponse();
         PassengerRequest request = TestUtil.getPassengerRequestWithParameters(username, phone);
         Passenger passenger = TestUtil.getDefaultPassenger();
@@ -179,7 +180,7 @@ public class PassengerStepDefinitions {
                 .existsByPhone(request.getPhone());
         doReturn(Optional.of(passenger))
                 .when(passengerRepository)
-                .findById(id);
+                .findById(UUID.fromString(id));
         doReturn(editPassenger)
                 .when(modelMapper)
                 .map(request, Passenger.class);
@@ -190,24 +191,25 @@ public class PassengerStepDefinitions {
                 .when(modelMapper)
                 .map(editPassenger, PassengerResponse.class);
 
-        PassengerResponse result = passengerService.editPassenger(id, request);
+        PassengerResponse result = passengerService.editPassenger(UUID.fromString(id), request);
 
         assertEquals(response, result);
     }
 
-    @When("editPassenger method is called with ID {long} and PassengerRequest of username {string} and phone {string}")
-    public void editPassengerMethodIsCalledWithIdAndPassengerRequestOfUsernameAndPhone(Long id,
+    @When("editPassenger method is called with ID {string} and PassengerRequest of username {string} and phone {string}")
+    public void editPassengerMethodIsCalledWithIdAndPassengerRequestOfUsernameAndPhone(String id,
                                                                                        String username, String phone) {
         try {
             actualResponse =
-                    passengerService.editPassenger(id, TestUtil.getPassengerRequestWithParameters(username, phone));
+                    passengerService.editPassenger(UUID.fromString(id),
+                            TestUtil.getPassengerRequestWithParameters(username, phone));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("PassengerResponse should contains passenger with ID {long} and username {string} and phone {string}")
-    public void PassengerResponseShouldContainsPassengerWithUsernameAndPhoneAndID(Long id,
+    @Then("PassengerResponse should contains passenger with ID {string} and username {string} and phone {string}")
+    public void PassengerResponseShouldContainsPassengerWithUsernameAndPhoneAndID(String id,
                                                                                   String username, String phone) {
         PassengerResponse expected = TestUtil.getUpdatePassengerResponse();
 
@@ -215,9 +217,9 @@ public class PassengerStepDefinitions {
         assertEquals(expected, actualResponse);
     }
 
-    @Given("Passenger with ID {long} exists and Passenger with existing username {string} and not existing phone {string}")
+    @Given("Passenger with ID {string} exists and Passenger with existing username {string} and not existing phone {string}")
     public void passengerWithIdExistsAndPassengerWithExistingUsernameAndNotExistingPhone
-            (Long id, String existingUsername, String phone) {
+            (String id, String existingUsername, String phone) {
         doReturn(true)
                 .when(passengerRepository)
                 .existsByUsername(existingUsername);
@@ -225,9 +227,9 @@ public class PassengerStepDefinitions {
         assertTrue(passengerRepository.existsByUsername(existingUsername));
     }
 
-    @Given("Passenger with ID {long} exists and Passenger with not existing username {string} and existing phone {string}")
+    @Given("Passenger with ID {string} exists and Passenger with not existing username {string} and existing phone {string}")
     public void passengerWithIdExistsAndPassengerWithNotExistingUsernameAndExistingPhone
-            (Long id, String username, String existingPhone) {
+            (String id, String username, String existingPhone) {
         doReturn(true)
                 .when(passengerRepository)
                 .existsByPhone(existingPhone);
@@ -235,33 +237,33 @@ public class PassengerStepDefinitions {
         assertTrue(passengerRepository.existsByPhone(existingPhone));
     }
 
-    @Given("Passenger with ID {long} not exists and Passenger with username {string} and phone {string} not exists")
+    @Given("Passenger with ID {string} not exists and Passenger with username {string} and phone {string} not exists")
     public void passengerWithIdNotExistsAndPassengerWithUsernameAndPhoneNotExists
-            (Long id, String username, String existingPhone) {
+            (String id, String username, String existingPhone) {
         doReturn(Optional.empty())
                 .when(passengerRepository)
-                .findById(id);
+                .findById(UUID.fromString(id));
 
-        assertTrue(passengerRepository.findById(id).isEmpty());
+        assertTrue(passengerRepository.findById(UUID.fromString(id)).isEmpty());
     }
 
-    @When("deletePassenger method is called with ID {long}")
-    public void deletePassengerMethodIsCalledWithId(Long id) {
+    @When("deletePassenger method is called with ID {string}")
+    public void deletePassengerMethodIsCalledWithId(String id) {
         try {
-            passengerService.deletePassenger(id);
+            passengerService.deletePassenger(UUID.fromString(id));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("Should return No Content for ID {long} and delete Passenger")
-    public void shouldReturnNoContentForIdAndDeletePassenger(Long id) {
+    @Then("Should return No Content for ID {string} and delete Passenger")
+    public void shouldReturnNoContentForIdAndDeletePassenger(String id) {
         verify(passengerRepository).delete(any(Passenger.class));
         assertNull(exception);
     }
 
-    @Given("Passenger with ID {long} exists and rating {int} and comment {string}")
-    public void passengerWithIdExistsAndRatingAndComment(Long id, int rating, String comment) {
+    @Given("Passenger with ID {string} exists and rating {int} and comment {string}")
+    public void passengerWithIdExistsAndRatingAndComment(String id, int rating, String comment) {
         Passenger passenger = TestUtil.getDefaultPassenger();
         RatingToPassengerRequest request = TestUtil.getRatingToPassengerRequestWithParameters(id, rating, comment);
 
@@ -270,9 +272,9 @@ public class PassengerStepDefinitions {
                 .findById(request.getPassengerId());
     }
 
-    @When("createReview method is called with RatingToPassengerRequest of passenger ID {long} and rating {int} and comment {string}")
+    @When("createReview method is called with RatingToPassengerRequest of passenger ID {string} and rating {int} and comment {string}")
     public void createReviewMethodIsCalledWithRatingToPassengerRequestOfPassengerIdAndRatingAndComment
-            (Long id, int rating, String comment) {
+            (String id, int rating, String comment) {
         try {
             passengerService.createReview(TestUtil.getRatingToPassengerRequestWithParameters(id, rating, comment));
         } catch (RuntimeException ex) {
@@ -280,15 +282,15 @@ public class PassengerStepDefinitions {
         }
     }
 
-    @Then("Should return No Content for ID {long} and rating {int} and comment {string}")
-    public void shouldReturnNoContentForIdAndRatingAndComment(Long id, int rating, String comment) {
+    @Then("Should return No Content for ID {string} and rating {int} and comment {string}")
+    public void shouldReturnNoContentForIdAndRatingAndComment(String id, int rating, String comment) {
         verify(passengerRepository).save(any(Passenger.class));
-        verify(passengerRepository).findById(id);
+        verify(passengerRepository).findById(UUID.fromString(id));
         assertNull(exception);
     }
 
-    @Given("Passenger with ID {long} not exists and rating {int} and comment {string}")
-    public void passengerWithIdNotExistsAndRatingAndComment(Long id, int rating, String comment) {
+    @Given("Passenger with ID {string} not exists and rating {int} and comment {string}")
+    public void passengerWithIdNotExistsAndRatingAndComment(String id, int rating, String comment) {
         RatingToPassengerRequest request = TestUtil.getRatingToPassengerRequestWithParameters(id, rating, comment);
 
         doReturn(Optional.empty())
@@ -296,9 +298,9 @@ public class PassengerStepDefinitions {
                 .findById(request.getPassengerId());
     }
 
-    @Given("Passenger with ID {long} exists and CustomerDataRequest of username {string} and phone {string} and amount {string}")
+    @Given("Passenger with ID {string} exists and CustomerDataRequest of username {string} and phone {string} and amount {string}")
     public void passengerWithIdExistsAndCustomerDataRequestOfUsernameAndPhoneAndAmount
-            (Long id, String username, String phone, String amount) {
+            (String id, String username, String phone, String amount) {
         Passenger passenger = TestUtil.getPassengerWithParameters(id, username, phone);
 
         doReturn(Optional.of(passenger))
@@ -306,31 +308,31 @@ public class PassengerStepDefinitions {
                 .findById(passenger.getId());
     }
 
-    @When("createCustomerByPassenger method is called with Passenger ID {long} and CustomerDataRequest of username {string} and phone {string} and amount {string}")
+    @When("createCustomerByPassenger method is called with Passenger ID {string} and CustomerDataRequest of username {string} and phone {string} and amount {string}")
     public void createCustomerByPassengerMethodIsCalledWithPassengerIdAndCustomerDataRequestOfUsernameAndPhoneAndAmount
-            (Long id, String username, String phone, String amount) {
+            (String id, String username, String phone, String amount) {
         try {
-            passengerService.createCustomerByPassenger(id,
+            passengerService.createCustomerByPassenger(UUID.fromString(id),
                     TestUtil.getCustomerDataRequestWithParameters(username, phone, amount));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("Should return No Content and send Customer Creation Request for Passenger ID {long} and username {string} and phone {string} and amount {string}")
-    public void shouldReturnNoContentAndSendCustomerCreationRequest(Long id,
+    @Then("Should return No Content and send Customer Creation Request for Passenger ID {string} and username {string} and phone {string} and amount {string}")
+    public void shouldReturnNoContentAndSendCustomerCreationRequest(String id,
                                                                     String username, String phone, String amount) {
-        verify(passengerRepository).findById(id);
+        verify(passengerRepository).findById(UUID.fromString(id));
         verify(customerCreationRequestProducer).sendCustomerCreationRequest(TestUtil
                 .getCustomerCreationRequestWithParameters(id, username, phone, amount));
         assertNull(exception);
     }
 
-    @Given("Passenger with ID {long} not exists and CustomerDataRequest of username {string} and phone {string} and amount {string}")
+    @Given("Passenger with ID {string} not exists and CustomerDataRequest of username {string} and phone {string} and amount {string}")
     public void passengerWithIdNotExistsAndCustomerDataRequestOfUsernameAndPhoneAndAmount
-            (Long id, String username, String phone, String amount) {
+            (String id, String username, String phone, String amount) {
         doReturn(Optional.empty())
                 .when(passengerRepository)
-                .findById(id);
+                .findById(UUID.fromString(id));
     }
 }

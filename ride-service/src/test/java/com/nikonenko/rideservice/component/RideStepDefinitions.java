@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -90,15 +91,17 @@ public class RideStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("CreateRideRequest by card of Passenger ID {long} and Start Address {string} and End Address {string} and success Charge ID {string}")
+    @Given("CreateRideRequest by card of Passenger ID {string} and Start Address {string} and End Address {string} and success Charge ID {string}")
     public void createRideRequestByCardOfPassengerIDAndStartAddressAndEndAddressAndSuccessChargeID
-            (Long passengerId, String startAddress, String endAddress, String chargeId) {
-        RideResponse response =
-                TestUtil.getRideResponseWithParameters(passengerId, startAddress, endAddress, chargeId);
-        CreateRideRequest request =
-                TestUtil.getCreateRideRequestWithParameters(passengerId, startAddress, endAddress, chargeId);
-        Ride notSavedRide = TestUtil.getNotSavedRideWithParameters(passengerId, startAddress, endAddress, chargeId);
-        Ride savedRide = TestUtil.getOpenedRideWithParameters(passengerId, startAddress, endAddress, chargeId);
+            (String passengerId, String startAddress, String endAddress, String chargeId) {
+        RideResponse response = TestUtil
+                .getRideResponseWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId);
+        CreateRideRequest request = TestUtil
+                .getCreateRideRequestWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId);
+        Ride notSavedRide = TestUtil
+                .getNotSavedRideWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId);
+        Ride savedRide = TestUtil
+                .getOpenedRideWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId);
         CustomerChargeResponse chargeResponse = TestUtil.getSuccessfulCustomerChargeResponse();
 
         doReturn(notSavedRide)
@@ -115,33 +118,34 @@ public class RideStepDefinitions {
                 .map(savedRide, RideResponse.class);
     }
 
-    @When("createRide method is called with Passenger ID {long} and Start Address {string} and End Address {string} and Charge ID {string}")
+    @When("createRide method is called with Passenger ID {string} and Start Address {string} and End Address {string} and Charge ID {string}")
     public void createRideMethodIsCalledWithPassengerIdAndStartAddressAndEndAddressAndChargeId
-            (Long passengerId, String startAddress, String endAddress, String chargeId) {
+            (String passengerId, String startAddress, String endAddress, String chargeId) {
         try {
             actualResponse = rideService.createRide(TestUtil
-                    .getCreateRideRequestWithParameters(passengerId, startAddress, endAddress, chargeId));
+                    .getCreateRideRequestWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("RideResponse should contains Passenger ID {long} and Start Address {string} and End Address {string} and Charge ID {string}")
+    @Then("RideResponse should contains Passenger ID {string} and Start Address {string} and End Address {string} and Charge ID {string}")
     public void rideResponseShouldContainsPassengerIdAndStartAddressAndEndAddressAndChargeId
-            (Long passengerId, String startAddress, String endAddress, String chargeId) {
+            (String passengerId, String startAddress, String endAddress, String chargeId) {
         RideResponse expected = TestUtil
-                .getRideResponseWithParameters(passengerId, startAddress, endAddress, chargeId);
+                .getRideResponseWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId);
 
         assertNull(exception);
         assertEquals(expected, actualResponse);
     }
 
-    @Given("CreateRideRequest by card of Passenger ID {long} and Start Address {string} and End Address {string} and unsuccessful Charge ID {string}")
+    @Given("CreateRideRequest by card of Passenger ID {string} and Start Address {string} and End Address {string} and unsuccessful Charge ID {string}")
     public void createRideRequestByCardOfPassengerIDAndStartAddressAndEndAddressAndUnsuccessfulChargeID
-            (Long passengerId, String startAddress, String endAddress, String chargeId) {
-        CreateRideRequest request =
-                TestUtil.getCreateRideRequestWithParameters(passengerId, startAddress, endAddress, chargeId);
-        Ride notSavedRide = TestUtil.getNotSavedRideWithParameters(passengerId, startAddress, endAddress, chargeId);
+            (String passengerId, String startAddress, String endAddress, String chargeId) {
+        CreateRideRequest request = TestUtil
+                .getCreateRideRequestWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId);
+        Ride notSavedRide = TestUtil
+                .getNotSavedRideWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId);
         CustomerChargeResponse chargeResponse = TestUtil.getUnsuccessfulCustomerChargeResponse();
 
         doReturn(notSavedRide)
@@ -159,15 +163,17 @@ public class RideStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("CreateRideRequest by cash of Passenger ID {long} and Start Address {string} and End Address {string}")
-    public void createRideRequestByCashOfPassengerIDAndStartAddressAndEndAddress(Long passengerId, String startAddress,
+    @Given("CreateRideRequest by cash of Passenger ID {string} and Start Address {string} and End Address {string}")
+    public void createRideRequestByCashOfPassengerIDAndStartAddressAndEndAddress(String passengerId, String startAddress,
                                                                                  String endAddress) {
-        RideResponse response =
-                TestUtil.getRideResponseWithParameters(passengerId, startAddress, endAddress, null);
-        CreateRideRequest request =
-                TestUtil.getCreateRideRequestWithParameters(passengerId, startAddress, endAddress, null);
-        Ride notSavedRide = TestUtil.getNotSavedRideWithParameters(passengerId, startAddress, endAddress, null);
-        Ride savedRide = TestUtil.getOpenedRideWithParameters(passengerId, startAddress, endAddress, null);
+        RideResponse response = TestUtil
+                .getRideResponseWithParameters(UUID.fromString(passengerId), startAddress, endAddress, null);
+        CreateRideRequest request = TestUtil
+                .getCreateRideRequestWithParameters(UUID.fromString(passengerId), startAddress, endAddress, null);
+        Ride notSavedRide = TestUtil
+                .getNotSavedRideWithParameters(UUID.fromString(passengerId), startAddress, endAddress, null);
+        Ride savedRide = TestUtil
+                .getOpenedRideWithParameters(UUID.fromString(passengerId), startAddress, endAddress, null);
 
         doReturn(notSavedRide)
                 .when(modelMapper)
@@ -180,22 +186,22 @@ public class RideStepDefinitions {
                 .map(savedRide, RideResponse.class);
     }
 
-    @When("createRide method is called with Passenger ID {long} and Start Address {string} and End Address {string}")
+    @When("createRide method is called with Passenger ID {stromg} and Start Address {string} and End Address {string}")
     public void createRideMethodIsCalledWithPassengerIdAndStartAddressAndEndAddressAndChargeId
-            (Long passengerId, String startAddress, String endAddress) {
+            (String passengerId, String startAddress, String endAddress) {
         try {
-            actualResponse = rideService.createRide(TestUtil
-                    .getCreateRideRequestWithParameters(passengerId, startAddress, endAddress, null));
+            actualResponse = rideService.createRide(TestUtil.getCreateRideRequestWithParameters(
+                    UUID.fromString(passengerId), startAddress, endAddress, null));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("RideResponse should contains Passenger ID {long} and Start Address {string} and End Address {string}")
-    public void rideResponseShouldContainsPassengerIdAndStartAddressAndEndAddress(Long passengerId, String startAddress,
+    @Then("RideResponse should contains Passenger ID {string} and Start Address {string} and End Address {string}")
+    public void rideResponseShouldContainsPassengerIdAndStartAddressAndEndAddress(String passengerId, String startAddress,
                                                                                   String endAddress) {
         RideResponse expected = TestUtil
-                .getRideResponseWithParameters(passengerId, startAddress, endAddress, null);
+                .getRideResponseWithParameters(UUID.fromString(passengerId), startAddress, endAddress, null);
 
         assertNull(exception);
         assertEquals(expected, actualResponse);

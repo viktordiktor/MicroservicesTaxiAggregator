@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +75,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse getPassengerById(Long id) {
+    public PassengerResponse getPassengerById(UUID id) {
         Passenger passenger = getOrThrow(id);
         log.info(LogList.LOG_GET_PASSENGER, id);
         return modelMapper.map(passenger, PassengerResponse.class);
@@ -90,7 +91,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public RideResponse createRideByPassenger(Long passengerId, RideByPassengerRequest rideByPassengerRequest) {
+    public RideResponse createRideByPassenger(UUID passengerId, RideByPassengerRequest rideByPassengerRequest) {
         getOrThrow(passengerId);
         CalculateDistanceResponse distanceResponse = getRideDistance(rideByPassengerRequest);
 
@@ -131,14 +132,14 @@ public class PassengerServiceImpl implements PassengerService {
         return calculatePriceResponse;
     }
 
-    private void checkCustomerExists(Long passengerId) {
+    private void checkCustomerExists(UUID passengerId) {
         if (!paymentService.checkCustomerExists(passengerId).isExists()) {
             throw new NotFoundByPassengerException();
         }
         log.info(LogList.LOG_CUSTOMER_EXISTS);
     }
 
-    private CustomerChargeResponse createCharge(Long passengerId, BigDecimal amount) {
+    private CustomerChargeResponse createCharge(UUID passengerId, BigDecimal amount) {
         CustomerChargeRequest chargeRequest = CustomerChargeRequest.builder()
                 .passengerId(passengerId)
                 .amount(amount)
@@ -149,7 +150,7 @@ public class PassengerServiceImpl implements PassengerService {
         return chargeResponse;
     }
 
-    private RideResponse createRide(Long passengerId, RideByPassengerRequest rideByPassengerRequest,
+    private RideResponse createRide(UUID passengerId, RideByPassengerRequest rideByPassengerRequest,
                                     double distance, CustomerChargeResponse chargeResponse) {
         CreateRideRequest createRideRequest = CreateRideRequest.builder()
                 .passengerId(passengerId)
@@ -164,7 +165,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse editPassenger(Long id, PassengerRequest passengerRequest) {
+    public PassengerResponse editPassenger(UUID id, PassengerRequest passengerRequest) {
         checkPassengerExists(passengerRequest);
         Passenger editingPassenger = getOrThrow(id);
         Set<RatingPassenger> passengerRating = editingPassenger.getRatingSet();
@@ -182,12 +183,12 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PageResponse<RideResponse> getPassengerRides(Long passengerId) {
+    public PageResponse<RideResponse> getPassengerRides(UUID passengerId) {
         return rideService.getRidesByPassengerId(passengerId);
     }
 
     @Override
-    public void deletePassenger(Long id) {
+    public void deletePassenger(UUID id) {
         passengerRepository.delete(getOrThrow(id));
         log.info(LogList.LOG_DELETE_PASSENGER, id);
     }
@@ -220,7 +221,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public void createCustomerByPassenger(Long passengerId, CustomerDataRequest dataRequest) {
+    public void createCustomerByPassenger(UUID passengerId, CustomerDataRequest dataRequest) {
         Passenger passenger = getOrThrow(passengerId);
         customerCreationRequestProducer.sendCustomerCreationRequest(CustomerCreationRequest.builder()
                         .passengerId(passengerId)
@@ -232,7 +233,7 @@ public class PassengerServiceImpl implements PassengerService {
                         .build());
     }
 
-    public Passenger getOrThrow(Long id) {
+    public Passenger getOrThrow(UUID id) {
         Optional<Passenger> optionalPassenger = passengerRepository.findById(id);
         return optionalPassenger.orElseThrow(PassengerNotFoundException::new);
     }

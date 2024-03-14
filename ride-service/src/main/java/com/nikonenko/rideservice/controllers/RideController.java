@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/rides")
@@ -53,7 +55,7 @@ public class RideController {
     }
 
     @GetMapping("/by-passenger/{passengerId}")
-    public PageResponse<RideResponse> getRidesByPassenger(@PathVariable Long passengerId,
+    public PageResponse<RideResponse> getRidesByPassenger(@PathVariable UUID passengerId,
                                                            @RequestParam(defaultValue = "0") int pageNumber,
                                                            @RequestParam(defaultValue = "5") int pageSize,
                                                            @RequestParam(defaultValue = "id") String sortField) {
@@ -61,7 +63,7 @@ public class RideController {
     }
 
     @GetMapping("/by-driver/{driverId}")
-    public PageResponse<RideResponse> getRidesByDriver(@PathVariable Long driverId,
+    public PageResponse<RideResponse> getRidesByDriver(@PathVariable UUID driverId,
                                                         @RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
                                                         @RequestParam(defaultValue = "id") String sortField) {

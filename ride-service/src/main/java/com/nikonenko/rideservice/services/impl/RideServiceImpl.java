@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +63,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public PageResponse<RideResponse> getRidesByPassenger(Long passengerId,
+    public PageResponse<RideResponse> getRidesByPassenger(UUID passengerId,
                                                           int pageNumber, int pageSize, String sortField) {
         Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
         Page<Ride> page = rideRepository.findAllByPassengerIdIs(passengerId, pageable);
@@ -70,7 +71,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public PageResponse<RideResponse> getRidesByDriver(Long driverId,
+    public PageResponse<RideResponse> getRidesByDriver(UUID driverId,
                                                        int pageNumber, int pageSize, String sortField) {
         Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
         Page<Ride> page = rideRepository.findAllByDriverIdIs(driverId, pageable);
@@ -231,7 +232,7 @@ public class RideServiceImpl implements RideService {
         log.info(LogList.LOG_FINISH_RIDE, ride.getId());
     }
 
-    public void checkRideAttributes(Ride ride, Long driverId, RideStatus rideStatus, RuntimeException ex) {
+    public void checkRideAttributes(Ride ride, UUID driverId, RideStatus rideStatus, RuntimeException ex) {
         if (ride.getStatus() != rideStatus) {
             throw ex;
         }

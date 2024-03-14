@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/passengers")
@@ -46,25 +48,25 @@ public class PassengerController {
 
     @PostMapping("/{passengerId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public RideResponse createRide(@PathVariable Long passengerId,
+    public RideResponse createRide(@PathVariable UUID passengerId,
                                    @RequestBody RideByPassengerRequest rideByPassengerRequest) {
         return passengerService.createRideByPassenger(passengerId, rideByPassengerRequest);
     }
 
     @GetMapping("/{id}")
-    public PassengerResponse getPassengerById(@PathVariable Long id) {
+    public PassengerResponse getPassengerById(@PathVariable UUID id) {
         return passengerService.getPassengerById(id);
     }
 
     @PutMapping("/{id}")
-    public PassengerResponse editPassenger(@PathVariable Long id,
+    public PassengerResponse editPassenger(@PathVariable UUID id,
                                            @Valid @RequestBody PassengerRequest passengerRequest) {
         return passengerService.editPassenger(id, passengerRequest);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePassenger(@PathVariable Long id) {
+    public void deletePassenger(@PathVariable UUID id) {
         passengerService.deletePassenger(id);
     }
 
@@ -77,7 +79,7 @@ public class PassengerController {
 
     @PostMapping("/{passengerId}/customer")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCustomer(@PathVariable Long passengerId, @Valid @RequestBody CustomerDataRequest dataRequest) {
+    public void createCustomer(@PathVariable UUID passengerId, @Valid @RequestBody CustomerDataRequest dataRequest) {
         passengerService.createCustomerByPassenger(passengerId, dataRequest);
     }
 
@@ -87,7 +89,7 @@ public class PassengerController {
     }
 
     @GetMapping("/rides/{passengerId}")
-    public PageResponse<RideResponse> getPassengerRides(@PathVariable Long passengerId) {
+    public PageResponse<RideResponse> getPassengerRides(@PathVariable UUID passengerId) {
         return passengerService.getPassengerRides(passengerId);
     }
 }

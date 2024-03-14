@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public CustomerExistsResponse checkCustomerExists(Long passengerId) {
+    public CustomerExistsResponse checkCustomerExists(UUID passengerId) {
         return paymentFeignClient.isCustomerExists(passengerId);
     }
 
@@ -46,14 +47,14 @@ public class PaymentServiceImpl implements PaymentService {
         log.error(LogList.LOG_CREATE_CHARGE_FEIGN_ERROR, customerChargeRequest.getPassengerId(), ex.getMessage());
         return CustomerChargeResponse.builder()
                 .id("")
-                .passengerId(0L)
+                .passengerId(UUID.randomUUID())
                 .amount(BigDecimal.ZERO)
                 .success(false)
                 .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
                 .build();
     }
 
-    public CustomerExistsResponse fallbackPaymentService(Long passengerId, Exception ex) {
+    public CustomerExistsResponse fallbackPaymentService(UUID passengerId, Exception ex) {
         log.error(LogList.LOG_CHECK_CUSTOMER_EXISTS_FEIGN_ERROR, passengerId, ex.getMessage());
         return CustomerExistsResponse.builder()
                 .isExists(false)

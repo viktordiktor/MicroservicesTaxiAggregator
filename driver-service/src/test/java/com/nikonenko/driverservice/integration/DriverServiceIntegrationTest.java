@@ -24,6 +24,8 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Sql(
         scripts = {
@@ -363,7 +365,6 @@ public class DriverServiceIntegrationTest extends ContainerConfiguration {
     }
 
     @Test
-        //@Order(1)
     void givenNonExistingDriver_whenCreateDriver_thenReturnDriverResponse() {
         DriverResponse response = TestUtil.getCreationDriverResponse();
         DriverRequest request = TestUtil.getCreationDriverRequest();
@@ -379,7 +380,11 @@ public class DriverServiceIntegrationTest extends ContainerConfiguration {
                 .extract()
                 .as(DriverResponse.class);
 
-        assertEquals(response, result);
+        assertEquals(response.getUsername(), result.getUsername());
+        assertEquals(response.getPhone(), result.getPhone());
+        assertNull(result.getCar());
+        assertNull(result.getRatingSet());
+        assertTrue(result.isAvailable());
     }
 
     @Test

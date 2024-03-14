@@ -2,13 +2,12 @@ spring:
   messages:
     basename: validation
   datasource:
-    url: jdbc:mysql://localhost:3306/cabDB?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
-    username: root
+    url: jdbc:postgresql://localhost:5432/cabdb?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
+    username: def_user
     password: pass
   application:
     name: PASSENGER-SERVICE
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
     properties:
       hibernate:

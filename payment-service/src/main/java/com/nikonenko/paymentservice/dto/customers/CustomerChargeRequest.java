@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CustomerChargeRequest {
     @NotNull(message = ValidationList.PASSENGER_ID_REQUIRED)
-    private Long passengerId;
+    private UUID passengerId;
     @NotBlank(message = ValidationList.CURRENCY_REQUIRED)
     private String currency;
     @NotNull(message = ValidationList.AMOUNT_REQUIRED)

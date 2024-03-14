@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -49,13 +50,13 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                 .build();
     }
 
-    private void checkCustomerExists(Long passengerId) {
+    private void checkCustomerExists(UUID passengerId) {
         if (customerUserRepository.existsByPassengerId(passengerId)) {
             throw new CustomerAlreadyExistsException();
         }
     }
 
-    private void saveCustomerUserToDatabase(Long passengerId, String customerId) {
+    private void saveCustomerUserToDatabase(UUID passengerId, String customerId) {
         CustomerUser user = CustomerUser.builder()
                 .customerId(customerId)
                 .passengerId(passengerId)
@@ -65,7 +66,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
 
     @Override
     public CustomerChargeResponse createCustomerCharge(CustomerChargeRequest customerChargeRequest) {
-        Long passengerId = customerChargeRequest.getPassengerId();
+        UUID passengerId = customerChargeRequest.getPassengerId();
         CustomerUser user = getCustomerUser(passengerId);
         String customerId = user.getCustomerId();
         checkBalanceEnough(customerId, customerChargeRequest.getAmount());
@@ -79,8 +80,8 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
                 .build();
     }
 
-    private CustomerUser getCustomerUser(Long id) {
-        return customerUserRepository.findByPassengerId(id)
+    private CustomerUser getCustomerUser(UUID passengerId) {
+        return customerUserRepository.findByPassengerId(passengerId)
                 .orElseThrow(CustomerNotFoundException::new);
     }
 
@@ -129,7 +130,7 @@ public class PaymentCustomerServiceImpl implements PaymentCustomerService {
     }
 
     @Override
-    public CustomerExistsResponse isCustomerExists(Long passengerId) {
+    public CustomerExistsResponse isCustomerExists(UUID passengerId) {
         return new CustomerExistsResponse(customerUserRepository.existsByPassengerId(passengerId));
     }
 

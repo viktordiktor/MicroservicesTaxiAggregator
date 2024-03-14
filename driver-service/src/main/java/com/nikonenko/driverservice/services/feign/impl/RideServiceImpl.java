@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +23,12 @@ public class RideServiceImpl implements RideService {
     private final RideFeignClient rideFeignClient;
 
     @Override
-    public PageResponse<RideResponse> getRidesByDriverId(Long driverId, int pageNumber, int pageSize, String sortField) {
+    public PageResponse<RideResponse> getRidesByDriverId(UUID driverId,
+                                                         int pageNumber, int pageSize, String sortField) {
         return rideFeignClient.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
     }
 
-    public PageResponse<RideResponse> fallbackRideService(Long driverId, Exception ex) {
+    public PageResponse<RideResponse> fallbackRideService(UUID driverId, Exception ex) {
         log.error(LogList.LOG_GET_RIDES_BY_DRIVER_ID_FEIGN_ERROR, driverId, ex.getMessage());
         return PageResponse.<RideResponse>builder()
                 .objectList(Collections.emptyList())

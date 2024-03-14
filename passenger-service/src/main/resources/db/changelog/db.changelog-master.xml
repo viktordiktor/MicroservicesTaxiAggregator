@@ -4,7 +4,7 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
     
     <preConditions>
-        <dbms type="mysql"/>
+        <dbms type="postgresql"/>
     </preConditions>
 
     <changeSet id="0" author="viktordiktor">

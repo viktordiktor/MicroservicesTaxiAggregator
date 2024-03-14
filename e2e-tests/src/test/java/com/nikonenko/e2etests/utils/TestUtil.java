@@ -14,6 +14,7 @@ import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @UtilityClass
 public class TestUtil {
@@ -38,7 +39,7 @@ public class TestUtil {
     }
 
     public CustomerCreationRequest createCustomerCreationRequest(String username, String phone,
-                                                                        Long passengerId, String amount) {
+                                                                 UUID passengerId, String amount) {
         return CustomerCreationRequest.builder()
                 .username(username)
                 .phone(phone)
@@ -47,7 +48,7 @@ public class TestUtil {
                 .build();
     }
 
-    public CustomerChargeRequest getCustomerChargeRequest(Long passengerId, String currency, BigDecimal price) {
+    public CustomerChargeRequest getCustomerChargeRequest(UUID passengerId, String currency, BigDecimal price) {
         return CustomerChargeRequest.builder()
                 .passengerId(passengerId)
                 .currency(currency)
@@ -56,7 +57,7 @@ public class TestUtil {
     }
 
     public CreateRideRequest getCreateRideRequestByCard(String chargeId, Double distance,
-                                                  String startAddress, String endAddress, Long passengerId) {
+                                                  String startAddress, String endAddress, UUID passengerId) {
         return CreateRideRequest.builder()
                 .chargeId(chargeId)
                 .distance(distance)
@@ -67,7 +68,7 @@ public class TestUtil {
     }
 
     public CreateRideRequest getCreateRideRequestByCash(Double distance, String startAddress,
-                                                        String endAddress, Long passengerId) {
+                                                        String endAddress, UUID passengerId) {
         return CreateRideRequest.builder()
                 .distance(distance)
                 .startAddress(startAddress)
@@ -76,7 +77,7 @@ public class TestUtil {
                 .build();
     }
 
-    public ChangeRideStatusRequest getChangeRideStatusRequest(String rideId, String action, Long driverId) {
+    public ChangeRideStatusRequest getChangeRideStatusRequest(String rideId, String action, UUID driverId) {
         return ChangeRideStatusRequest.builder()
                 .car(new CarResponse())
                 .rideId(rideId)

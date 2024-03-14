@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @UtilityClass
 public class TestUtil {
@@ -44,15 +45,17 @@ public class TestUtil {
     public final int INVALID_PAGE_SIZE = 0;
     public final String DEFAULT_PAGE_SORT = "id";
     public final String INVALID_PAGE_SORT = "aaa";
-    public final Long DEFAULT_ID = 1L;
-    public final Long SECOND_ID = 2L;
-    public final Long NOT_EXISTING_ID = 999L;
+    public final UUID DEFAULT_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    public final Long DEFAULT_REVIEW_ID = 1L;
+    public final UUID SECOND_ID = UUID.fromString("22222222-2222-2222-2222-222222222222");
+    public final Long SECOND_REVIEW_ID = 2L;
+    public final UUID NOT_EXISTING_ID = UUID.fromString("99999999-9999-9999-9999-999999999999");
     public final String DEFAULT_USERNAME = "USERNAME1";
     public final String SECOND_USERNAME = "USERNAME2";
     public final String DEFAULT_PHONE = "+375484848484";
     public final String SECOND_PHONE = "+375222222222";
-    public final Long UPDATING_ID = 3L;
-    public final Long CREATION_ID = 4L;
+    public final UUID UPDATING_ID = UUID.fromString("33333333-3333-3333-3333-333333333333");
+    public final UUID CREATION_ID = UUID.fromString("44444444-4444-4444-4444-444444444444");
     public final String CREATION_PHONE = "+375191911919";
     public final String EXISTING_PHONE = "+375111111111";
     public final String CREATION_USERNAME = "viktordiktor";
@@ -94,9 +97,9 @@ public class TestUtil {
                 .build();
     }
 
-    public Passenger getPassengerWithParameters(Long id, String username, String phone) {
+    public Passenger getPassengerWithParameters(String id, String username, String phone) {
         return Passenger.builder()
-                .id(id)
+                .id(UUID.fromString(id))
                 .phone(username)
                 .username(phone)
                 .build();
@@ -209,13 +212,13 @@ public class TestUtil {
     }
 
     public Set<RatingPassenger> getDefaultRatingSet() {
-        return Set.of(new RatingPassenger(DEFAULT_ID, DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
-                new RatingPassenger(SECOND_ID, SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
+        return Set.of(new RatingPassenger(DEFAULT_REVIEW_ID, DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
+                new RatingPassenger(SECOND_REVIEW_ID, SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
     }
 
     public Set<RatingPassengerResponse> getDefaultRatingSetResponse() {
-        return Set.of(new RatingPassengerResponse(DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
-                new RatingPassengerResponse(SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
+        return Set.of(new RatingPassengerResponse(DEFAULT_REVIEW_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
+                new RatingPassengerResponse(SECOND_REVIEW_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
     }
 
     public RatingToPassengerRequest getRatingToPassengerRequest() {
@@ -226,9 +229,9 @@ public class TestUtil {
                 .build();
     }
 
-    public RatingToPassengerRequest getRatingToPassengerRequestWithParameters(Long id, int rating, String comment) {
+    public RatingToPassengerRequest getRatingToPassengerRequestWithParameters(String id, int rating, String comment) {
         return RatingToPassengerRequest.builder()
-                .passengerId(id)
+                .passengerId(UUID.fromString(id))
                 .rating(rating)
                 .comment(comment)
                 .build();
@@ -260,9 +263,9 @@ public class TestUtil {
     }
 
     public CustomerCreationRequest getCustomerCreationRequestWithParameters
-                                                            (Long id, String username, String phone, String amount) {
+                                                            (String id, String username, String phone, String amount) {
         return CustomerCreationRequest.builder()
-                .passengerId(id)
+                .passengerId(UUID.fromString(id))
                 .username(username)
                 .phone(phone)
                 .amount(new BigDecimal(amount))

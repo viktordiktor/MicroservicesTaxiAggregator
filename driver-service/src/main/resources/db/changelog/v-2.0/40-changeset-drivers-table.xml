@@ -4,17 +4,17 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
 
     <changeSet id="6" author="viktordiktor">
-        <sqlFile dbms="mysql"
+        <sqlFile dbms="postgresql"
                  encoding="UTF-8"
-                 endDelimiter="\nGO"
+                 endDelimiter=";"
                  relativeToChangelogFile="true"
                  splitStatements="true"
                  stripComments="true"
                  path="40-insert-data-drivers-table.sql"/>
         <rollback>
-            <sqlFile dbms="mysql"
+            <sqlFile dbms="postgresql"
                      encoding="UTF-8"
-                     endDelimiter="\nGO"
+                     endDelimiter=";"
                      relativeToChangelogFile="true"
                      splitStatements="true"
                      stripComments="true"
