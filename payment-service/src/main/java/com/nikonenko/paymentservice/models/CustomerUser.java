@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,5 +28,5 @@ public class CustomerUser {
     @Column(name = "customer_id")
     String customerId;
     @Column(name = "passenger_id")
-    Long passengerId;
+    UUID passengerId;
 }

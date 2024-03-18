@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Set;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,8 +29,8 @@ import java.util.Set;
 public class Driver {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @Column(name = "username", unique = true)
     private String username;
     @Column(name = "phone", unique = true)
@@ -37,7 +38,7 @@ public class Driver {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     private Set<RatingDriver> ratingSet;
     @Column(name = "available")

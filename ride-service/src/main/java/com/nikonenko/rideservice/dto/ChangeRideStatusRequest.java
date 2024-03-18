@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangeRideStatusRequest {
-    private Long driverId;
+    private UUID driverId;
     private String rideId;
     private RideAction rideAction;
     private CarResponse car;

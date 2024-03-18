@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +67,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse getDriverById(Long id) {
+    public DriverResponse getDriverById(UUID id) {
         Driver driver = getOrThrow(id);
         log.info(LogList.LOG_GET_DRIVER, id);
         return modelMapper.map(driver, DriverResponse.class);
@@ -83,7 +84,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse editDriver(Long id, DriverRequest driverRequest) {
+    public DriverResponse editDriver(UUID id, DriverRequest driverRequest) {
         checkDriverExists(driverRequest);
         Driver editingDriver = getOrThrow(id);
         Set<RatingDriver> driverRating = editingDriver.getRatingSet();
@@ -96,13 +97,13 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void deleteDriver(Long id) {
+    public void deleteDriver(UUID id) {
         driverRepository.delete(getOrThrow(id));
         log.info(LogList.LOG_DELETE_DRIVER, id);
     }
 
     @Override
-    public void acceptRide(String rideId, Long driverId) {
+    public void acceptRide(String rideId, UUID driverId) {
         Driver driver = getAvailableDriver(driverId);
         sendRequest(rideId, driverId, RideAction.ACCEPT);
         driver.setAvailable(false);
@@ -110,7 +111,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void rejectRide(String rideId, Long driverId) {
+    public void rejectRide(String rideId, UUID driverId) {
         Driver driver = getNotAvailableDriver(driverId);
         sendRequest(rideId, driverId, RideAction.REJECT);
         driver.setAvailable(true);
@@ -118,14 +119,14 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void startRide(String rideId, Long driverId) {
+    public void startRide(String rideId, UUID driverId) {
         Driver driver = getNotAvailableDriver(driverId);
         sendRequest(rideId, driverId, RideAction.START);
         driverRepository.save(driver);
     }
 
     @Override
-    public void finishRide(String rideId, Long driverId) {
+    public void finishRide(String rideId, UUID driverId) {
         Driver driver = getNotAvailableDriver(driverId);
         sendRequest(rideId, driverId, RideAction.FINISH);
         driver.setAvailable(true);
@@ -141,7 +142,7 @@ public class DriverServiceImpl implements DriverService {
                 .build());
     }
 
-    private Driver getNotAvailableDriver(Long driverId) {
+    private Driver getNotAvailableDriver(UUID driverId) {
         Driver driver = getOrThrow(driverId);
         if (driver.isAvailable()) {
             throw new DriverNoRidesException();
@@ -149,7 +150,7 @@ public class DriverServiceImpl implements DriverService {
         return driver;
     }
 
-    private Driver getAvailableDriver(Long driverId) {
+    private Driver getAvailableDriver(UUID driverId) {
         Driver driver = getOrThrow(driverId);
         if (!driver.isAvailable()) {
             throw new DriverIsNotAvailableException();
@@ -157,7 +158,7 @@ public class DriverServiceImpl implements DriverService {
         return driver;
     }
 
-    private void sendRequest(String rideId, Long driverId, RideAction rideAction) {
+    private void sendRequest(String rideId, UUID driverId, RideAction rideAction) {
         rideStatusRequestProducer.sendChangeRideStatusRequest(ChangeRideStatusRequest.builder()
                 .rideId(rideId)
                 .driverId(driverId)
@@ -166,7 +167,7 @@ public class DriverServiceImpl implements DriverService {
                 .build());
     }
 
-    private CarResponse getCarByDriver(Long driverId) {
+    private CarResponse getCarByDriver(UUID driverId) {
         Driver driver = getOrThrow(driverId);
         return Optional.ofNullable(driver.getCar())
                 .map(car -> modelMapper.map(car, CarResponse.class))
@@ -192,7 +193,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse addCarToDriver(Long id, CarRequest carRequest) {
+    public DriverResponse addCarToDriver(UUID id, CarRequest carRequest) {
         Driver driver = getOrThrow(id);
         CarResponse carResponse = carService.createCar(carRequest);
         driver.setCar(modelMapper.map(carResponse, Car.class));
@@ -201,12 +202,12 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public PageResponse<RideResponse> getDriverRides(Long driverId, int pageNumber, int pageSize, String sortField) {
+    public PageResponse<RideResponse> getDriverRides(UUID driverId, int pageNumber, int pageSize, String sortField) {
         return rideService.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
     }
 
     @Override
-    public void deleteCar(Long driverId) {
+    public void deleteCar(UUID driverId) {
         Driver driver = getOrThrow(driverId);
         if (driver.getCar() == null) {
             throw new CarNotFoundException();
@@ -218,7 +219,7 @@ public class DriverServiceImpl implements DriverService {
         log.info(LogList.LOG_DELETE_CAR_FOR_DRIVER, driverId);
     }
 
-    public Driver getOrThrow(Long id) {
+    public Driver getOrThrow(UUID id) {
         Optional<Driver> optionalDriver = driverRepository.findById(id);
         return optionalDriver.orElseThrow(DriverNotFoundException::new);
     }

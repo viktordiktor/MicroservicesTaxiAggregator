@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class PaymentCustomerController {
     private final PaymentCustomerService paymentCustomerService;
 
     @GetMapping("/checkExists/{passengerId}")
-    public CustomerExistsResponse isCustomerExists(@PathVariable Long passengerId) {
+    public CustomerExistsResponse isCustomerExists(@PathVariable UUID passengerId) {
         return paymentCustomerService.isCustomerExists(passengerId);
     }
 

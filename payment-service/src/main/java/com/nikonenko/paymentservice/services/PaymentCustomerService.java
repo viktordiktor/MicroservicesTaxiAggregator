@@ -9,6 +9,7 @@ import com.nikonenko.paymentservice.dto.customers.CustomerCreationResponse;
 import com.nikonenko.paymentservice.dto.customers.CustomerExistsResponse;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface PaymentCustomerService {
     CustomerCreationResponse createCustomer(CustomerCreationRequest customerRequest);
@@ -21,5 +22,5 @@ public interface PaymentCustomerService {
 
     CustomerChargeReturnResponse returnCustomerCharge(String chargeId);
 
-    CustomerExistsResponse isCustomerExists(Long passengerId);
+    CustomerExistsResponse isCustomerExists(UUID passengerId);
 }

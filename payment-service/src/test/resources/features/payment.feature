@@ -1,26 +1,26 @@
 Feature: Payment Service
 
   Scenario: Create Customer that not exists by Passenger
-    Given Customer not exists with Username "viktordiktor" and phone "+375292547777" and Passenger ID 1 and Amount "9.9"
-    When createCustomer method is called with Username "viktordiktor" and phone "+375292547777" and Passenger ID 1 and Amount "9.9"
+    Given Customer not exists with Username "viktordiktor" and phone "+375292547777" and Passenger ID "11111111-1111-1111-1111-111111111111" and Amount "9.9"
+    When createCustomer method is called with Username "viktordiktor" and phone "+375292547777" and Passenger ID "11111111-1111-1111-1111-111111111111" and Amount "9.9"
     Then CustomerCreationResponse should contains Username "viktordiktor" and Phone "+375292547777"
   Scenario: Create Customer that exists by Passenger
-    Given Customer exists with Passenger ID 2
-    When createCustomer method is called with Username "viktordiktor" and phone "+375292547777" and Passenger ID 2 and Amount "9.9"
-    Then CustomerAlreadyExistsException should be thrown for Customer with Passenger ID 2
+    Given Customer exists with Passenger ID "22222222-2222-2222-2222-222222222222"
+    When createCustomer method is called with Username "viktordiktor" and phone "+375292547777" and Passenger ID "22222222-2222-2222-2222-222222222222" and Amount "9.9"
+    Then CustomerAlreadyExistsException should be thrown for Customer with Passenger ID "22222222-2222-2222-2222-222222222222"
 
   Scenario: Create Customer Charge with Enough Funds and Existing Customer
-    Given Customer enough funds charge with Amount "50.5" and Passenger ID 1 and Currency "usd"
-    When createCustomerCharge method is called with Amount "50.5" and Passenger ID 1 and Currency "usd"
-    Then CustomerChargeResponse should contains Amount "50.5" and Passenger ID 1 and Currency "usd"
-    And CustomerChargeResponse should be successful for Customer With Passenger ID 1
+    Given Customer enough funds charge with Amount "50.5" and Passenger ID "11111111-1111-1111-1111-111111111111" and Currency "usd"
+    When createCustomerCharge method is called with Amount "50.5" and Passenger ID "11111111-1111-1111-1111-111111111111" and Currency "usd"
+    Then CustomerChargeResponse should contains Amount "50.5" and Passenger ID "11111111-1111-1111-1111-111111111111" and Currency "usd"
+    And CustomerChargeResponse should be successful for Customer With Passenger ID "11111111-1111-1111-1111-111111111111"
   Scenario: Create Customer Charge with Not Enough Funds and Existing Customer
-    Given Customer not enough funds charge with Amount "50.5" and Passenger ID 2 and Currency "usd"
-    When createCustomerCharge method is called with Amount "50.5" and Passenger ID 2 and Currency "usd"
-    Then InsufficientFundsException should be Thrown for Customer With Passenger ID 2
+    Given Customer not enough funds charge with Amount "50.5" and Passenger ID "22222222-2222-2222-2222-222222222222" and Currency "usd"
+    When createCustomerCharge method is called with Amount "50.5" and Passenger ID "22222222-2222-2222-2222-222222222222" and Currency "usd"
+    Then InsufficientFundsException should be Thrown for Customer With Passenger ID "22222222-2222-2222-2222-222222222222"
   Scenario: Create Customer Charge with not Existing Customer
-    Given Customer not exists with Passenger ID 3
-    When createCustomerCharge method is called with Amount "50.5" and Passenger ID 3 and Currency "usd"
+    Given Customer not exists with Passenger ID "33333333-3333-3333-3333-333333333333"
+    When createCustomerCharge method is called with Amount "50.5" and Passenger ID "33333333-3333-3333-3333-333333333333" and Currency "usd"
     Then CustomerNotFoundException should be thrown
 
   Scenario: Get Customer Charge by Charge ID with existing Customer

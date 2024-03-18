@@ -3,6 +3,7 @@ package com.nikonenko.rideservice.config.mongo;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import lombok.RequiredArgsConstructor;
+import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ public class MongoConfig {
     @Bean
     public MongoClientSettings mongoClient() {
         return MongoClientSettings.builder()
+                .uuidRepresentation(UuidRepresentation.JAVA_LEGACY)
                 .applyToClusterSettings(builder -> builder.hosts(getServerAddress()))
                 .codecRegistry(getCodecRegistry())
                 .build();

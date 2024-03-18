@@ -40,12 +40,12 @@ public class CarServiceIntegrationTest extends ContainerConfiguration {
 
     @Test
     void givenExistingCarId_whenFindById_thenReturnCarResponse() {
-        Car car = carRepository.findById(TestUtil.DEFAULT_ID).get();
+        Car car = carRepository.findById(TestUtil.DEFAULT_CAR_ID).get();
         CarResponse response = modelMapper.map(car, CarResponse.class);
 
         CarResponse result = given()
                 .port(port)
-                .pathParam(TestUtil.ID_PARAMETER, TestUtil.DEFAULT_ID)
+                .pathParam(TestUtil.ID_PARAMETER, TestUtil.DEFAULT_CAR_ID)
                 .when()
                 .get(TestUtil.DEFAULT_CARS_ID_PATH)
                 .then()
@@ -62,7 +62,7 @@ public class CarServiceIntegrationTest extends ContainerConfiguration {
 
         ExceptionResponse result = given()
                 .port(port)
-                .pathParam(TestUtil.ID_PARAMETER, TestUtil.NOT_EXISTING_ID)
+                .pathParam(TestUtil.ID_PARAMETER, TestUtil.NOT_EXISTING_CAR_ID)
                 .when()
                 .get(TestUtil.DEFAULT_CARS_ID_PATH)
                 .then()
@@ -143,7 +143,7 @@ public class CarServiceIntegrationTest extends ContainerConfiguration {
 
         CarResponse result = given()
                 .port(port)
-                .pathParam(TestUtil.ID_PARAMETER, TestUtil.DEFAULT_ID)
+                .pathParam(TestUtil.ID_PARAMETER, TestUtil.DEFAULT_CAR_ID)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when()
@@ -163,7 +163,7 @@ public class CarServiceIntegrationTest extends ContainerConfiguration {
 
         ExceptionResponse result = given()
                 .port(port)
-                .pathParam(TestUtil.ID_PARAMETER, TestUtil.DEFAULT_ID)
+                .pathParam(TestUtil.ID_PARAMETER, TestUtil.DEFAULT_CAR_ID)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when()
@@ -184,7 +184,7 @@ public class CarServiceIntegrationTest extends ContainerConfiguration {
 
         ExceptionResponse result = given()
                 .port(port)
-                .pathParam(TestUtil.ID_PARAMETER, TestUtil.NOT_EXISTING_ID)
+                .pathParam(TestUtil.ID_PARAMETER, TestUtil.NOT_EXISTING_CAR_ID)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when()

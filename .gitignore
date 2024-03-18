@@ -4,6 +4,7 @@ mvnw
 mvnw.cmd
 target/
 mongo-data/
+postgresql.conf/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

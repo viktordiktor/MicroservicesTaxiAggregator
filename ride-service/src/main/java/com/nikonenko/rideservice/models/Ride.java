@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Document(value = "rides")
 @AllArgsConstructor
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
 public class Ride {
     @Id
     private String id;
-    private Long driverId;
-    private Long passengerId;
+    private UUID driverId;
+    private UUID passengerId;
     private String startAddress;
     private String endAddress;
     private LocalDateTime startDate;

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.UUID;
+
 @FeignClient(value = "${feign.client.config.payment.name}",
         configuration = FeignConfig.class,
         path = "${feign.client.config.payment.path}")
@@ -21,7 +23,7 @@ public interface PaymentFeignClient {
     CustomerChargeResponse customerCharge(@RequestBody CustomerChargeRequest customerChargeRequest);
 
     @GetMapping("/customers/checkExists/{passengerId}")
-    CustomerExistsResponse isCustomerExists(@PathVariable Long passengerId);
+    CustomerExistsResponse isCustomerExists(@PathVariable UUID passengerId);
 
     @GetMapping("/customers/ride-price")
     CustomerCalculateRideResponse calculateRidePrice(

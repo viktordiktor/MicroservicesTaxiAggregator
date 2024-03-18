@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +48,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public PageResponse<RideResponse> getRidesByPassengerId(Long passengerId) {
+    public PageResponse<RideResponse> getRidesByPassengerId(UUID passengerId) {
         return rideFeignClient.getRidesByPassengerId(passengerId);
     }
 
@@ -66,8 +67,8 @@ public class RideServiceImpl implements RideService {
         return RideResponse.builder()
                 .chargeId("")
                 .distance(0.0)
-                .passengerId(0L)
-                .driverId(0L)
+                .passengerId(UUID.randomUUID())
+                .driverId(UUID.randomUUID())
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .paymentMethod(RidePaymentMethod.BY_CASH)
@@ -85,7 +86,7 @@ public class RideServiceImpl implements RideService {
                 .build();
     }
 
-    public PageResponse<RideResponse> fallbackRideService(Long passengerId, Exception ex) {
+    public PageResponse<RideResponse> fallbackRideService(UUID passengerId, Exception ex) {
         log.error(LogList.LOG_GET_RIDES_BY_PASSENGER_ID_FEIGN_ERROR, passengerId, ex.getMessage());
         return PageResponse.<RideResponse>builder()
                 .objectList(Collections.emptyList())

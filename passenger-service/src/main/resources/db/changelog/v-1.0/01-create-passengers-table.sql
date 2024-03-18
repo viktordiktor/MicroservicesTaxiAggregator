@@ -1,5 +1,5 @@
 CREATE TABLE passengers (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id uuid default gen_random_uuid() PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(20) NOT NULL UNIQUE
-) engine=InnoDB;
+)
