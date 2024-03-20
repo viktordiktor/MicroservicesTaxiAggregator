@@ -15,6 +15,7 @@ import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotAddedCarException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
+import com.nikonenko.driverservice.exceptions.KeycloakUserIsNotValid;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.driverservice.kafka.producer.DriverReviewRequestProducer;
@@ -29,11 +30,14 @@ import com.nikonenko.driverservice.services.DriverService;
 import com.nikonenko.driverservice.services.feign.RideService;
 import com.nikonenko.driverservice.utils.LogList;
 import com.nikonenko.driverservice.utils.PageUtil;
+import com.nikonenko.driverservice.utils.PatternList;
+import com.nikonenko.driverservice.utils.SecurityList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
@@ -74,13 +78,27 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse createDriver(DriverRequest driverRequest) {
+    public DriverResponse createDriver(OAuth2User principal) {
+        DriverRequest driverRequest = createRequestFromPrincipal(principal);
         checkDriverExists(driverRequest);
         Driver driver = modelMapper.map(driverRequest, Driver.class);
         driver.setAvailable(true);
+        driver.setId(principal.getAttribute(SecurityList.ID));
         Driver savedDriver = driverRepository.save(driver);
         log.info(LogList.LOG_CREATE_DRIVER, savedDriver.getId());
         return modelMapper.map(savedDriver, DriverResponse.class);
+    }
+
+    private DriverRequest createRequestFromPrincipal(OAuth2User principal) {
+        String phone = principal.getAttribute(SecurityList.PHONE);
+        String username = principal.getAttribute(SecurityList.USERNAME);
+        if (phone == null || username == null || !phone.matches(PatternList.PHONE_PATTERN)) {
+            throw new KeycloakUserIsNotValid();
+        }
+        return DriverRequest.builder()
+                .username(username)
+                .phone(phone)
+                .build();
     }
 
     @Override

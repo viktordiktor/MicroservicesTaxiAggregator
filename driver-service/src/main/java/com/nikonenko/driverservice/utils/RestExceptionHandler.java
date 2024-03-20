@@ -8,6 +8,7 @@ import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotAddedCarException;
 import com.nikonenko.driverservice.exceptions.DriverNotFoundException;
+import com.nikonenko.driverservice.exceptions.KeycloakUserIsNotValid;
 import com.nikonenko.driverservice.exceptions.PhoneAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.UsernameAlreadyExistsException;
 import com.nikonenko.driverservice.exceptions.WrongPageableParameterException;
@@ -61,7 +62,7 @@ public class RestExceptionHandler {
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.CONFLICT));
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class,
+    @ExceptionHandler({HttpMessageNotReadableException.class, KeycloakUserIsNotValid.class,
             PropertyReferenceException.class, WrongPageableParameterException.class,
             MethodArgumentTypeMismatchException.class, DriverIsNotAvailableException.class,
             DriverNoRidesException.class, BadRequestByDriverException.class,

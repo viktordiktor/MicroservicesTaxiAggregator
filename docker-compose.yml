@@ -79,6 +79,19 @@ services:
     depends_on:
       - broker
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:18.0.2
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./keycloak/themes:/opt/keycloak/themes/custom/login
+    command:
+      - start-dev
+    ports:
+      - "8181:8080"
+
   elasticsearch:
     image: elasticsearch:8.12.2
     container_name: elasticsearch
@@ -150,9 +163,11 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/taxi-realm
     depends_on:
       - discovery-server
       - broker
+      - keycloak
     restart: always
 
   payment-service:

@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: API-GATEWAY
   cloud:
     gateway:
       routes:
@@ -50,76 +48,29 @@ spring:
                 name: ride-service-circuit
                 fallbackUri: redirect:/fallback/ride-service
         - id: eureka-server
-          uri: http://eureka@localhost:8761
+          uri: http://eureka@discovery-server:8761
           predicates:
             - Path=/eureka/web
           filters:
             - SetPath=/
         - id: eureka-server-static
-          uri: http://eureka@localhost:8761
+          uri: http://eureka@discovery-server:8761
           predicates:
             - Path=/eureka/**
-      default-filters:
-        - TokenRelay=
-      discovery:
-        locator:
-          enabled: true
   security:
     oauth2:
       client:
         provider:
           keycloak:
-            token-uri: http://localhost:8181/realms/taxi-realm/protocol/openid-connect/token
-            authorization-uri: http://localhost:8181/realms/taxi-realm/protocol/openid-connect/auth
-            user-name-attribute: preferred_username
-            user-info-uri: http://localhost:8181/realms/taxi-realm/protocol/openid-connect/userinfo
-            jwk-set-uri: http://localhost:8181/realms/taxi-realm/protocol/openid-connect/certs
-            user-info-authentication-method: header
-        registration:
-          keycloak:
-            provider: keycloak
-            client-id: taxi-realm
-            client-secret: ${REALM-SECRET}
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
-            scope: openid
+            token-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/token
+            authorization-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/auth
+            user-info-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/userinfo
+            jwk-set-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/certs
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8181/realms/taxi-realm/protocol/openid-connect/certs
-
+          jwk-set-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/certs
 
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka@localhost:8761/eureka/
-
-resilience4j.timelimiter:
-  configs:
-    default:
-      cancelRunningFuture: false
-      timeoutDuration: 20s
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: [ "prometheus", "health" ]
-    metrics:
-      tags:
-        application: ${spring.application.name}
-    endpoint:
-      health:
-        show-details: always
-      metrics:
-        enabled: true
-    health:
-      circuitbreakers:
-        enabled: true
-    prometheus:
-      metrics:
-        export:
-          enabled: true
-  tracing:
-    sampling:
-      rate: 1.0
-      probability: 1.0
+      defaultZone: http://discovery-server:8761/eureka/

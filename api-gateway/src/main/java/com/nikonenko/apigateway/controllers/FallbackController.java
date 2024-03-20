@@ -1,5 +1,6 @@
-package com.nikonenko.apigateway;
+package com.nikonenko.apigateway.controllers;
 
+import com.nikonenko.apigateway.utils.ExceptionList;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,21 +10,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class FallbackController {
     @GetMapping("/passenger-service")
     public String passengerServiceFallback() {
-        return "Passenger service is down right now. Please try again later.";
+        return ExceptionList.PASSENGER_SERVICE_DOWN.getValue();
     }
 
     @GetMapping("/driver-service")
     public String driverServiceFallback() {
-        return "Driver service is down right now. Please try again later.";
+        return ExceptionList.DRIVER_SERVICE_DOWN.getValue();
     }
 
     @GetMapping("/ride-service")
     public String rideServiceFallback() {
-        return "Rides service is down right now. Please try again later.";
+        return ExceptionList.RIDE_SERVICE_DOWN.getValue();
     }
 
     @GetMapping("/payment-service")
     public String paymentServiceFallback() {
-        return "Payment service is down right now. Please try again later.";
+        return ExceptionList.PAYMENT_SERVICE_DOWN.getValue();
     }
 }
