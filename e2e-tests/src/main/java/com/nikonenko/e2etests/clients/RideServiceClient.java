@@ -15,15 +15,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.UUID;
+
 @FeignClient(value = "${feign.client.config.ride.name}",
         configuration = FeignConfig.class,
         url = "${feign.client.config.ride.url}")
 public interface RideServiceClient {
     @GetMapping("/by-passenger/{passengerId}")
-    PageResponse<RideResponse> getRidesByPassengerId(@PathVariable Long passengerId);
+    PageResponse<RideResponse> getRidesByPassengerId(@PathVariable UUID passengerId);
 
     @GetMapping("/by-driver/{driverId}")
-    PageResponse<RideResponse> getRidesByDriverId(@PathVariable Long driverId);
+    PageResponse<RideResponse> getRidesByDriverId(@PathVariable UUID driverId);
 
     @GetMapping("/distance")
     CalculateDistanceResponse calculateDistance(@SpringQueryMap CalculateDistanceRequest customerChargeRequest);

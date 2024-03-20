@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -40,11 +41,15 @@ public class TestUtil {
     public final String DEFAULT_PAGE_SORT = "id";
     public final String INVALID_PAGE_SORT = "aaa";
     public final int DEFAULT_TOTAL_PAGE_SIZE = 1;
-    public final Long DEFAULT_ID = 1L;
-    public final Long SECOND_ID = 2L;
-    public final Long UPDATING_ID = 3L;
-    public final Long CREATION_ID = 4L;
-    public final Long NOT_EXISTING_ID = 999L;
+    public final UUID DEFAULT_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    public final Long DEFAULT_CAR_ID = 1L;
+    public final UUID SECOND_ID = UUID.fromString("22222222-2222-2222-2222-222222222222");
+    public final Long SECOND_CAR_ID = 2L;
+    public final UUID UPDATING_ID = UUID.fromString("33333333-3333-3333-3333-333333333333");
+    public final UUID CREATION_ID = UUID.fromString("44444444-4444-4444-4444-444444444444");
+    public final Long CREATION_CAR_ID = 4L;
+    public final UUID NOT_EXISTING_ID = UUID.fromString("99999999-9999-9999-9999-999999999999");
+    public final Long NOT_EXISTING_CAR_ID = 999L;
     public final String DEFAULT_USERNAME = "viktordiktor";
     public final String SECOND_USERNAME = "USERNAME2";
     public final String EXISTING_USERNAME = "FANAT_UBER";
@@ -264,7 +269,7 @@ public class TestUtil {
 
     public Car getDefaultCar() {
         return Car.builder()
-                .id(DEFAULT_ID)
+                .id(DEFAULT_CAR_ID)
                 .number(DEFAULT_CAR_NUMBER)
                 .model(DEFAULT_CAR_MODEL)
                 .color(DEFAULT_CAR_COLOR)
@@ -273,7 +278,7 @@ public class TestUtil {
 
     public Car getSavedCarWithParameters(String number, String model, String color) {
         return Car.builder()
-                .id(DEFAULT_ID)
+                .id(DEFAULT_CAR_ID)
                 .number(number)
                 .model(model)
                 .color(color)
@@ -282,7 +287,7 @@ public class TestUtil {
 
     public Car getSecondCar() {
         return Car.builder()
-                .id(SECOND_ID)
+                .id(SECOND_CAR_ID)
                 .number(SECOND_CAR_NUMBER)
                 .model(SECOND_CAR_MODEL)
                 .color(SECOND_CAR_COLOR)
@@ -329,7 +334,7 @@ public class TestUtil {
 
     public CarResponse getDefaultCarResponse() {
         return CarResponse.builder()
-                .id(DEFAULT_ID)
+                .id(DEFAULT_CAR_ID)
                 .number(DEFAULT_CAR_NUMBER)
                 .model(DEFAULT_CAR_MODEL)
                 .color(DEFAULT_CAR_COLOR)
@@ -338,7 +343,7 @@ public class TestUtil {
 
     public CarResponse getCarResponseWithParameters(String number, String model, String color) {
         return CarResponse.builder()
-                .id(DEFAULT_ID)
+                .id(DEFAULT_CAR_ID)
                 .number(number)
                 .model(model)
                 .color(color)
@@ -347,7 +352,7 @@ public class TestUtil {
 
     public CarResponse getUpdateCarResponse() {
         return CarResponse.builder()
-                .id(DEFAULT_ID)
+                .id(DEFAULT_CAR_ID)
                 .number(SECOND_CAR_NUMBER)
                 .model(SECOND_CAR_MODEL)
                 .color(SECOND_CAR_COLOR)
@@ -356,7 +361,7 @@ public class TestUtil {
 
     public CarResponse getCreationCarResponse() {
         return CarResponse.builder()
-                .id(CREATION_ID)
+                .id(CREATION_CAR_ID)
                 .number(DEFAULT_CAR_NUMBER)
                 .model(DEFAULT_CAR_MODEL)
                 .color(DEFAULT_CAR_COLOR)
@@ -382,13 +387,13 @@ public class TestUtil {
     }
 
     public Set<RatingDriver> getDefaultRatingSet() {
-        return Set.of(new RatingDriver(DEFAULT_ID, DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
-                new RatingDriver(SECOND_ID, SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
+        return Set.of(new RatingDriver(DEFAULT_CAR_ID, DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
+                new RatingDriver(SECOND_CAR_ID, SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
     }
 
     public Set<RatingDriverResponse> getDefaultRatingSetResponse() {
-        return Set.of(new RatingDriverResponse(DEFAULT_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
-                new RatingDriverResponse(SECOND_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
+        return Set.of(new RatingDriverResponse(DEFAULT_CAR_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT),
+                new RatingDriverResponse(SECOND_CAR_ID, DEFAULT_RATING, DEFAULT_RATING_COMMENT));
     }
 
     public RatingToDriverRequest getRatingToDriverRequest() {
@@ -399,7 +404,7 @@ public class TestUtil {
                 .build();
     }
 
-    public RatingToDriverRequest getRatingToDriverRequestWithParameters(Long driverId, int rating, String comment) {
+    public RatingToDriverRequest getRatingToDriverRequestWithParameters(UUID driverId, int rating, String comment) {
         return RatingToDriverRequest.builder()
                 .driverId(driverId)
                 .rating(rating)

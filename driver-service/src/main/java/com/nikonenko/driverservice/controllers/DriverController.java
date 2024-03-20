@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/drivers")
@@ -45,50 +47,50 @@ public class DriverController {
     }
 
     @GetMapping("/{id}")
-    public DriverResponse getDriverById(@PathVariable Long id) {
+    public DriverResponse getDriverById(@PathVariable UUID id) {
         return driverService.getDriverById(id);
     }
 
     @PutMapping("/{id}")
-    public DriverResponse editDriver(@PathVariable Long id, @Valid @RequestBody DriverRequest driverRequest) {
+    public DriverResponse editDriver(@PathVariable UUID id, @Valid @RequestBody DriverRequest driverRequest) {
         return driverService.editDriver(id, driverRequest);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteDriver(@PathVariable Long id) {
+    public void deleteDriver(@PathVariable UUID id) {
         driverService.deleteDriver(id);
     }
 
     @DeleteMapping("/car/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCar(@PathVariable Long id) {
+    public void deleteCar(@PathVariable UUID id) {
         driverService.deleteCar(id);
     }
 
     @PatchMapping("/{driverId}/accept/{rideId}")
-    public void acceptRide(@PathVariable String rideId, @PathVariable Long driverId) {
+    public void acceptRide(@PathVariable String rideId, @PathVariable UUID driverId) {
         driverService.acceptRide(rideId, driverId);
     }
 
     @PatchMapping("/{driverId}/reject/{rideId}")
-    public void rejectRide(@PathVariable String rideId, @PathVariable Long driverId) {
+    public void rejectRide(@PathVariable String rideId, @PathVariable UUID driverId) {
         driverService.rejectRide(rideId, driverId);
     }
 
     @PatchMapping("/{driverId}/start/{rideId}")
-    public void startRide(@PathVariable String rideId, @PathVariable Long driverId) {
+    public void startRide(@PathVariable String rideId, @PathVariable UUID driverId) {
         driverService.startRide(rideId, driverId);
     }
 
     @PatchMapping("/{driverId}/finish/{rideId}")
-    public void finishRide(@PathVariable String rideId, @PathVariable Long driverId) {
+    public void finishRide(@PathVariable String rideId, @PathVariable UUID driverId) {
         driverService.finishRide(rideId, driverId);
     }
 
     @PostMapping("/car/{driverId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public DriverResponse addCarToDriver(@PathVariable Long driverId, @Valid @RequestBody CarRequest carRequest) {
+    public DriverResponse addCarToDriver(@PathVariable UUID driverId, @Valid @RequestBody CarRequest carRequest) {
         return driverService.addCarToDriver(driverId, carRequest);
     }
 
@@ -100,7 +102,7 @@ public class DriverController {
     }
 
     @GetMapping("/rides/{driverId}")
-    public PageResponse<RideResponse> getDriverRides(@PathVariable Long driverId,
+    public PageResponse<RideResponse> getDriverRides(@PathVariable UUID driverId,
                                                      @RequestParam(defaultValue = "0") int pageNumber,
                                                      @RequestParam(defaultValue = "5") int pageSize,
                                                      @RequestParam(defaultValue = "id") String sortField) {

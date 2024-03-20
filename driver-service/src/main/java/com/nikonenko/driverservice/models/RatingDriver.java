@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -24,7 +26,7 @@ public class RatingDriver {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name="driver_id")
-    private Long driverId;
+    private UUID driverId;
     @Column(nullable = false)
     private int rating;
     @Column

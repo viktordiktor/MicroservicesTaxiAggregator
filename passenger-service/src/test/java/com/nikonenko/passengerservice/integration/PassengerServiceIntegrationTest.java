@@ -153,7 +153,9 @@ public class PassengerServiceIntegrationTest extends ContainerConfiguration {
                 .extract()
                 .as(PassengerResponse.class);
 
-        assertEquals(response, result);
+        assertEquals(response.getPhone(), result.getPhone());
+        assertEquals(response.getUsername(), result.getUsername());
+        assertEquals(response.getRatingSet(), result.getRatingSet());
     }
 
     @Test

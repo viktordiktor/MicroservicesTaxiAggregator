@@ -10,26 +10,28 @@ import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 
+import java.util.UUID;
+
 public interface PassengerService {
     PageResponse<PassengerResponse> getAllPassengers(int pageNumber, int pageSize, String sortField);
 
-    PassengerResponse getPassengerById(Long id);
+    PassengerResponse getPassengerById(UUID id);
 
     PassengerResponse createPassenger(PassengerRequest passengerRequest);
 
-    RideResponse createRideByPassenger(Long passengerId, RideByPassengerRequest rideByPassengerRequest);
+    RideResponse createRideByPassenger(UUID passengerId, RideByPassengerRequest rideByPassengerRequest);
 
-    PassengerResponse editPassenger(Long id, PassengerRequest passengerRequest);
+    PassengerResponse editPassenger(UUID id, PassengerRequest passengerRequest);
 
     CloseRideResponse closeRide(String rideId);
 
-    PageResponse<RideResponse> getPassengerRides(Long passengerId);
+    PageResponse<RideResponse> getPassengerRides(UUID passengerId);
 
-    void deletePassenger(Long id);
+    void deletePassenger(UUID id);
 
     void sendReviewToDriver(String rideId, RatingFromPassengerRequest request);
 
     void createReview(RatingToPassengerRequest request);
 
-    void createCustomerByPassenger(Long passengerId, CustomerDataRequest dataRequest);
+    void createCustomerByPassenger(UUID passengerId, CustomerDataRequest dataRequest);
 }

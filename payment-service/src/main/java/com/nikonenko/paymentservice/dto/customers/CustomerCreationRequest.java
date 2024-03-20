@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -24,7 +25,7 @@ public class CustomerCreationRequest {
     @Pattern(regexp = PatternList.PHONE_PATTERN, message = ValidationList.WRONG_PHONE_FORMAT)
     private String phone;
     @NotNull(message = ValidationList.PASSENGER_ID_REQUIRED)
-    private Long passengerId;
+    private UUID passengerId;
     @NotNull(message = ValidationList.AMOUNT_REQUIRED)
     @Positive(message = ValidationList.NEGATIVE_VALUE)
     private BigDecimal amount;

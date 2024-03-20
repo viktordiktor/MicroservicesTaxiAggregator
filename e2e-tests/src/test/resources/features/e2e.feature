@@ -1,7 +1,7 @@
 Feature: End to End Tests
 
   Scenario: Passenger sends request to Ride Service and get All Rides by him
-    Given Passenger with ID 1 exists
+    Given Passenger with ID "11111111-1111-1111-1111-111111111111" exists
     When getRidesByPassengerId is called by Ride Service Client
     Then PageRideResponse should not be null
     And PageRideResponse should contains at least one RideResponse
@@ -9,7 +9,7 @@ Feature: End to End Tests
 
 
   Scenario: Driver sends request to Ride Service and get All Rides by him
-    Given Driver with ID 1 exists
+    Given Driver with ID "11111111-1111-1111-1111-111111111111" exists
     When getRidesByDriverId is called by Ride Service Client
     Then PageRideResponse should not be null
     And PageRideResponse should contains at least one RideResponse
@@ -27,13 +27,13 @@ Feature: End to End Tests
     Then CustomerCalculateRideResponse should contains Not Null Price
     And CustomerCalculateRideResponse should not contains Error Message
 
-    Given Passenger with ID 5 exists
+    Given Passenger with ID "55555555-5555-5555-5555-555555555555" exists
     When isCustomerExists method is called by Payment Service Client
     Then CustomerExistsResponse should be False
 
 
   Scenario: Create Customer by Passenger
-    Given Username "testuser" and phone "+375292547787" and Existing Passenger ID 2 and Amount "95000.2"
+    Given Username "testuser" and phone "+375292547787" and Existing Passenger ID "22222222-2222-2222-2222-222222222222" and Amount "95000.2"
     When sendCustomerCreationRequest method is called with CustomerCreationRequest
     Then CustomerExistsResponse should be True after 10 seconds
 
@@ -49,7 +49,7 @@ Feature: End to End Tests
     Then CustomerCalculateRideResponse should contains Not Null Price
     And CustomerCalculateRideResponse should not contains Error Message
 
-    Given Passenger with ID 2 exists
+    Given Passenger with ID "22222222-2222-2222-2222-222222222222" exists
     When isCustomerExists method is called by Payment Service Client
     Then CustomerExistsResponse should be True
 
@@ -80,7 +80,7 @@ Feature: End to End Tests
     Then CustomerCalculateRideResponse should contains Not Null Price
     And CustomerCalculateRideResponse should not contains Error Message
 
-    Given Valid CreateRideRequest by Cash of Start Address "address1" and End Address "address2" and Passenger with ID 3
+    Given Valid CreateRideRequest by Cash of Start Address "address1" and End Address "address2" and Passenger with ID "33333333-3333-3333-3333-333333333333"
     When createRideRequest method is called with createRideRequest
     Then Ride Response should contains Not Null ID
     And Ride Response should Not have Error Message
@@ -101,13 +101,13 @@ Feature: End to End Tests
     Then CustomerCalculateRideResponse should contains Not Null Price
     And CustomerCalculateRideResponse should not contains Error Message
 
-    Given Valid CreateRideRequest by Cash of Start Address "address1" and End Address "address2" and Passenger with ID 3
+    Given Valid CreateRideRequest by Cash of Start Address "address1" and End Address "address2" and Passenger with ID "33333333-3333-3333-3333-333333333333"
     When createRideRequest method is called with createRideRequest
     Then Ride Response should contains Not Null ID
     And Ride Response should Not have Error Message
     And Ride Response should have By Cash Payment method
 
-    Given Driver with ID 1 exists
+    Given Driver with ID "11111111-1111-1111-1111-111111111111" exists
     When sendChangeRideStatusRequest method is called with Ride Action "ACCEPT"
     Then Ride should change status to "ACCEPTED"
     When sendChangeRideStatusRequest method is called with Ride Action "START"
@@ -115,17 +115,17 @@ Feature: End to End Tests
     When sendChangeRideStatusRequest method is called with Ride Action "FINISH"
     Then Ride should change status to "FINISHED"
 
-    Given Passenger with ID 3 exists
+    Given Passenger with ID "33333333-3333-3333-3333-333333333333" exists
     When sendRatingDriverRequest method is called with Rating 5 and Comment "Cool"
     Then Driver should contains new Review
 
-    Given Driver with ID 1 exists
+    Given Driver with ID "11111111-1111-1111-1111-111111111111" exists
     When sendRatingPassengerRequest method is called with Rating 5 and Comment "Cool"
     Then Passenger should contains new Review
 
 
   Scenario: Passenger create customer and then not have enough balance to create Ride
-    Given Username "pooruser" and phone "+37529555555" and Existing Passenger ID 3 and Amount "0.01"
+    Given Username "pooruser" and phone "+37529555555" and Existing Passenger ID "33333333-3333-3333-3333-333333333333" and Amount "0.01"
     When sendCustomerCreationRequest method is called with CustomerCreationRequest
     Then CustomerExistsResponse should be True after 10 seconds
 
@@ -139,7 +139,7 @@ Feature: End to End Tests
     Then CustomerCalculateRideResponse should contains Not Null Price
     And CustomerCalculateRideResponse should not contains Error Message
 
-    Given Passenger with ID 3 exists
+    Given Passenger with ID "33333333-3333-3333-3333-333333333333" exists
     When isCustomerExists method is called by Payment Service Client
     Then CustomerExistsResponse should be True
 

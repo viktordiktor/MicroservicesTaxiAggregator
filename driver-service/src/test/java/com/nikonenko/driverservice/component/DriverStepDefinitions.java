@@ -31,6 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -61,47 +62,47 @@ public class DriverStepDefinitions {
     private CarResponse actualCarResponse;
     private RuntimeException exception;
 
-    @Given("Driver with ID {long} exists")
-    public void driverWithIdExists(Long id) {
+    @Given("Driver with ID {string} exists")
+    public void driverWithIdExists(String id) {
         Driver driver = TestUtil.getDefaultDriver();
         DriverResponse expectedResponse = TestUtil.getDefaultDriverResponse();
 
         doReturn(Optional.of(driver))
                 .when(driverRepository)
-                .findById(id);
+                .findById(UUID.fromString(id));
         doReturn(expectedResponse)
                 .when(modelMapper)
                 .map(driver, DriverResponse.class);
 
-        DriverResponse result = driverService.getDriverById(id);
+        DriverResponse result = driverService.getDriverById(UUID.fromString(id));
         assertEquals(expectedResponse, result);
     }
 
-    @When("getDriverById method is called with ID {long}")
-    public void getDriverByIdMethodIsCalledWithId(Long id) {
+    @When("getDriverById method is called with ID {string}")
+    public void getDriverByIdMethodIsCalledWithId(String id) {
         try {
-            actualDriverResponse = driverService.getDriverById(id);
+            actualDriverResponse = driverService.getDriverById(UUID.fromString(id));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("DriverResponse should contains driver with ID {long}")
-    public void driverResponseShouldContainsDriverWithId(Long id) {
-        Driver driver = driverRepository.findById(id).get();
+    @Then("DriverResponse should contains driver with ID {string}")
+    public void driverResponseShouldContainsDriverWithId(String id) {
+        Driver driver = driverRepository.findById(UUID.fromString(id)).get();
         DriverResponse expected = modelMapper.map(driver, DriverResponse.class);
 
         assertNull(exception);
         assertEquals(expected, actualDriverResponse);
     }
 
-    @Given("Driver with ID {long} not exists")
-    public void driverWithIdNotExists(Long id) {
-        assertTrue(driverRepository.findById(id).isEmpty());
+    @Given("Driver with ID {string} not exists")
+    public void driverWithIdNotExists(String id) {
+        assertTrue(driverRepository.findById(UUID.fromString(id)).isEmpty());
     }
 
-    @Then("DriverNotFoundException should be thrown for ID {long}")
-    public void driverNotFoundExceptionThrownForId(Long id) {
+    @Then("DriverNotFoundException should be thrown for ID {string}")
+    public void driverNotFoundExceptionThrownForId(String id) {
         DriverNotFoundException expected = new DriverNotFoundException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
@@ -184,8 +185,8 @@ public class DriverStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("Driver with ID {long} exists and Driver with username {string} and phone {string} not exists")
-    public void driverWithIdExistsAndDriverWithUsernameAndPhoneNotExists(Long id, String username, String phone) {
+    @Given("Driver with ID {string} exists and Driver with username {string} and phone {string} not exists")
+    public void driverWithIdExistsAndDriverWithUsernameAndPhoneNotExists(String id, String username, String phone) {
         DriverResponse response = TestUtil.getUpdateDriverResponse();
         DriverRequest request = TestUtil.getDriverRequestWithParameters(username, phone);
         Driver driver = TestUtil.getDefaultDriver();
@@ -199,7 +200,7 @@ public class DriverStepDefinitions {
                 .existsByPhone(request.getPhone());
         doReturn(Optional.of(driver))
                 .when(driverRepository)
-                .findById(id);
+                .findById(UUID.fromString(id));
         doReturn(editDriver)
                 .when(modelMapper)
                 .map(request, Driver.class);
@@ -210,24 +211,24 @@ public class DriverStepDefinitions {
                 .when(modelMapper)
                 .map(editDriver, DriverResponse.class);
 
-        DriverResponse result = driverService.editDriver(id, request);
+        DriverResponse result = driverService.editDriver(UUID.fromString(id), request);
 
         assertEquals(response, result);
     }
 
-    @When("editDriver method is called with ID {long} and DriverRequest of username {string} and phone {string}")
-    public void editDriverMethodIsCalledWithIdAndDriverRequestOfUsernameAndPhone(Long id,
+    @When("editDriver method is called with ID {string} and DriverRequest of username {string} and phone {string}")
+    public void editDriverMethodIsCalledWithIdAndDriverRequestOfUsernameAndPhone(String id,
                                                                                  String username, String phone) {
         try {
-            actualDriverResponse =
-                    driverService.editDriver(id, TestUtil.getDriverRequestWithParameters(username, phone));
+            actualDriverResponse = driverService
+                    .editDriver(UUID.fromString(id), TestUtil.getDriverRequestWithParameters(username, phone));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("DriverResponse should contains driver with ID {long} and username {string} and phone {string}")
-    public void DriverResponseShouldContainsDriverWithUsernameAndPhoneAndID(Long id,
+    @Then("DriverResponse should contains driver with ID {string} and username {string} and phone {string}")
+    public void DriverResponseShouldContainsDriverWithUsernameAndPhoneAndID(String id,
                                                                             String username, String phone) {
         DriverResponse expected = TestUtil.getUpdateDriverResponse();
 
@@ -235,9 +236,9 @@ public class DriverStepDefinitions {
         assertEquals(expected, actualDriverResponse);
     }
 
-    @Given("Driver with ID {long} exists and Driver with existing username {string} and not existing phone {string}")
+    @Given("Driver with ID {string} exists and Driver with existing username {string} and not existing phone {string}")
     public void driverWithIdExistsAndDriverWithExistingUsernameAndNotExistingPhone
-            (Long id, String existingUsername, String phone) {
+            (String id, String existingUsername, String phone) {
         doReturn(true)
                 .when(driverRepository)
                 .existsByUsername(existingUsername);
@@ -245,9 +246,9 @@ public class DriverStepDefinitions {
         assertTrue(driverRepository.existsByUsername(existingUsername));
     }
 
-    @Given("Driver with ID {long} exists and Driver with not existing username {string} and existing phone {string}")
+    @Given("Driver with ID {string} exists and Driver with not existing username {string} and existing phone {string}")
     public void driverWithIdExistsAndDriverWithNotExistingUsernameAndExistingPhone
-            (Long id, String username, String existingPhone) {
+            (String id, String username, String existingPhone) {
         doReturn(true)
                 .when(driverRepository)
                 .existsByPhone(existingPhone);
@@ -255,40 +256,40 @@ public class DriverStepDefinitions {
         assertTrue(driverRepository.existsByPhone(existingPhone));
     }
 
-    @Given("Driver with ID {long} not exists and Driver with username {string} and phone {string} not exists")
+    @Given("Driver with ID {string} not exists and Driver with username {string} and phone {string} not exists")
     public void driverWithIdNotExistsAndDriverWithUsernameAndPhoneNotExists
-            (Long id, String username, String existingPhone) {
+            (String id, String username, String existingPhone) {
         doReturn(Optional.empty())
                 .when(driverRepository)
-                .findById(id);
+                .findById(UUID.fromString(id));
 
-        assertTrue(driverRepository.findById(id).isEmpty());
+        assertTrue(driverRepository.findById(UUID.fromString(id)).isEmpty());
     }
 
-    @When("deleteDriver method is called with ID {long}")
-    public void deleteDriverMethodIsCalledWithId(Long id) {
+    @When("deleteDriver method is called with ID {string}")
+    public void deleteDriverMethodIsCalledWithId(String id) {
         try {
-            driverService.deleteDriver(id);
+            driverService.deleteDriver(UUID.fromString(id));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("Should return No Content for ID {long} and delete Driver")
-    public void shouldReturnNoContentForIdAndDeleteDriver(Long id) {
+    @Then("Should return No Content for ID {string} and delete Driver")
+    public void shouldReturnNoContentForIdAndDeleteDriver(String id) {
         verify(driverRepository).delete(any(Driver.class));
         assertNull(exception);
     }
 
-    @Given("Driver with ID {long} exists and available and Ride ID {string}")
-    public void driverWithIdExistsAndAvailableAndRideId(Long driverId, String rideId) {
+    @Given("Driver with ID {string} exists and available and Ride ID {string}")
+    public void driverWithIdExistsAndAvailableAndRideId(String driverId, String rideId) {
         driver = TestUtil.getAvailableDriver();
         Car car = driver.getCar();
         CarResponse carResponse = TestUtil.getDefaultCarResponse();
 
         doReturn(Optional.of(driver))
                 .when(driverRepository)
-                .findById(driverId);
+                .findById(UUID.fromString(driverId));
         doReturn(carResponse)
                 .when(modelMapper)
                 .map(car, CarResponse.class);
@@ -296,17 +297,17 @@ public class DriverStepDefinitions {
         assertTrue(driver.isAvailable());
     }
 
-    @When("acceptRide method is called with Driver ID {long} and Ride ID {string}")
-    public void acceptRideMethodIsCalledWithDriverIdAndRideId(Long driverId, String rideId) {
+    @When("acceptRide method is called with Driver ID {string} and Ride ID {string}")
+    public void acceptRideMethodIsCalledWithDriverIdAndRideId(String driverId, String rideId) {
         try {
-            driverService.acceptRide(rideId, driverId);
+            driverService.acceptRide(rideId, UUID.fromString(driverId));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("Should return No Content And send request to Ride Service for Driver ID {long} and Ride ID {string}")
-    public void shouldReturnNoContentAndSendRequestToRideServiceForDriverIdAndRideId(Long driverId, String rideId) {
+    @Then("Should return No Content And send request to Ride Service for Driver ID {string} and Ride ID {string}")
+    public void shouldReturnNoContentAndSendRequestToRideServiceForDriverIdAndRideId(String driverId, String rideId) {
         assertNull(exception);
         verify(rideStatusRequestProducer).sendChangeRideStatusRequest(any(ChangeRideStatusRequest.class));
     }
@@ -316,15 +317,15 @@ public class DriverStepDefinitions {
         assertFalse(driver.isAvailable());
     }
 
-    @Given("Driver with ID {long} exists and not available and Ride ID {string}")
-    public void driverWithIdExistsAndNotAvailableAndRideId(Long driverId, String rideId) {
+    @Given("Driver with ID {string} exists and not available and Ride ID {string}")
+    public void driverWithIdExistsAndNotAvailableAndRideId(String driverId, String rideId) {
         driver = TestUtil.getNotAvailableDriver();
         Car car = driver.getCar();
         CarResponse carResponse = TestUtil.getDefaultCarResponse();
 
         doReturn(Optional.of(driver))
                 .when(driverRepository)
-                .findById(driverId);
+                .findById(UUID.fromString(driverId));
         doReturn(carResponse)
                 .when(modelMapper)
                 .map(car, CarResponse.class);
@@ -332,17 +333,17 @@ public class DriverStepDefinitions {
         assertFalse(driver.isAvailable());
     }
 
-    @Then("DriverIsNotAvailableException should be thrown for ID {long}")
-    public void driverIsNotAvailableExceptionShouldBeThrownForId(Long id) {
+    @Then("DriverIsNotAvailableException should be thrown for ID {string}")
+    public void driverIsNotAvailableExceptionShouldBeThrownForId(String id) {
         DriverIsNotAvailableException expected = new DriverIsNotAvailableException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @When("rejectRide method is called with Driver ID {long} and Ride ID {string}")
-    public void rejectRideMethodIsCalledWithDriverIdAndRideId(Long driverId, String rideId) {
+    @When("rejectRide method is called with Driver ID {string} and Ride ID {string}")
+    public void rejectRideMethodIsCalledWithDriverIdAndRideId(String driverId, String rideId) {
         try {
-            driverService.rejectRide(rideId, driverId);
+            driverService.rejectRide(rideId, UUID.fromString(driverId));
         } catch (RuntimeException ex) {
             exception = ex;
         }
@@ -353,60 +354,62 @@ public class DriverStepDefinitions {
         assertTrue(driver.isAvailable());
     }
 
-    @Then("DriverNoRidesException should be thrown for ID {long}")
-    public void driverNoRidesExceptionShouldBeThrownForId(Long id) {
+    @Then("DriverNoRidesException should be thrown for ID {string}")
+    public void driverNoRidesExceptionShouldBeThrownForId(String id) {
         DriverNoRidesException expected = new DriverNoRidesException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @When("startRide method is called with Driver ID {long} and Ride ID {string}")
-    public void startRideMethodIsCalledWithDriverIdAndRideId(Long driverId, String rideId) {
+    @When("startRide method is called with Driver ID {string} and Ride ID {string}")
+    public void startRideMethodIsCalledWithDriverIdAndRideId(String driverId, String rideId) {
         try {
-            driverService.startRide(rideId, driverId);
+            driverService.startRide(rideId, UUID.fromString(driverId));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @When("finishRide method is called with Driver ID {long} and Ride ID {string}")
-    public void finishRideMethodIsCalledWithDriverIdAndRideId(Long driverId, String rideId) {
+    @When("finishRide method is called with Driver ID {string} and Ride ID {string}")
+    public void finishRideMethodIsCalledWithDriverIdAndRideId(String driverId, String rideId) {
         try {
-            driverService.finishRide(rideId, driverId);
+            driverService.finishRide(rideId, UUID.fromString(driverId));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Given("Driver with ID {long} exists and rating {int} and comment {string}")
-    public void driverWithIdExistsAndRatingAndComment(Long id, int rating, String comment) {
+    @Given("Driver with ID {string} exists and rating {int} and comment {string}")
+    public void driverWithIdExistsAndRatingAndComment(String id, int rating, String comment) {
         Driver driver = TestUtil.getDefaultDriver();
-        RatingToDriverRequest request = TestUtil.getRatingToDriverRequestWithParameters(id, rating, comment);
+        RatingToDriverRequest request = TestUtil
+                .getRatingToDriverRequestWithParameters(UUID.fromString(id), rating, comment);
 
         doReturn(Optional.of(driver))
                 .when(driverRepository)
                 .findById(request.getDriverId());
     }
 
-    @When("createReview method is called with RatingToDriverRequest of driver ID {long} and rating {int} and comment {string}")
+    @When("createReview method is called with RatingToDriverRequest of driver ID {string} and rating {int} and comment {string}")
     public void createReviewMethodIsCalledWithRatingToDriverRequestOfDriverIdAndRatingAndComment
-            (Long id, int rating, String comment) {
+            (String id, int rating, String comment) {
         try {
-            driverService.createReview(TestUtil.getRatingToDriverRequestWithParameters(id, rating, comment));
+            driverService.createReview(TestUtil
+                    .getRatingToDriverRequestWithParameters(UUID.fromString(id), rating, comment));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("Should return No Content for ID {long} and rating {int} and comment {string}")
-    public void shouldReturnNoContentForIdAndRatingAndComment(Long id, int rating, String comment) {
+    @Then("Should return No Content for ID {string} and rating {int} and comment {string}")
+    public void shouldReturnNoContentForIdAndRatingAndComment(String id, int rating, String comment) {
         verify(driverRepository).save(any(Driver.class));
-        verify(driverRepository).findById(id);
+        verify(driverRepository).findById(UUID.fromString(id));
         assertNull(exception);
     }
 
-    @Given("Driver with ID {long} exists and CarRequest of number {string} and model {string} and color {string}")
-    public void driverWithIdExistsAndCarRequestOfNumberAndModelAndColor(Long driverId,
+    @Given("Driver with ID {string} exists and CarRequest of number {string} and model {string} and color {string}")
+    public void driverWithIdExistsAndCarRequestOfNumberAndModelAndColor(String driverId,
                                                                         String number, String model, String color) {
         Driver driver = TestUtil.getDefaultDriver();
         Car car = TestUtil.getSavedCarWithParameters(number, model, color);
@@ -416,7 +419,7 @@ public class DriverStepDefinitions {
 
         doReturn(Optional.of(driver))
                 .when(driverRepository)
-                .findById(driverId);
+                .findById(UUID.fromString(driverId));
         doReturn(carResponse)
                 .when(carServiceMock)
                 .createCar(carRequest);
@@ -431,19 +434,19 @@ public class DriverStepDefinitions {
                 .map(driver, DriverResponse.class);
     }
 
-    @When("addCarToDriver method is called with Driver ID {long} and CarRequest of number {string} and model {string} and color {string}")
+    @When("addCarToDriver method is called with Driver ID {string} and CarRequest of number {string} and model {string} and color {string}")
     public void addCarToDriverMethodIsCalledWithDriverIdAndCarRequestOfNumberAndModelAndColor
-            (Long driverId, String number, String model, String color) {
+            (String driverId, String number, String model, String color) {
         try {
-            actualDriverResponse = driverService.addCarToDriver(driverId,
+            actualDriverResponse = driverService.addCarToDriver(UUID.fromString(driverId),
                     TestUtil.getCarRequestWithParameters(number, model, color));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("DriverResponse should contains driver with ID {long} and CarResponse of number {string} and model {string} and color {string}")
-    public void driverResponseShouldContainsCarResponseOfNumberAndModelAndColor(Long driverId, String number,
+    @Then("DriverResponse should contains driver with ID {string} and CarResponse of number {string} and model {string} and color {string}")
+    public void driverResponseShouldContainsCarResponseOfNumberAndModelAndColor(String driverId, String number,
                                                                                 String model, String color) {
         DriverResponse expected = TestUtil.getDriverResponseWithCarParameters(number, model, color);
 
@@ -559,12 +562,12 @@ public class DriverStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("Ride with ID {long} not exists and Ride with number {string} not exists")
-    public void rideWithIdNotExistsAndRideWithNumberNotExists(Long id, String number) {
+    @Given("Car with ID {long} not exists and Ride with number {string} not exists")
+    public void carWithIdNotExistsAndRideWithNumberNotExists(Long id, String number) {
         doReturn(Optional.empty())
-                .when(driverRepository)
+                .when(carRepository)
                 .findById(id);
 
-        assertTrue(driverRepository.findById(id).isEmpty());
+        assertTrue(carRepository.findById(id).isEmpty());
     }
 }

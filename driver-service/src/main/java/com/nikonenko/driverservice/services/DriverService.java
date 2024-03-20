@@ -8,32 +8,34 @@ import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 
+import java.util.UUID;
+
 public interface DriverService {
     PageResponse<DriverResponse> getAllDrivers(int pageNumber, int pageSize, String sortField);
 
-    DriverResponse getDriverById(Long id);
+    DriverResponse getDriverById(UUID id);
 
     DriverResponse createDriver(DriverRequest driverRequest);
 
-    DriverResponse editDriver(Long id, DriverRequest driverRequest);
+    DriverResponse editDriver(UUID id, DriverRequest driverRequest);
 
-    void deleteDriver(Long id);
+    void deleteDriver(UUID id);
 
-    void acceptRide(String rideId, Long driverId);
+    void acceptRide(String rideId, UUID driverId);
 
-    void rejectRide(String rideId, Long driverId);
+    void rejectRide(String rideId, UUID driverId);
 
-    void startRide(String rideId, Long driverId);
+    void startRide(String rideId, UUID driverId);
 
-    void finishRide(String rideId, Long driverId);
+    void finishRide(String rideId, UUID driverId);
 
     void createReview(RatingToDriverRequest ratingRequest);
 
-    DriverResponse addCarToDriver(Long id, CarRequest carRequest);
+    DriverResponse addCarToDriver(UUID id, CarRequest carRequest);
 
     void sendReviewToPassenger(String rideId, RatingFromDriverRequest request);
 
-    PageResponse<RideResponse> getDriverRides(Long driverId, int pageNumber, int pageSize, String sortField);
+    PageResponse<RideResponse> getDriverRides(UUID driverId, int pageNumber, int pageSize, String sortField);
 
-    void deleteCar(Long driverId);
+    void deleteCar(UUID driverId);
 }

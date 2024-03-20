@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @UtilityClass
 public class TestUtil {
@@ -44,7 +45,7 @@ public class TestUtil {
     public final BigDecimal DEFAULT_PERCENT = BigDecimal.valueOf(50L);
     public final String DEFAULT_COUPON_ID = "coupon1";
     public final String DEFAULT_CUSTOMER_ID = "customer1";
-    public final Long DEFAULT_PASSENGER_ID = 1L;
+    public final UUID DEFAULT_PASSENGER_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     public final String DEFAULT_USERNAME = "username";
     public final String DEFAULT_PHONE = "+375111111111";
     public final BigDecimal DEFAULT_CUSTOMER_AMOUNT = BigDecimal.valueOf(100L);
@@ -249,7 +250,7 @@ public class TestUtil {
     }
 
     public CustomerCreationRequest getCustomerCreationRequestWithParameters(String username, String phone,
-                                                                            Long passengerId, String amount) {
+                                                                            UUID passengerId, String amount) {
         return CustomerCreationRequest.builder()
                 .passengerId(passengerId)
                 .username(username)
@@ -299,7 +300,7 @@ public class TestUtil {
     }
 
     public CustomerChargeRequest getCustomerChargeRequestWithParameters(String amount,
-                                                                        Long passengerId, String currency) {
+                                                                        UUID passengerId, String currency) {
         return CustomerChargeRequest.builder()
                 .amount(new BigDecimal(amount))
                 .passengerId(passengerId)
@@ -332,7 +333,7 @@ public class TestUtil {
                 .build();
     }
 
-    public CustomerUser getCustomerUserWithPassengerId(Long passengerId) {
+    public CustomerUser getCustomerUserWithPassengerId(UUID passengerId) {
         CustomerUser customerUser = getCustomerUser();
         customerUser.setPassengerId(passengerId);
         return customerUser;

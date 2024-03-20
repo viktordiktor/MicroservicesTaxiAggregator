@@ -9,14 +9,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateRideRequest {
     @NotNull(message = ValidationList.PASSENGER_ID_REQUIRED)
-    @Positive(message = ValidationList.NEGATIVE_VALUE)
-    private Long passengerId;
+    private UUID passengerId;
     @NotBlank(message = ValidationList.START_ADDRESS_REQUIRED)
     private String startAddress;
     @NotBlank(message = ValidationList.END_ADDRESS_REQUIRED)

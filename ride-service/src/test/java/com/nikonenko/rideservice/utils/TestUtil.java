@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestUtil {
     public static final String DEFAULT_RIDE_ID = "ride1";
     public static final String NOT_EXISTING_RIDE_ID = "ride32193912";
-    public static final Long DEFAULT_PASSENGER_ID = 1L;
-    public static final Long DEFAULT_DRIVER_ID = 1L;
+    public static final UUID DEFAULT_PASSENGER_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    public static final UUID DEFAULT_DRIVER_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     public static final String DEFAULT_START_ADDRESS = "address1";
     public static final String DEFAULT_END_ADDRESS = "address2";
     public static final LocalDateTime DEFAULT_DATETIME = LocalDateTime.of(2024, 2, 27, 12, 12, 12);
@@ -100,7 +101,7 @@ public class TestUtil {
                 .build();
     }
 
-    public RideResponse getRideResponseWithParameters(Long passengerId, String startAddress,
+    public RideResponse getRideResponseWithParameters(UUID passengerId, String startAddress,
                                                           String endAddress, String chargeId) {
         RideResponse rideResponse = getRideResponse();
         rideResponse.setPassengerId(passengerId);
@@ -150,7 +151,7 @@ public class TestUtil {
                 .build();
     }
 
-    public Ride getNotSavedRideWithParameters(Long passengerId, String startAddress,
+    public Ride getNotSavedRideWithParameters(UUID passengerId, String startAddress,
                                               String endAddress, String chargeId) {
         Ride ride = getNotSavedRide();
         ride.setPassengerId(passengerId);
@@ -188,7 +189,7 @@ public class TestUtil {
         return ride;
     }
 
-    public Ride getOpenedRideWithParameters(Long passengerId, String startAddress,
+    public Ride getOpenedRideWithParameters(UUID passengerId, String startAddress,
                                                   String endAddress, String chargeId) {
         Ride ride = getOpenedByCardRide();
         ride.setPassengerId(passengerId);
@@ -282,7 +283,7 @@ public class TestUtil {
                 .build();
     }
 
-    public CreateRideRequest getCreateRideRequestWithParameters(Long passengerId, String startAddress,
+    public CreateRideRequest getCreateRideRequestWithParameters(UUID passengerId, String startAddress,
                                                                       String endAddress, String chargeId) {
         return CreateRideRequest.builder()
                 .passengerId(passengerId)

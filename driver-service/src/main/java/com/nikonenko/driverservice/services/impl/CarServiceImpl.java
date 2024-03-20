@@ -41,8 +41,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponse createCar(CarRequest carRequest) {
         checkCarExists(carRequest);
-        Car car = modelMapper.map(carRequest, Car.class);
-        Car savedCar = carRepository.save(car);
+        Car savedCar = carRepository.save(modelMapper.map(carRequest, Car.class));
         log.info(LogList.LOG_CREATE_CAR, savedCar.getId());
         return modelMapper.map(savedCar, CarResponse.class);
     }

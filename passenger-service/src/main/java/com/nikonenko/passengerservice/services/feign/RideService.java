@@ -7,6 +7,8 @@ import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 
+import java.util.UUID;
+
 public interface RideService {
     CalculateDistanceResponse getRideDistance(CalculateDistanceRequest customerChargeRequest);
 
@@ -14,5 +16,5 @@ public interface RideService {
 
     CloseRideResponse closeRide(String rideId);
 
-    PageResponse<RideResponse> getRidesByPassengerId(Long passengerId);
+    PageResponse<RideResponse> getRidesByPassengerId(UUID passengerId);
 }

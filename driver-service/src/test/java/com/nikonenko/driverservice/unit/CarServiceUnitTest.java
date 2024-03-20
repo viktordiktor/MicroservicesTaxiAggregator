@@ -95,13 +95,13 @@ public class CarServiceUnitTest {
 
         doReturn(Optional.of(retrievedCar))
                 .when(carRepository)
-                .findById(TestUtil.DEFAULT_ID);
+                .findById(TestUtil.DEFAULT_CAR_ID);
         when(modelMapper.map(retrievedCar, CarResponse.class))
                 .thenReturn(response);
 
-        CarResponse result = carService.getCarById(TestUtil.DEFAULT_ID);
+        CarResponse result = carService.getCarById(TestUtil.DEFAULT_CAR_ID);
 
-        verify(carRepository).findById(TestUtil.DEFAULT_ID);
+        verify(carRepository).findById(TestUtil.DEFAULT_CAR_ID);
         verify(modelMapper).map(retrievedCar, CarResponse.class);
         assertNotNull(result);
         assertEquals(response, result);
@@ -111,14 +111,14 @@ public class CarServiceUnitTest {
     void givenNonExistingCarId_whenFindById_thenThrowException() {
         doReturn(Optional.empty())
                 .when(carRepository)
-                .findById(TestUtil.DEFAULT_ID);
+                .findById(TestUtil.DEFAULT_CAR_ID);
 
         assertThrows(
                 CarNotFoundException.class,
-                () -> carService.getCarById(TestUtil.DEFAULT_ID)
+                () -> carService.getCarById(TestUtil.DEFAULT_CAR_ID)
         );
 
-        verify(carRepository).findById(TestUtil.DEFAULT_ID);
+        verify(carRepository).findById(TestUtil.DEFAULT_CAR_ID);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class CarServiceUnitTest {
                 .existsByNumber(editCar.getNumber());
         doReturn(Optional.of(car))
                 .when(carRepository)
-                .findById(TestUtil.DEFAULT_ID);
+                .findById(TestUtil.DEFAULT_CAR_ID);
         doReturn(editCar)
                 .when(modelMapper)
                 .map(request, Car.class);
@@ -189,10 +189,10 @@ public class CarServiceUnitTest {
                 .when(modelMapper)
                 .map(editCar, CarResponse.class);
 
-        CarResponse result = carService.editCar(TestUtil.DEFAULT_ID, request);
+        CarResponse result = carService.editCar(TestUtil.DEFAULT_CAR_ID, request);
 
         verify(carRepository).existsByNumber(editCar.getNumber());
-        verify(carRepository).findById(TestUtil.DEFAULT_ID);
+        verify(carRepository).findById(TestUtil.DEFAULT_CAR_ID);
         verify(modelMapper).map(request, Car.class);
         verify(carRepository).save(editCar);
         verify(modelMapper).map(editCar, CarResponse.class);
@@ -209,7 +209,7 @@ public class CarServiceUnitTest {
 
         assertThrows(
                 CarNumberAlreadyExistsException.class,
-                () -> carService.editCar(TestUtil.DEFAULT_ID, request)
+                () -> carService.editCar(TestUtil.DEFAULT_CAR_ID, request)
         );
 
         verify(carRepository).existsByNumber(request.getNumber());
@@ -222,15 +222,15 @@ public class CarServiceUnitTest {
 
         doReturn(Optional.empty())
                 .when(carRepository)
-                .findById(TestUtil.DEFAULT_ID);
+                .findById(TestUtil.DEFAULT_CAR_ID);
 
         assertThrows(
                 CarNotFoundException.class,
-                () -> carService.editCar(TestUtil.DEFAULT_ID, request)
+                () -> carService.editCar(TestUtil.DEFAULT_CAR_ID, request)
         );
 
         verify(carRepository).existsByNumber(request.getNumber());
-        verify(carRepository).findById(TestUtil.DEFAULT_ID);
+        verify(carRepository).findById(TestUtil.DEFAULT_CAR_ID);
         verifyNoMoreInteractions(ignoreStubs(carRepository));
     }
 
@@ -252,14 +252,14 @@ public class CarServiceUnitTest {
     void givenNonExistingCar_whenDeleteCar_thenThrowException() {
         doReturn(Optional.empty())
                 .when(carRepository)
-                .findById(TestUtil.DEFAULT_ID);
+                .findById(TestUtil.DEFAULT_CAR_ID);
 
         assertThrows(
                 CarNotFoundException.class,
-                () -> carService.deleteCar(TestUtil.DEFAULT_ID)
+                () -> carService.deleteCar(TestUtil.DEFAULT_CAR_ID)
         );
 
-        verify(carRepository).findById(TestUtil.DEFAULT_ID);
+        verify(carRepository).findById(TestUtil.DEFAULT_CAR_ID);
         verifyNoMoreInteractions(carRepository);
     }
 }

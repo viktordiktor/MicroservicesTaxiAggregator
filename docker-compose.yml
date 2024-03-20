@@ -1,16 +1,17 @@
 version: '3.7'
 services:
-  mysqldb:
-    image: mysql:latest
-    container_name: mysqldb
+  postgredb:
+    image: postgres:latest
+    container_name: postgredb
+    ports:
+      - '5432:5432'
     environment:
-      - MYSQL_ROOT_PASSWORD=pass
-      - MYSQL_DATABASE=cabDB
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=pass
+      - POSTGRES_USER=def_user
+      - POSTGRES_PASSWORD=pass
+      - PG_DATA=/var/lib/postgresql/data
     volumes:
-      - mysqldb:/var/lib/mysql
-    restart: always
+      - ./data:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgres/sql/postgresql.conf
 
   mongodb:
     image: mongo:latest
@@ -53,7 +54,7 @@ services:
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
-      - mysqldb
+      - postgredb
       - mongodb
 
   grafana:
@@ -163,7 +164,7 @@ services:
     depends_on:
       - discovery-server
       - api-gateway
-      - mysqldb
+      - postgredb
       - broker
     restart: always
 
@@ -176,7 +177,7 @@ services:
     depends_on:
       - discovery-server
       - api-gateway
-      - mysqldb
+      - postgredb
       - broker
     restart: always
 
@@ -189,7 +190,7 @@ services:
     depends_on:
       - discovery-server
       - api-gateway
-      - mysqldb
+      - postgredb
       - broker
     restart: always
 
@@ -207,7 +208,6 @@ services:
     restart: always
 
 volumes:
-  mysqldb:
   elasticsearch_data:
     driver: local
 

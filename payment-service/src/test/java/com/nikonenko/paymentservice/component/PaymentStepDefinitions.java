@@ -38,6 +38,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -69,27 +70,27 @@ public class PaymentStepDefinitions {
     private CustomerCalculateRideResponse actualCustomerCalculateRideResponse;
     private RuntimeException exception;
 
-    @Given("Customer not exists with Username {string} and phone {string} and Passenger ID {long} and Amount {string}")
+    @Given("Customer not exists with Username {string} and phone {string} and Passenger ID {string} and Amount {string}")
     public void customerNotExistsWithUsernameAndPhoneAndPassengerIdAndAmount(String username, String phone,
-                                                                             Long passengerId, String amount) {
+                                                                             String passengerId, String amount) {
         CustomerCreationRequest request = TestUtil
-                .getCustomerCreationRequestWithParameters(username, phone, passengerId, amount);
+                .getCustomerCreationRequestWithParameters(username, phone, UUID.fromString(passengerId), amount);
         Customer customer = TestUtil.getCustomerWithParameters(username, phone, amount);
 
         doReturn(false)
                 .when(customerUserRepository)
-                .existsByPassengerId(passengerId);
+                .existsByPassengerId(UUID.fromString(passengerId));
         doReturn(customer)
                 .when(stripeUtil)
                 .stripeCustomerCreation(request);
     }
 
-    @When("createCustomer method is called with Username {string} and phone {string} and Passenger ID {long} and Amount {string}")
+    @When("createCustomer method is called with Username {string} and phone {string} and Passenger ID {string} and Amount {string}")
     public void createCustomerMethodIsCalledWithUsernameAndPhoneAndPassengerIdAndAmount
-            (String username, String phone, Long passengerId, String amount) {
+            (String username, String phone, String passengerId, String amount) {
         try {
             actualCustomerCreationResponse = paymentCustomerService.createCustomer(TestUtil
-                    .getCustomerCreationRequestWithParameters(username, phone, passengerId, amount));
+                    .getCustomerCreationRequestWithParameters(username, phone, UUID.fromString(passengerId), amount));
         } catch (RuntimeException ex) {
             exception = ex;
         }
@@ -102,25 +103,26 @@ public class PaymentStepDefinitions {
         assertEquals(actualCustomerCreationResponse.getPhone(), phone);
     }
 
-    @Given("Customer exists with Passenger ID {long}")
-    public void customerExistsWithPassengerId(Long passengerId) {
+    @Given("Customer exists with Passenger ID {string}")
+    public void customerExistsWithPassengerId(String passengerId) {
         doReturn(true)
                 .when(customerUserRepository)
-                .existsByPassengerId(passengerId);
+                .existsByPassengerId(UUID.fromString(passengerId));
     }
 
-    @Then("CustomerAlreadyExistsException should be thrown for Customer with Passenger ID {long}")
-    public void CustomerAlreadyExistsExceptionShouldBeThrown(Long passengerId) {
+    @Then("CustomerAlreadyExistsException should be thrown for Customer with Passenger ID {string}")
+    public void CustomerAlreadyExistsExceptionShouldBeThrown(String passengerId) {
         CustomerAlreadyExistsException expected = new CustomerAlreadyExistsException();
 
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("Customer enough funds charge with Amount {string} and Passenger ID {long} and Currency {string}")
+    @Given("Customer enough funds charge with Amount {string} and Passenger ID {string} and Currency {string}")
     public void customerEnoughFundsChargeWithAmountAndPassengerIdAndCurrency(String amount,
-                                                                             Long passengerId, String currency) {
-        CustomerChargeRequest request = TestUtil.getCustomerChargeRequestWithParameters(amount, passengerId, currency);
-        CustomerUser customerUser = TestUtil.getCustomerUserWithPassengerId(passengerId);
+                                                                             String passengerId, String currency) {
+        CustomerChargeRequest request = TestUtil
+                .getCustomerChargeRequestWithParameters(amount, UUID.fromString(passengerId), currency);
+        CustomerUser customerUser = TestUtil.getCustomerUserWithPassengerId(UUID.fromString(passengerId));
         Customer customer = TestUtil.getCustomer();
         PaymentIntent customerCharge = TestUtil.getPaymentIntentWithParameters(amount, currency);
 
@@ -135,58 +137,57 @@ public class PaymentStepDefinitions {
                 .stripeIntentConfirming(request, customerUser.getCustomerId());
     }
 
-    @When("createCustomerCharge method is called with Amount {string} and Passenger ID {long} and Currency {string}")
+    @When("createCustomerCharge method is called with Amount {string} and Passenger ID {string} and Currency {string}")
     public void createCustomerChargeMethodIsCalledWithAmountAndPassengerIdAndCurrency
-                                                                (String amount, Long passengerId, String currency) {
+                                                                (String amount, String passengerId, String currency) {
         try {
             actualCustomerChargeResponse = paymentCustomerService.createCustomerCharge(TestUtil
-                    .getCustomerChargeRequestWithParameters(amount, passengerId, currency));
+                    .getCustomerChargeRequestWithParameters(amount, UUID.fromString(passengerId), currency));
         } catch (RuntimeException ex) {
             exception = ex;
         }
     }
 
-    @Then("CustomerChargeResponse should contains Amount {string} and Passenger ID {long} and Currency {string}")
-    public void customerChargeResponseShouldContainsAmountAndPassengerIdAndCurrency(String amount,
-                                                                                    Long passengerId, String currency) {
+    @Then("CustomerChargeResponse should contains Amount {string} and Passenger ID {string} and Currency {string}")
+    public void customerChargeResponseShouldContainsAmountAndPassengerIdAndCurrency
+                                                                (String amount, String passengerId, String currency) {
         assertNull(exception);
         assertEquals(actualCustomerChargeResponse.getAmount(), new BigDecimal(amount));
-        assertEquals(actualCustomerChargeResponse.getPassengerId(), passengerId);
+        assertEquals(actualCustomerChargeResponse.getPassengerId(), UUID.fromString(passengerId));
         assertEquals(actualCustomerChargeResponse.getCurrency(), currency);
     }
 
-    @And("CustomerChargeResponse should be successful for Customer With Passenger ID {long}")
-    public void customerChargeResponseShouldBeSuccessful(Long passengerId) {
+    @And("CustomerChargeResponse should be successful for Customer With Passenger ID {string}")
+    public void customerChargeResponseShouldBeSuccessful(String passengerId) {
         assertTrue(actualCustomerChargeResponse.isSuccess());
     }
 
-    @Given("Customer not enough funds charge with Amount {string} and Passenger ID {long} and Currency {string}")
+    @Given("Customer not enough funds charge with Amount {string} and Passenger ID {string} and Currency {string}")
     public void customerNotEnoughFundsChargeWithAmountAndPassengerIdAndCurrency(String amount,
-                                                                                Long passengerId, String currency) {
-        CustomerChargeRequest request = TestUtil.getCustomerChargeRequestWithParameters(amount, passengerId, currency);
-        CustomerUser customerUser = TestUtil.getCustomerUserWithPassengerId(passengerId);
+                                                                                String passengerId, String currency) {
+        CustomerUser customerUser = TestUtil.getCustomerUserWithPassengerId(UUID.fromString(passengerId));
         Customer customer = TestUtil.getCustomerWithZeroBalance();
 
         doReturn(Optional.of(customerUser))
                 .when(customerUserRepository)
-                .findByPassengerId(passengerId);
+                .findByPassengerId(UUID.fromString(passengerId));
         doReturn(customer)
                 .when(stripeUtil)
                 .stripeCustomerRetrieving(customerUser.getCustomerId());
     }
 
-    @Then("InsufficientFundsException should be Thrown for Customer With Passenger ID {long}")
-    public void insufficientFundsExceptionShouldBeThrownForCustomerWithPassengerID(Long passengerId) {
+    @Then("InsufficientFundsException should be Thrown for Customer With Passenger ID {string}")
+    public void insufficientFundsExceptionShouldBeThrownForCustomerWithPassengerID(String passengerId) {
         InsufficientFundsException expected = new InsufficientFundsException();
 
         assertEquals(expected.getMessage(), exception.getMessage());
     }
 
-    @Given("Customer not exists with Passenger ID {long}")
-    public void customerNotExistsWithPassengerId(Long passengerId) {
+    @Given("Customer not exists with Passenger ID {string}")
+    public void customerNotExistsWithPassengerId(String passengerId) {
         doReturn(Optional.empty())
                 .when(customerUserRepository)
-                .findByPassengerId(passengerId);
+                .findByPassengerId(UUID.fromString(passengerId));
     }
 
     @Then("CustomerNotFoundException should be thrown")
