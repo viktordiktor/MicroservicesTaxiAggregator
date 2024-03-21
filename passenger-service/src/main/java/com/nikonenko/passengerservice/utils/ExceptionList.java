@@ -14,7 +14,8 @@ public enum ExceptionList {
     RIDE_SERVICE_NOT_AVAILABLE("ride-service-not-available"),
     PAYMENT_SERVICE_NOT_AVAILABLE("payment-service-not-available"),
     CHARGE_IS_NOT_SUCCESS("charge-is-not-success"),
-    NOT_FOUND_BY_PASSENGER("not-found-by-passenger");
+    NOT_FOUND_BY_PASSENGER("not-found-by-passenger"),
+    KEYCLOAK_USER_NOT_VALID("keycloak-not-valid");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
     private final String key;

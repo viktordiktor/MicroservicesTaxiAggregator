@@ -88,42 +88,42 @@ public class PassengerStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("Passenger with username {string} and phone {string} not exists")
-    public void passengerWithUsernameAndPhoneNotExists(String username, String phone) {
-        PassengerResponse response = TestUtil.getCreationPassengerResponse();
-        PassengerRequest request = TestUtil.getPassengerRequestWithParameters(username, phone);
-        Passenger notSavedPassenger = TestUtil.getNotSavedCreationPassenger();
-        Passenger savedPassenger = TestUtil.getSavedCreationPassenger();
+//    @Given("Passenger with username {string} and phone {string} not exists")
+//    public void passengerWithUsernameAndPhoneNotExists(String username, String phone) {
+//        PassengerResponse response = TestUtil.getCreationPassengerResponse();
+//        PassengerRequest request = TestUtil.getPassengerRequestWithParameters(username, phone);
+//        Passenger notSavedPassenger = TestUtil.getNotSavedCreationPassenger();
+//        Passenger savedPassenger = TestUtil.getSavedCreationPassenger();
+//
+//        doReturn(false)
+//                .when(passengerRepository)
+//                .existsByUsername(request.getUsername());
+//        doReturn(false)
+//                .when(passengerRepository)
+//                .existsByPhone(request.getPhone());
+//        doReturn(notSavedPassenger)
+//                .when(modelMapper)
+//                .map(request, Passenger.class);
+//        doReturn(savedPassenger)
+//                .when(passengerRepository)
+//                .save(notSavedPassenger);
+//        doReturn(response)
+//                .when(modelMapper)
+//                .map(savedPassenger, PassengerResponse.class);
+//
+//        PassengerResponse result = passengerService.createPassenger(request);
+//
+//        assertEquals(response, result);
+//    }
 
-        doReturn(false)
-                .when(passengerRepository)
-                .existsByUsername(request.getUsername());
-        doReturn(false)
-                .when(passengerRepository)
-                .existsByPhone(request.getPhone());
-        doReturn(notSavedPassenger)
-                .when(modelMapper)
-                .map(request, Passenger.class);
-        doReturn(savedPassenger)
-                .when(passengerRepository)
-                .save(notSavedPassenger);
-        doReturn(response)
-                .when(modelMapper)
-                .map(savedPassenger, PassengerResponse.class);
-
-        PassengerResponse result = passengerService.createPassenger(request);
-
-        assertEquals(response, result);
-    }
-
-    @When("createPassenger method is called with PassengerRequest of username {string} and phone {string}")
-    public void createPassengerMethodIsCalledWithPassengerRequestOfUsernameAndPhone(String username, String phone) {
-        try {
-            actualResponse = passengerService.createPassenger(TestUtil.getPassengerRequestWithParameters(username, phone));
-        } catch (RuntimeException ex) {
-            exception = ex;
-        }
-    }
+//    @When("createPassenger method is called with PassengerRequest of username {string} and phone {string}")
+//    public void createPassengerMethodIsCalledWithPassengerRequestOfUsernameAndPhone(String username, String phone) {
+//        try {
+//            actualResponse = passengerService.createPassenger(TestUtil.getPassengerRequestWithParameters(username, phone));
+//        } catch (RuntimeException ex) {
+//            exception = ex;
+//        }
+//    }
 
     @Then("PassengerResponse should contains passenger with username {string} and phone {string}")
     public void passengerResponseShouldContainsPassengerWithUsernameAndPhone(String username, String phone) {

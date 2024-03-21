@@ -18,6 +18,7 @@ import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
+import com.nikonenko.passengerservice.exceptions.KeycloakUserIsNotValid;
 import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
@@ -34,11 +35,14 @@ import com.nikonenko.passengerservice.services.feign.RideService;
 import com.nikonenko.passengerservice.utils.ExceptionList;
 import com.nikonenko.passengerservice.utils.LogList;
 import com.nikonenko.passengerservice.utils.PageUtil;
+import com.nikonenko.passengerservice.utils.PatternList;
+import com.nikonenko.passengerservice.utils.SecurityList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -82,12 +86,26 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse createPassenger(PassengerRequest passengerRequest) {
+    public PassengerResponse createPassenger(OAuth2User principal) {
+        PassengerRequest passengerRequest = createRequestFromPrincipal(principal);
         checkPassengerExists(passengerRequest);
         Passenger passenger = modelMapper.map(passengerRequest, Passenger.class);
+        passenger.setId(principal.getAttribute(SecurityList.ID));
         Passenger savedPassenger = passengerRepository.save(passenger);
         log.info(LogList.LOG_CREATE_PASSENGER, savedPassenger.getId());
         return modelMapper.map(savedPassenger, PassengerResponse.class);
+    }
+
+    private PassengerRequest createRequestFromPrincipal(OAuth2User principal) {
+        String phone = principal.getAttribute(SecurityList.PHONE);
+        String username = principal.getAttribute(SecurityList.USERNAME);
+        if (phone == null || username == null || !phone.matches(PatternList.PHONE_PATTERN)) {
+            throw new KeycloakUserIsNotValid();
+        }
+        return PassengerRequest.builder()
+                .username(username)
+                .phone(phone)
+                .build();
     }
 
     @Override

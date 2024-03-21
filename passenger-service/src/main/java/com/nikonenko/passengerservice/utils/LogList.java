@@ -16,6 +16,8 @@ public class LogList {
     public static final String LOG_CUSTOMER_EXISTS = "Customer Exists!";
     public static final String LOG_GET_CHARGE = "Got Charge: {}";
     public static final String LOG_CREATE_RIDE = "Created ride with ID: {}";
+    public static final String LOG_EXTRACT_DATA = "Extracted id: {}, username: {}, email: {}, phone: {}";
+    public static final String LOG_EXTRACT_ROLES = "Extracted roles: {}";
     public static final String LOG_NOT_FOUND_ERROR = "Not Found exception thrown: {}";
     public static final String LOG_BAD_REQUEST_ERROR = "Bad Request exception thrown: {}";
     public static final String LOG_CONFLICT_ERROR = "Conflict exception thrown: {}";
