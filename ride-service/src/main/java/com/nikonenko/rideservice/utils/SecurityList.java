@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.utils;
+package com.nikonenko.rideservice.utils;
 
 import lombok.experimental.UtilityClass;
 

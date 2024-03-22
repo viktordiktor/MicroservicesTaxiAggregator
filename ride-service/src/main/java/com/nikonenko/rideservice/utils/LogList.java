@@ -11,6 +11,8 @@ public class LogList {
     public static final String LOG_START_RIDE = "Started ride with id: {}";
     public static final String LOG_FINISH_RIDE = "Finished ride with id: {}";
     public static final String LOG_SUCCESS_CHARGE = "Charge is success";
+    public static final String LOG_EXTRACT_DATA = "Extracted id: {}, username: {}, email: {}, phone: {}";
+    public static final String LOG_EXTRACT_ROLES = "Extracted roles: {}";
     public static final String LOG_KAFKA_SEND_MESSAGE = "Sending message {}";
     public static final String LOG_KAFKA_RECEIVE_CHANGE_PASSENGER_RATING = "Receiver request of Driver: Ride {}";
     public static final String LOG_KAFKA_RECEIVE_CHANGE_DRIVER_RATING = "Receiver request of Passenger: Ride {}";

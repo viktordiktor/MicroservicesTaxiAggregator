@@ -7,6 +7,11 @@ spring:
       authentication-database: admin
   kafka:
     bootstrap-servers: broker:29092
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/certs
 eureka:
   client:
     service-url:

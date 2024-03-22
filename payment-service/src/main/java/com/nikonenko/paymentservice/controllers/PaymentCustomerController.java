@@ -9,6 +9,7 @@ import com.nikonenko.paymentservice.services.PaymentCustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,11 +28,13 @@ public class PaymentCustomerController {
     private final PaymentCustomerService paymentCustomerService;
 
     @GetMapping("/checkExists/{passengerId}")
+    @PreAuthorize("(hasRole('ROLE_PASSENGER') && #passengerId == authentication.principal.id) || hasRole('ROLE_ADMIN')")
     public CustomerExistsResponse isCustomerExists(@PathVariable UUID passengerId) {
         return paymentCustomerService.isCustomerExists(passengerId);
     }
 
     @GetMapping("/ride-price")
+    @PreAuthorize("hasRole('ROLE_PASSENGER')")
     public CustomerCalculateRideResponse calculateRidePrice(@RequestParam(value = "rideLength") Double rideLength,
                                          @RequestParam(value = "rideDateTime") LocalDateTime rideDateTime,
                                          @RequestParam(value = "coupon", required = false) String coupon) {
@@ -39,6 +42,7 @@ public class PaymentCustomerController {
     }
 
     @PostMapping("/charge")
+    @PreAuthorize("hasRole('ROLE_PASSENGER')")
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerChargeResponse createCustomerCharge(@RequestBody
                                                            @Valid CustomerChargeRequest customerChargeRequest) {
@@ -46,11 +50,13 @@ public class PaymentCustomerController {
     }
 
     @GetMapping("/charge/{chargeId}")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN')")
     public CustomerChargeResponse getCustomerCharge(@PathVariable String chargeId) {
         return paymentCustomerService.getCustomerCharge(chargeId);
     }
 
     @PostMapping("/charge/{chargeId}/return")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN')")
     public CustomerChargeReturnResponse returnCustomerCharge(@PathVariable String chargeId) {
         return paymentCustomerService.returnCustomerCharge(chargeId);
     }
