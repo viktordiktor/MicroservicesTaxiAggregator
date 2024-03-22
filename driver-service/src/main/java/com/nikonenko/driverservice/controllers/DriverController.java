@@ -36,7 +36,7 @@ public class DriverController {
     private final DriverService driverService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_DRIVER') || hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER', 'ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public PageResponse<DriverResponse> getAllDrivers(@RequestParam(defaultValue = "0") int pageNumber,
                                                       @RequestParam(defaultValue = "5") int pageSize,

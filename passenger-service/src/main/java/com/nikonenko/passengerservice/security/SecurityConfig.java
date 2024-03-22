@@ -1,6 +1,6 @@
 package com.nikonenko.passengerservice.security;
 
-import com.nikonenko.passengerservice.utils.SecurityList;
+import com.nikonenko.passengerservice.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ public class SecurityConfig {
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter))
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, SecurityList.ACTUATOR_PATH).permitAll()
+                        .requestMatchers(HttpMethod.GET, SecurityUtil.ACTUATOR_PATH).permitAll()
                         .anyRequest().authenticated()
                 )
         ;

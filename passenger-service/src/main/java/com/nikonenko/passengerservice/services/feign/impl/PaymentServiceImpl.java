@@ -9,7 +9,6 @@ import com.nikonenko.passengerservice.dto.feign.payment.CustomerCreationResponse
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerExistsResponse;
 import com.nikonenko.passengerservice.feign.PaymentFeignClient;
 import com.nikonenko.passengerservice.services.feign.PaymentService;
-import com.nikonenko.passengerservice.utils.ExceptionList;
 import com.nikonenko.passengerservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -50,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .passengerId(UUID.randomUUID())
                 .amount(BigDecimal.ZERO)
                 .success(false)
-                .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 
@@ -58,7 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
         log.error(LogList.LOG_CHECK_CUSTOMER_EXISTS_FEIGN_ERROR, passengerId, ex.getMessage());
         return CustomerExistsResponse.builder()
                 .isExists(false)
-                .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 
@@ -70,7 +69,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .rideDateTime(LocalDateTime.now())
                 .price(BigDecimal.ZERO)
                 .coupon("")
-                .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 
@@ -81,7 +80,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .id("")
                 .phone("")
                 .username("")
-                .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 }

@@ -79,7 +79,7 @@ public class PassengerController {
     }
 
     @PostMapping("/rating/{rideId}")
-    @PreAuthorize("hasRole('ROLE_DRIVER')")
+    @PreAuthorize("hasRole('ROLE_PASSENGER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void addRatingToDriver(@PathVariable String rideId,
                                   @Valid @RequestBody RatingFromPassengerRequest request) {

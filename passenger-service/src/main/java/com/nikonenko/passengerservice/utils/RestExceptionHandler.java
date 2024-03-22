@@ -1,6 +1,7 @@
 package com.nikonenko.passengerservice.utils;
 
 import com.nikonenko.passengerservice.dto.ExceptionResponse;
+import com.nikonenko.passengerservice.exceptions.AccessDeniedByPassengerException;
 import com.nikonenko.passengerservice.exceptions.BadRequestByPassengerException;
 import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
@@ -64,5 +65,13 @@ public class RestExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(AccessDeniedByPassengerException.class)
+    public ResponseEntity<ExceptionResponse> handleAccessDeniedException(AccessDeniedByPassengerException ex) {
+        log.error(LogList.LOG_FORBIDDEN_ERROR, ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.FORBIDDEN));
     }
 }

@@ -1,7 +1,7 @@
 package com.nikonenko.passengerservice.security;
 
 import com.nikonenko.passengerservice.utils.LogList;
-import com.nikonenko.passengerservice.utils.SecurityList;
+import com.nikonenko.passengerservice.utils.SecurityUtil;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
@@ -48,10 +48,10 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     }
 
     private User extractUserInfo(Jwt jwt) {
-        UUID id = UUID.fromString(jwt.getClaim(SecurityList.SUB_UUID));
-        String username = jwt.getClaim(SecurityList.PREFERRED_USERNAME);
-        String email = jwt.getClaim(SecurityList.EMAIL);
-        String phone = jwt.getClaim(SecurityList.PHONE);
+        UUID id = UUID.fromString(jwt.getClaim(SecurityUtil.SUB_UUID));
+        String username = jwt.getClaim(SecurityUtil.PREFERRED_USERNAME);
+        String email = jwt.getClaim(SecurityUtil.EMAIL);
+        String phone = jwt.getClaim(SecurityUtil.PHONE);
         log.info(LogList.LOG_EXTRACT_DATA, id, username, email, phone);
         return User.builder()
                 .phone(phone)
@@ -62,17 +62,17 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     }
 
     private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt jwt) {
-        Map<String, Object> resourceAccess = jwt.getClaim(SecurityList.RESOURCE_ACCESS);
+        Map<String, Object> resourceAccess = jwt.getClaim(SecurityUtil.RESOURCE_ACCESS);
         Map<String, Object> resource;
         Collection<String> resourceRoles;
         if (resourceAccess == null
                 || (resource = (Map<String, Object>) resourceAccess.get(properties.getResourceId())) == null
-                || (resourceRoles = (Collection<String>) resource.get(SecurityList.RESOURCE_ROLES)) == null) {
+                || (resourceRoles = (Collection<String>) resource.get(SecurityUtil.RESOURCE_ROLES)) == null) {
             return Set.of();
         }
         log.info(LogList.LOG_EXTRACT_ROLES, resourceRoles);
         return resourceRoles.stream()
-                .map(role -> new SimpleGrantedAuthority(SecurityList.ROLE_PREFIX + role))
+                .map(role -> new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + role))
                 .collect(Collectors.toSet());
     }
 }

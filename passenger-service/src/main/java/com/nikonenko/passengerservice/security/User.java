@@ -1,6 +1,6 @@
 package com.nikonenko.passengerservice.security;
 
-import com.nikonenko.passengerservice.utils.SecurityList;
+import com.nikonenko.passengerservice.utils.SecurityUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,10 +40,10 @@ public class User implements UserDetails, OAuth2User {
     @Override
     public Map<String, Object> getAttributes() {
         Map<String, Object> map = new HashMap<>();
-        putIfNotNull(map, SecurityList.ID, id);
-        putIfNotNull(map, SecurityList.USERNAME, username);
-        putIfNotNull(map, SecurityList.EMAIL, email);
-        putIfNotNull(map, SecurityList.PHONE, phone);
+        putIfNotNull(map, SecurityUtil.ID, id);
+        putIfNotNull(map, SecurityUtil.USERNAME, username);
+        putIfNotNull(map, SecurityUtil.EMAIL, email);
+        putIfNotNull(map, SecurityUtil.PHONE, phone);
         return map;
     }
 

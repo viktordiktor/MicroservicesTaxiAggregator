@@ -3,13 +3,17 @@ package com.nikonenko.passengerservice.config.feign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nikonenko.passengerservice.dto.ExceptionResponse;
+import com.nikonenko.passengerservice.exceptions.AccessDeniedByPassengerException;
 import com.nikonenko.passengerservice.exceptions.BadRequestByPassengerException;
+import com.nikonenko.passengerservice.utils.ExceptionList;
 import com.nikonenko.passengerservice.utils.LogList;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,7 +40,9 @@ public class CustomErrorDecoder implements ErrorDecoder {
                         response.request());
             }
             if (exceptionResponse.getHttpStatus().is4xxClientError()) {
-                return new BadRequestByPassengerException(exceptionResponse.getMessage());
+                return exceptionResponse.getHttpStatus() != HttpStatus.FORBIDDEN ?
+                        new BadRequestByPassengerException(exceptionResponse.getMessage()) :
+                        new AccessDeniedByPassengerException(ExceptionList.ACCESS_DENIED_BY_PASSENGER.getValue());
             }
         } catch (IOException ex) {
             log.error(LogList.LOG_DECODE_ERROR, ex.getMessage());
