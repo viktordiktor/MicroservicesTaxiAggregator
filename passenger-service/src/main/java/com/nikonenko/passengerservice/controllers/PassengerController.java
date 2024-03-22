@@ -37,7 +37,7 @@ public class PassengerController {
     private final PassengerService passengerService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_PASSENGER') || hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN')")
     public PageResponse<PassengerResponse> getAllPassengers(@RequestParam(defaultValue = "0") int pageNumber,
                                                             @RequestParam(defaultValue = "5") int pageSize,
                                                             @RequestParam(defaultValue = "id") String sortField) {
