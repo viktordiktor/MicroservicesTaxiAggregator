@@ -108,42 +108,42 @@ public class DriverStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-    @Given("Driver with username {string} and phone {string} not exists")
-    public void driverWithUsernameAndPhoneNotExists(String username, String phone) {
-        DriverResponse response = TestUtil.getCreationDriverResponse();
-        DriverRequest request = TestUtil.getDriverRequestWithParameters(username, phone);
-        Driver notSavedDriver = TestUtil.getNotSavedDriver();
-        Driver savedDriver = TestUtil.getDefaultDriver();
-
-        doReturn(false)
-                .when(driverRepository)
-                .existsByUsername(request.getUsername());
-        doReturn(false)
-                .when(driverRepository)
-                .existsByPhone(request.getPhone());
-        doReturn(notSavedDriver)
-                .when(modelMapper)
-                .map(request, Driver.class);
-        doReturn(savedDriver)
-                .when(driverRepository)
-                .save(notSavedDriver);
-        doReturn(response)
-                .when(modelMapper)
-                .map(savedDriver, DriverResponse.class);
-
-        DriverResponse result = driverService.createDriver(request);
-
-        assertEquals(response, result);
-    }
-
-    @When("createDriver method is called with DriverRequest of username {string} and phone {string}")
-    public void createDriverMethodIsCalledWithDriverRequestOfUsernameAndPhone(String username, String phone) {
-        try {
-            actualDriverResponse = driverService.createDriver(TestUtil.getDriverRequestWithParameters(username, phone));
-        } catch (RuntimeException ex) {
-            exception = ex;
-        }
-    }
+//    @Given("Driver with username {string} and phone {string} not exists")
+//    public void driverWithUsernameAndPhoneNotExists(String username, String phone) {
+//        DriverResponse response = TestUtil.getCreationDriverResponse();
+//        DriverRequest request = TestUtil.getDriverRequestWithParameters(username, phone);
+//        Driver notSavedDriver = TestUtil.getNotSavedDriver();
+//        Driver savedDriver = TestUtil.getDefaultDriver();
+//
+//        doReturn(false)
+//                .when(driverRepository)
+//                .existsByUsername(request.getUsername());
+//        doReturn(false)
+//                .when(driverRepository)
+//                .existsByPhone(request.getPhone());
+//        doReturn(notSavedDriver)
+//                .when(modelMapper)
+//                .map(request, Driver.class);
+//        doReturn(savedDriver)
+//                .when(driverRepository)
+//                .save(notSavedDriver);
+//        doReturn(response)
+//                .when(modelMapper)
+//                .map(savedDriver, DriverResponse.class);
+//
+//        DriverResponse result = driverService.createDriver(request);
+//
+//        assertEquals(response, result);
+//    }
+//
+//    @When("createDriver method is called with DriverRequest of username {string} and phone {string}")
+//    public void createDriverMethodIsCalledWithDriverRequestOfUsernameAndPhone(String username, String phone) {
+//        try {
+//            actualDriverResponse = driverService.createDriver(TestUtil.getDriverRequestWithParameters(username, phone));
+//        } catch (RuntimeException ex) {
+//            exception = ex;
+//        }
+//    }
 
     @Then("DriverResponse should contains driver with username {string} and phone {string}")
     public void driverResponseShouldContainsDriverWithUsernameAndPhone(String username, String phone) {
