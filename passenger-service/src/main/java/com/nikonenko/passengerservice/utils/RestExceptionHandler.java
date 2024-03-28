@@ -3,6 +3,7 @@ package com.nikonenko.passengerservice.utils;
 import com.nikonenko.passengerservice.dto.ExceptionResponse;
 import com.nikonenko.passengerservice.exceptions.AccessDeniedByPassengerException;
 import com.nikonenko.passengerservice.exceptions.BadRequestByPassengerException;
+import com.nikonenko.passengerservice.exceptions.KeycloakUserIsNotValid;
 import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
@@ -17,13 +18,13 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import java.util.ArrayList;
 import java.util.List;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class RestExceptionHandler {
     @ExceptionHandler({PassengerNotFoundException.class, NotFoundByPassengerException.class})
@@ -59,7 +60,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class,
             WrongPageableParameterException.class, MethodArgumentTypeMismatchException.class,
-            BadRequestByPassengerException.class, WrongSortFieldException.class})
+            BadRequestByPassengerException.class, WrongSortFieldException.class, KeycloakUserIsNotValid.class})
     public ResponseEntity<ExceptionResponse> handleBadRequestException(RuntimeException ex) {
         log.error(LogList.LOG_BAD_REQUEST_ERROR, ex.getMessage());
         return ResponseEntity

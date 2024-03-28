@@ -18,12 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/payments/general")
-@RestControllerAdvice
 public class PaymentGeneralController {
     private final PaymentGeneralService paymentGeneralService;
 
