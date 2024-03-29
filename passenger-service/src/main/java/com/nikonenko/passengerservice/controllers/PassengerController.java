@@ -12,6 +12,9 @@ import com.nikonenko.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,18 +25,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/passengers")
-@RestControllerAdvice
 public class PassengerController {
     private final PassengerService passengerService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN')")
     public PageResponse<PassengerResponse> getAllPassengers(@RequestParam(defaultValue = "0") int pageNumber,
                                                             @RequestParam(defaultValue = "5") int pageSize,
                                                             @RequestParam(defaultValue = "id") String sortField) {
@@ -41,9 +42,10 @@ public class PassengerController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_PASSENGER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public PassengerResponse createPassenger(@Valid @RequestBody PassengerRequest passengerRequest) {
-        return passengerService.createPassenger(passengerRequest);
+    public PassengerResponse createPassenger(@AuthenticationPrincipal OAuth2User principal) {
+        return passengerService.createPassenger(principal);
     }
 
     @PostMapping("/{passengerId}")
@@ -54,23 +56,27 @@ public class PassengerController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("(hasRole('ROLE_PASSENGER') && #id == authentication.principal.id) || hasRole('ROLE_ADMIN')")
     public PassengerResponse getPassengerById(@PathVariable UUID id) {
         return passengerService.getPassengerById(id);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_PASSENGER') && #id == authentication.principal.id")
     public PassengerResponse editPassenger(@PathVariable UUID id,
                                            @Valid @RequestBody PassengerRequest passengerRequest) {
         return passengerService.editPassenger(id, passengerRequest);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("(hasRole('ROLE_PASSENGER') && #id == authentication.principal.id) || hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePassenger(@PathVariable UUID id) {
         passengerService.deletePassenger(id);
     }
 
     @PostMapping("/rating/{rideId}")
+    @PreAuthorize("hasRole('ROLE_PASSENGER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void addRatingToDriver(@PathVariable String rideId,
                                   @Valid @RequestBody RatingFromPassengerRequest request) {

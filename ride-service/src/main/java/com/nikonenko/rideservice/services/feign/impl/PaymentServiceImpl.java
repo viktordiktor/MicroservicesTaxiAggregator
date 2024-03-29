@@ -4,7 +4,6 @@ import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeResponse;
 import com.nikonenko.rideservice.dto.feign.payments.CustomerChargeReturnResponse;
 import com.nikonenko.rideservice.feign.PaymentFeignClient;
 import com.nikonenko.rideservice.services.feign.PaymentService;
-import com.nikonenko.rideservice.utils.ExceptionList;
 import com.nikonenko.rideservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -40,7 +39,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentId("")
                 .amount(BigDecimal.ZERO)
                 .currency("")
-                .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 
@@ -52,7 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .passengerId(UUID.randomUUID())
                 .currency("")
                 .success(false)
-                .errorMessage(ExceptionList.PAYMENT_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 }

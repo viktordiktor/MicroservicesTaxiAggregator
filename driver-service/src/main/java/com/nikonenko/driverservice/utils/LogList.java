@@ -15,6 +15,8 @@ public class LogList {
     public static final String LOG_ADD_RATING = "Added Review for Driver with ID: {}";
     public static final String LOG_ADD_CAR_FOR_DRIVER = "Added Car for Driver with ID: {}";
     public static final String LOG_DELETE_CAR_FOR_DRIVER = "Deleted Car for Driver with ID: {}";
+    public static final String LOG_EXTRACT_DATA = "Extracted id: {}, username: {}, email: {}, phone: {}";
+    public static final String LOG_EXTRACT_ROLES = "Extracted roles: {}";
     public static final String LOG_KAFKA_SEND_MESSAGE = "Sending message: {}";
     public static final String LOG_KAFKA_RECEIVE_CHANGE_RATING = "Receiver request for change rating Driver: {}";
     public static final String LOG_NOT_FOUND_ERROR = "Not Found exception thrown: {}";
@@ -24,5 +26,4 @@ public class LogList {
     public static final String LOG_DECODE_ERROR = "Error decoding response body: {}";
     public static final String LOG_GET_RIDES_BY_DRIVER_ID_FEIGN_ERROR =
             "Exception during getRidesByDriverId request for Driver with ID {} to Ride Service: {}";
-
 }

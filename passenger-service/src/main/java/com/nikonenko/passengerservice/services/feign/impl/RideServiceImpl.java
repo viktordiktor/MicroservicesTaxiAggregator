@@ -12,14 +12,12 @@ import com.nikonenko.passengerservice.feign.RideFeignClient;
 import com.nikonenko.passengerservice.models.feign.RidePaymentMethod;
 import com.nikonenko.passengerservice.models.feign.RideStatus;
 import com.nikonenko.passengerservice.services.feign.RideService;
-import com.nikonenko.passengerservice.utils.ExceptionList;
 import com.nikonenko.passengerservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
@@ -33,8 +31,9 @@ public class RideServiceImpl implements RideService {
     private final RideFeignClient rideFeignClient;
 
     @Override
-    public CalculateDistanceResponse getRideDistance(CalculateDistanceRequest customerChargeRequest) {
-        return rideFeignClient.calculateDistance(customerChargeRequest);
+    @CircuitBreaker(name = "rideBreaker", fallbackMethod = "fallbackRideService")
+    public CalculateDistanceResponse getRideDistance(CalculateDistanceRequest calculateDistanceRequest) {
+        return rideFeignClient.calculateDistance(calculateDistanceRequest);
     }
 
     @Override
@@ -52,13 +51,13 @@ public class RideServiceImpl implements RideService {
         return rideFeignClient.getRidesByPassengerId(passengerId);
     }
 
-    public CalculateDistanceResponse fallbackRideService(CalculateDistanceRequest customerChargeRequest, Exception ex) {
+    public CalculateDistanceResponse fallbackRideService(CalculateDistanceRequest calculateDistanceRequest, Exception ex) {
         log.error(LogList.LOG_GET_RIDE_DISTANCE_FEIGN_ERROR, ex.getMessage());
         return CalculateDistanceResponse.builder()
                 .distance(0.0)
                 .startGeo(new LatLng())
                 .endGeo(new LatLng())
-                .errorMessage(ExceptionList.RIDE_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 
@@ -73,7 +72,7 @@ public class RideServiceImpl implements RideService {
                 .endDate(LocalDateTime.now())
                 .paymentMethod(RidePaymentMethod.BY_CASH)
                 .status(RideStatus.FINISHED)
-                .errorMessage(ExceptionList.RIDE_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 
@@ -82,7 +81,7 @@ public class RideServiceImpl implements RideService {
         return CloseRideResponse.builder()
                 .customerChargeReturnResponse(new CustomerChargeReturnResponse())
                 .ridePaymentMethod(RidePaymentMethod.BY_CASH)
-                .errorMessage(ExceptionList.RIDE_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 
@@ -92,7 +91,7 @@ public class RideServiceImpl implements RideService {
                 .objectList(Collections.emptyList())
                 .totalElements(0)
                 .totalPages(0)
-                .errorMessage(ExceptionList.RIDE_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 }

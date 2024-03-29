@@ -13,11 +13,13 @@ import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideReq
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideResponse;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeResponse;
+import com.nikonenko.passengerservice.dto.feign.payment.CustomerExistsResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
+import com.nikonenko.passengerservice.exceptions.KeycloakUserIsNotValid;
 import com.nikonenko.passengerservice.exceptions.NotFoundByPassengerException;
 import com.nikonenko.passengerservice.exceptions.PassengerNotFoundException;
 import com.nikonenko.passengerservice.exceptions.PhoneAlreadyExistsException;
@@ -34,11 +36,14 @@ import com.nikonenko.passengerservice.services.feign.RideService;
 import com.nikonenko.passengerservice.utils.ExceptionList;
 import com.nikonenko.passengerservice.utils.LogList;
 import com.nikonenko.passengerservice.utils.PageUtil;
+import com.nikonenko.passengerservice.utils.PatternList;
+import com.nikonenko.passengerservice.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -82,12 +87,26 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse createPassenger(PassengerRequest passengerRequest) {
+    public PassengerResponse createPassenger(OAuth2User principal) {
+        PassengerRequest passengerRequest = createRequestFromPrincipal(principal);
         checkPassengerExists(passengerRequest);
         Passenger passenger = modelMapper.map(passengerRequest, Passenger.class);
+        passenger.setId(principal.getAttribute(SecurityUtil.ID));
         Passenger savedPassenger = passengerRepository.save(passenger);
         log.info(LogList.LOG_CREATE_PASSENGER, savedPassenger.getId());
         return modelMapper.map(savedPassenger, PassengerResponse.class);
+    }
+
+    private PassengerRequest createRequestFromPrincipal(OAuth2User principal) {
+        String phone = principal.getAttribute(SecurityUtil.PHONE);
+        String username = principal.getAttribute(SecurityUtil.USERNAME);
+        if (phone == null || username == null || !phone.matches(PatternList.PHONE_PATTERN)) {
+            throw new KeycloakUserIsNotValid();
+        }
+        return PassengerRequest.builder()
+                .username(username)
+                .phone(phone)
+                .build();
     }
 
     @Override
@@ -97,6 +116,7 @@ public class PassengerServiceImpl implements PassengerService {
 
         CustomerCalculateRideResponse calculatePriceResponse = calculateRidePrice(rideByPassengerRequest,
                 distanceResponse.getDistance());
+        log.info("CalculatePriceResponse: {}", calculatePriceResponse.getPrice());
 
         CustomerChargeResponse chargeResponse = null;
         if (rideByPassengerRequest.getRidePaymentMethod() == RidePaymentMethod.BY_CARD) {
@@ -116,6 +136,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .endGeo(rideByPassengerRequest.getEndGeo())
                 .build();
         CalculateDistanceResponse distanceResponse = rideService.getRideDistance(distanceRequest);
+        SecurityUtil.checkException(distanceResponse.getErrorMessage());
         log.info(LogList.LOG_GET_DISTANCE, distanceResponse.getDistance());
         return distanceResponse;
     }
@@ -128,11 +149,14 @@ public class PassengerServiceImpl implements PassengerService {
                 .rideDateTime(LocalDateTime.now())
                 .build();
         CustomerCalculateRideResponse calculatePriceResponse = paymentService.calculateRidePrice(calculatePriceRequest);
+        SecurityUtil.checkException(calculatePriceResponse.getErrorMessage());
         log.info(LogList.LOG_GET_PRICE, calculatePriceResponse.getPrice());
         return calculatePriceResponse;
     }
 
     private void checkCustomerExists(UUID passengerId) {
+        CustomerExistsResponse customerExistsResponse = paymentService.checkCustomerExists(passengerId);
+        SecurityUtil.checkException(customerExistsResponse.getErrorMessage());
         if (!paymentService.checkCustomerExists(passengerId).isExists()) {
             throw new NotFoundByPassengerException();
         }
@@ -146,6 +170,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .currency("usd")
                 .build();
         CustomerChargeResponse chargeResponse = paymentService.createCharge(chargeRequest);
+        SecurityUtil.checkException(chargeResponse.getErrorMessage());
         log.info(LogList.LOG_GET_CHARGE, chargeResponse.getId());
         return chargeResponse;
     }
@@ -160,6 +185,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .chargeId(chargeResponse != null ? chargeResponse.getId() : null)
                 .build();
         RideResponse rideResponse = rideService.createRide(createRideRequest);
+        SecurityUtil.checkException(rideResponse.getErrorMessage());
         log.info(LogList.LOG_CREATE_RIDE, rideResponse.getId());
         return rideResponse;
     }

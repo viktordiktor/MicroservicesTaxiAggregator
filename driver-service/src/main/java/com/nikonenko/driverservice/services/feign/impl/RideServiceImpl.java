@@ -4,7 +4,6 @@ import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import com.nikonenko.driverservice.feign.RideFeignClient;
 import com.nikonenko.driverservice.services.feign.RideService;
-import com.nikonenko.driverservice.utils.ExceptionList;
 import com.nikonenko.driverservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -34,7 +33,7 @@ public class RideServiceImpl implements RideService {
                 .objectList(Collections.emptyList())
                 .totalElements(0)
                 .totalPages(0)
-                .errorMessage(ExceptionList.RIDE_SERVICE_NOT_AVAILABLE.getValue())
+                .errorMessage(ex.getMessage())
                 .build();
     }
 }

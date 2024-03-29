@@ -16,7 +16,7 @@ public enum ExceptionList {
     BAD_REQUEST_BY_DRIVER("bad-request-by-driver"),
     DRIVER_NO_RIDES("driver-no-rides"),
     DRIVER_NO_CAR("driver-no-car"),
-    RIDE_SERVICE_NOT_AVAILABLE("ride-service-not-available");
+    KEYCLOAK_USER_NOT_VALID("keycloak-user-not-valid");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
     private final String key;

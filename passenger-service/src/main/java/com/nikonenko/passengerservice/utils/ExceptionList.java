@@ -11,10 +11,10 @@ public enum ExceptionList {
     WRONG_PARAMETER("wrong-parameter"),
     WRONG_SORT_FIELD("wrong-sort-field"),
     BAD_REQUEST_BY_PASSENGER("bad-request-by-passenger"),
-    RIDE_SERVICE_NOT_AVAILABLE("ride-service-not-available"),
-    PAYMENT_SERVICE_NOT_AVAILABLE("payment-service-not-available"),
+    ACCESS_DENIED_BY_PASSENGER("access-denied-by-passenger"),
     CHARGE_IS_NOT_SUCCESS("charge-is-not-success"),
-    NOT_FOUND_BY_PASSENGER("not-found-by-passenger");
+    NOT_FOUND_BY_PASSENGER("not-found-by-passenger"),
+    KEYCLOAK_USER_NOT_VALID("keycloak-not-valid");
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("exceptions");
     private final String key;

@@ -9,6 +9,7 @@ import com.nikonenko.passengerservice.dto.RatingFromPassengerRequest;
 import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public interface PassengerService {
 
     PassengerResponse getPassengerById(UUID id);
 
-    PassengerResponse createPassenger(PassengerRequest passengerRequest);
+    PassengerResponse createPassenger(OAuth2User principal);
 
     RideResponse createRideByPassenger(UUID passengerId, RideByPassengerRequest rideByPassengerRequest);
 

@@ -10,6 +10,7 @@ import com.nikonenko.rideservice.services.RideService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,30 +20,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/rides")
-@RestControllerAdvice
 public class RideController {
     private final RideService rideService;
 
     @GetMapping("/distance")
+    @PreAuthorize("hasRole('ROLE_PASSENGER')")
     public CalculateDistanceResponse calculateDistance(@RequestParam(value = "startGeo") LatLng startGeo,
                                                        @RequestParam(value = "endGeo") LatLng endGeo) {
         return rideService.calculateDistance(startGeo, endGeo);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_PASSENGER')")
     @ResponseStatus(HttpStatus.CREATED)
     public RideResponse createRideRequest(@Valid @RequestBody CreateRideRequest createRideRequest) {
         return rideService.createRide(createRideRequest);
     }
 
     @GetMapping("/open")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN')")
     public PageResponse<RideResponse> getAvailableRides(@RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
                                                         @RequestParam(defaultValue = "id") String sortField) {
@@ -55,6 +56,7 @@ public class RideController {
     }
 
     @GetMapping("/by-passenger/{passengerId}")
+    @PreAuthorize("(hasRole('ROLE_PASSENGER') && #passengerId == authentication.principal.id) || hasRole('ROLE_ADMIN')")
     public PageResponse<RideResponse> getRidesByPassenger(@PathVariable UUID passengerId,
                                                            @RequestParam(defaultValue = "0") int pageNumber,
                                                            @RequestParam(defaultValue = "5") int pageSize,
@@ -63,6 +65,7 @@ public class RideController {
     }
 
     @GetMapping("/by-driver/{driverId}")
+    @PreAuthorize("(hasRole('ROLE_DRIVER') && #driverId == authentication.principal.id) || hasRole('ROLE_ADMIN')")
     public PageResponse<RideResponse> getRidesByDriver(@PathVariable UUID driverId,
                                                         @RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
@@ -71,7 +74,7 @@ public class RideController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("(hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN'))")
     public CloseRideResponse closeRide(@PathVariable String id) {
         return rideService.closeRide(id);
     }

@@ -18,6 +18,8 @@ public class LogList {
     public static final String LOG_RETRIEVE_INTENT = "Retrieved Intent with ID: {}";
     public static final String LOG_UPDATE_CUSTOMER = "Updated Customer with ID: {}";
     public static final String LOG_COUPON_EXP_DATE = "Coupon expiration date: {}\nRequest date: {}";
+    public static final String LOG_EXTRACT_DATA = "Extracted id: {}, username: {}, email: {}, phone: {}";
+    public static final String LOG_EXTRACT_ROLES = "Extracted roles: {}";
     public static final String LOG_NOT_FOUND_ERROR = "Not Found exception thrown: {}";
     public static final String LOG_BAD_STRIPE_REQUEST_ERROR = "Bad Request during Stripe operation exception thrown: {}";
     public static final String LOG_CONFLICT_ERROR = "Conflict exception thrown: {}";

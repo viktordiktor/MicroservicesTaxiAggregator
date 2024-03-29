@@ -7,6 +7,7 @@ import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public interface DriverService {
 
     DriverResponse getDriverById(UUID id);
 
-    DriverResponse createDriver(DriverRequest driverRequest);
+    DriverResponse createDriver(OAuth2User principal);
 
     DriverResponse editDriver(UUID id, DriverRequest driverRequest);
 

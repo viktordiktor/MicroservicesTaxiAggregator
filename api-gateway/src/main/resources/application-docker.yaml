@@ -1,0 +1,76 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: driver-service
+          uri: lb://DRIVER-SERVICE
+          predicates:
+            - Path=/api/v1/drivers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: driver-service-circuit
+                fallbackUri: redirect:/fallback/driver-service
+        - id: driver-service-cars
+          uri: lb://DRIVER-SERVICE
+          predicates:
+            - Path=/api/v1/cars/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: driver-service-circuit
+                fallbackUri: redirect:/fallback/driver-service
+        - id: passenger-service
+          uri: lb://PASSENGER-SERVICE
+          predicates:
+            - Path=/api/v1/passengers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: passenger-service-circuit
+                fallbackUri: redirect:/fallback/passenger-service
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/v1/payments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: payment-service-circuit
+                fallbackUri: redirect:/fallback/payment-service
+        - id: ride-service
+          uri: lb://RIDE-SERVICE
+          predicates:
+            - Path=/api/v1/rides/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ride-service-circuit
+                fallbackUri: redirect:/fallback/ride-service
+        - id: eureka-server
+          uri: http://eureka@discovery-server:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-server-static
+          uri: http://eureka@discovery-server:8761
+          predicates:
+            - Path=/eureka/**
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            token-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/token
+            authorization-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/auth
+            user-info-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/userinfo
+            jwk-set-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/certs
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8080/realms/taxi-realm/protocol/openid-connect/certs
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/

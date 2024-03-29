@@ -9,6 +9,12 @@ spring:
       authentication-database: admin
   application:
     name: RIDE-SERVICE
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/taxi-realm
+          jwk-set-uri: http://localhost:8181/realms/taxi-realm/protocol/openid-connect/certs
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -85,3 +91,9 @@ management:
     sampling:
       rate: 1.0
       probability: 1.0
+
+jwt:
+  auth:
+    converter:
+      resource-id: taxi-realm
+      principal-attribute: sub
