@@ -27,6 +27,7 @@ import com.nikonenko.passengerservice.repositories.PassengerRepository;
 import com.nikonenko.passengerservice.services.feign.PaymentService;
 import com.nikonenko.passengerservice.services.feign.RideService;
 import com.nikonenko.passengerservice.services.impl.PassengerServiceImpl;
+import com.nikonenko.passengerservice.utils.SecurityUtil;
 import com.nikonenko.passengerservice.utils.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.ignoreStubs;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -110,69 +114,72 @@ public class PassengerServiceUnitTest {
         verifyNoInteractions(passengerRepository);
     }
 
-//    @Test
-//    void givenNonExistingPassenger_whenCreatePassenger_thenCreateNewPassenger() {
-//        PassengerResponse response = TestUtil.getDefaultPassengerResponse();
-//        PassengerRequest request = TestUtil.getDefaultPassengerRequest();
-//        Passenger notSavedPassenger = TestUtil.getNotSavedPassenger();
-//        Passenger savedPassenger = TestUtil.getDefaultPassenger();
-//
-//        doReturn(false)
-//                .when(passengerRepository)
-//                .existsByUsername(request.getUsername());
-//        doReturn(false)
-//                .when(passengerRepository)
-//                .existsByPhone(request.getPhone());
-//        doReturn(notSavedPassenger)
-//                .when(modelMapper)
-//                .map(request, Passenger.class);
-//        doReturn(savedPassenger)
-//                .when(passengerRepository)
-//                .save(notSavedPassenger);
-//        doReturn(response)
-//                .when(modelMapper)
-//                .map(savedPassenger, PassengerResponse.class);
-//
-//        PassengerResponse result = passengerService.createPassenger(request);
-//
-//        verify(passengerRepository).existsByUsername(request.getUsername());
-//        verify(passengerRepository).existsByPhone(request.getPhone());
-//        verify(modelMapper).map(request, Passenger.class);
-//        verify(passengerRepository).save(notSavedPassenger);
-//        verify(modelMapper).map(savedPassenger, PassengerResponse.class);
-//        assertEquals(response, result);
-//    }
+    @Test
+    void givenNonExistingPassenger_whenCreatePassenger_thenCreateNewPassenger() {
+        PassengerResponse response = TestUtil.getDefaultPassengerResponse();
+        OAuth2User oAuth2User = TestUtil.getDefaultOAuth2User();
+        PassengerRequest passengerRequest = TestUtil.getDefaultPassengerRequest();
+        Passenger notSavedPassenger = TestUtil.getNotSavedPassenger();
+        Passenger savedPassenger = TestUtil.getDefaultPassenger();
+
+        doReturn(false)
+                .when(passengerRepository)
+                .existsByUsername(oAuth2User.getAttribute(SecurityUtil.USERNAME));
+        doReturn(false)
+                .when(passengerRepository)
+                .existsByPhone(oAuth2User.getAttribute(SecurityUtil.PHONE));
+        doReturn(notSavedPassenger)
+                .when(modelMapper)
+                .map(passengerRequest, Passenger.class);
+        doReturn(savedPassenger)
+                .when(passengerRepository)
+                .save(notSavedPassenger);
+        doReturn(response)
+                .when(modelMapper)
+                .map(savedPassenger, PassengerResponse.class);
+
+        PassengerResponse result = passengerService.createPassenger(oAuth2User);
+
+        verify(passengerRepository).existsByUsername(oAuth2User.getAttribute(SecurityUtil.USERNAME));
+        verify(passengerRepository).existsByPhone(oAuth2User.getAttribute(SecurityUtil.PHONE));
+        verify(modelMapper).map(passengerRequest, Passenger.class);
+        verify(passengerRepository).save(notSavedPassenger);
+        verify(modelMapper).map(savedPassenger, PassengerResponse.class);
+        assertEquals(response, result);
+    }
 
     @Test
     void givenPassengerWithExistingPhone_whenCreatePassenger_thenThrowException() {
-        PassengerRequest request = TestUtil.getDefaultPassengerRequest();
+        OAuth2User oAuth2User = TestUtil.getDefaultOAuth2User();
 
         doReturn(true)
                 .when(passengerRepository)
-                .existsByPhone(request.getPhone());
-//        assertThrows(
-//                PhoneAlreadyExistsException.class,
-//                () -> passengerService.createPassenger(request)
-//        );
+                .existsByPhone(oAuth2User.getAttribute(SecurityUtil.PHONE));
 
-        verify(passengerRepository).existsByPhone(request.getPhone());
+        assertThrows(
+                PhoneAlreadyExistsException.class,
+                () -> passengerService.createPassenger(oAuth2User)
+        );
+
+        verify(passengerRepository).existsByPhone(oAuth2User.getAttribute(SecurityUtil.PHONE));
         verifyNoMoreInteractions(passengerRepository);
     }
 
     @Test
     void givenPassengerWithExistingUsername_whenCreatePassenger_thenThrowException() {
-        PassengerRequest request = TestUtil.getDefaultPassengerRequest();
+        OAuth2User oAuth2User = TestUtil.getDefaultOAuth2User();
 
         doReturn(true)
                 .when(passengerRepository)
-                .existsByUsername(request.getUsername());
-//        assertThrows(
-//                UsernameAlreadyExistsException.class,
-//                () -> passengerService.createPassenger(request)
-//        );
+                .existsByUsername(oAuth2User.getAttribute(SecurityUtil.USERNAME));
 
-        verify(passengerRepository).existsByUsername(request.getUsername());
-        verify(passengerRepository).existsByPhone(request.getPhone());
+        assertThrows(
+                UsernameAlreadyExistsException.class,
+                () -> passengerService.createPassenger(oAuth2User)
+        );
+
+        verify(passengerRepository).existsByUsername(oAuth2User.getAttribute(SecurityUtil.USERNAME));
+        verify(passengerRepository).existsByPhone(oAuth2User.getAttribute(SecurityUtil.PHONE));
         verifyNoMoreInteractions(ignoreStubs(passengerRepository));
     }
 
@@ -397,7 +404,7 @@ public class PassengerServiceUnitTest {
         verify(passengerRepository).findById(passenger.getId());
         verify(rideService).getRideDistance(distanceRequest);
         verify(paymentService).calculateRidePrice(any(CustomerCalculateRideRequest.class));
-        verify(paymentService).checkCustomerExists(passenger.getId());
+        verify(paymentService, times(2)).checkCustomerExists(passenger.getId());
         verify(paymentService).createCharge(chargeRequest);
         verify(rideService).createRide(rideRequest);
     }
@@ -464,7 +471,7 @@ public class PassengerServiceUnitTest {
         verify(passengerRepository).findById(passenger.getId());
         verify(rideService).getRideDistance(distanceRequest);
         verify(paymentService).calculateRidePrice(any(CustomerCalculateRideRequest.class));
-        verify(paymentService).checkCustomerExists(passenger.getId());
+        verify(paymentService, times(2)).checkCustomerExists(passenger.getId());
         verifyNoMoreInteractions(paymentService);
         verifyNoMoreInteractions(rideService);
     }

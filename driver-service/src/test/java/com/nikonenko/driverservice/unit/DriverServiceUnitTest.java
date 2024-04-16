@@ -22,6 +22,7 @@ import com.nikonenko.driverservice.repositories.DriverRepository;
 import com.nikonenko.driverservice.services.CarService;
 import com.nikonenko.driverservice.services.feign.RideService;
 import com.nikonenko.driverservice.services.impl.DriverServiceImpl;
+import com.nikonenko.driverservice.utils.SecurityList;
 import com.nikonenko.driverservice.utils.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -142,69 +145,72 @@ class DriverServiceUnitTest {
         verify(driverRepository).findById(TestUtil.DEFAULT_ID);
     }
 
-//    @Test
-//    void givenNonExistingDriver_whenCreateDriver_thenCreateNewDriver() {
-//        DriverResponse response = TestUtil.getDefaultDriverResponse();
-//        DriverRequest request = TestUtil.getDriverRequest();
-//        Driver notSavedDriver = TestUtil.getNotSavedDriver();
-//        Driver savedDriver = TestUtil.getDefaultDriver();
-//
-//        doReturn(false)
-//                .when(driverRepository)
-//                .existsByUsername(request.getUsername());
-//        doReturn(false)
-//                .when(driverRepository)
-//                .existsByPhone(request.getPhone());
-//        doReturn(notSavedDriver)
-//                .when(modelMapper)
-//                .map(request, Driver.class);
-//        doReturn(savedDriver)
-//                .when(driverRepository)
-//                .save(notSavedDriver);
-//        doReturn(response)
-//                .when(modelMapper)
-//                .map(savedDriver, DriverResponse.class);
-//
-//        DriverResponse result = driverService.createDriver(request);
-//
-//        verify(driverRepository).existsByUsername(request.getUsername());
-//        verify(driverRepository).existsByPhone(request.getPhone());
-//        verify(modelMapper).map(request, Driver.class);
-//        verify(driverRepository).save(notSavedDriver);
-//        verify(modelMapper).map(savedDriver, DriverResponse.class);
-//        assertEquals(response, result);
-//    }
+    @Test
+    void givenNonExistingDriver_whenCreateDriver_thenCreateNewDriver() {
+        OAuth2User oAuth2User = TestUtil.getDefaultOAuth2User();
+        DriverResponse response = TestUtil.getDefaultDriverResponse();
+        DriverRequest request = TestUtil.getDriverRequest();
+        Driver notSavedDriver = TestUtil.getNotSavedDriver();
+        Driver savedDriver = TestUtil.getDefaultDriver();
+
+        doReturn(false)
+                .when(driverRepository)
+                .existsByUsername(oAuth2User.getAttribute(SecurityList.USERNAME));
+        doReturn(false)
+                .when(driverRepository)
+                .existsByPhone(oAuth2User.getAttribute(SecurityList.PHONE));
+        doReturn(notSavedDriver)
+                .when(modelMapper)
+                .map(request, Driver.class);
+        doReturn(savedDriver)
+                .when(driverRepository)
+                .save(notSavedDriver);
+        doReturn(response)
+                .when(modelMapper)
+                .map(savedDriver, DriverResponse.class);
+
+        DriverResponse result = driverService.createDriver(oAuth2User);
+
+        verify(driverRepository).existsByUsername(request.getUsername());
+        verify(driverRepository).existsByPhone(request.getPhone());
+        verify(modelMapper).map(request, Driver.class);
+        verify(driverRepository).save(notSavedDriver);
+        verify(modelMapper).map(savedDriver, DriverResponse.class);
+        assertEquals(response, result);
+    }
 
     @Test
     void givenDriverWithExistingPhone_whenCreateDriver_thenThrowException() {
-        DriverRequest request = TestUtil.getDriverRequest();
+        OAuth2User oAuth2User = TestUtil.getDefaultOAuth2User();
 
         doReturn(true)
                 .when(driverRepository)
-                .existsByPhone(request.getPhone());
-//        assertThrows(
-//                PhoneAlreadyExistsException.class,
-//                () -> driverService.createDriver(request)
-//        );
+                .existsByPhone(oAuth2User.getAttribute(SecurityList.PHONE));
 
-        verify(driverRepository).existsByPhone(request.getPhone());
+        assertThrows(
+                PhoneAlreadyExistsException.class,
+                () -> driverService.createDriver(oAuth2User)
+        );
+
+        verify(driverRepository).existsByPhone(oAuth2User.getAttribute(SecurityList.PHONE));
         verifyNoMoreInteractions(driverRepository);
     }
 
     @Test
     void givenDriverWithExistingUsername_whenCreateDriver_thenThrowException() {
-        DriverRequest request = TestUtil.getDriverRequest();
+        OAuth2User oAuth2User = TestUtil.getDefaultOAuth2User();
 
         doReturn(true)
                 .when(driverRepository)
-                .existsByUsername(request.getUsername());
-//        assertThrows(
-//                UsernameAlreadyExistsException.class,
-//                () -> driverService.createDriver(request)
-//        );
+                .existsByUsername(oAuth2User.getAttribute(SecurityList.USERNAME));
 
-        verify(driverRepository).existsByUsername(request.getUsername());
-        verify(driverRepository).existsByPhone(request.getPhone());
+        assertThrows(
+                UsernameAlreadyExistsException.class,
+                () -> driverService.createDriver(oAuth2User)
+        );
+
+        verify(driverRepository).existsByUsername(oAuth2User.getAttribute(SecurityList.USERNAME));
+        verify(driverRepository).existsByPhone(oAuth2User.getAttribute(SecurityList.PHONE));
         verifyNoMoreInteractions(ignoreStubs(driverRepository));
     }
 
