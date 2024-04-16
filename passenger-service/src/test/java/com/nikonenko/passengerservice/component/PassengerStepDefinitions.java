@@ -10,6 +10,7 @@ import com.nikonenko.passengerservice.kafka.producer.CustomerCreationRequestProd
 import com.nikonenko.passengerservice.models.Passenger;
 import com.nikonenko.passengerservice.repositories.PassengerRepository;
 import com.nikonenko.passengerservice.services.impl.PassengerServiceImpl;
+import com.nikonenko.passengerservice.utils.SecurityUtil;
 import com.nikonenko.passengerservice.utils.TestUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,6 +19,7 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -88,42 +90,43 @@ public class PassengerStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-//    @Given("Passenger with username {string} and phone {string} not exists")
-//    public void passengerWithUsernameAndPhoneNotExists(String username, String phone) {
-//        PassengerResponse response = TestUtil.getCreationPassengerResponse();
-//        PassengerRequest request = TestUtil.getPassengerRequestWithParameters(username, phone);
-//        Passenger notSavedPassenger = TestUtil.getNotSavedCreationPassenger();
-//        Passenger savedPassenger = TestUtil.getSavedCreationPassenger();
-//
-//        doReturn(false)
-//                .when(passengerRepository)
-//                .existsByUsername(request.getUsername());
-//        doReturn(false)
-//                .when(passengerRepository)
-//                .existsByPhone(request.getPhone());
-//        doReturn(notSavedPassenger)
-//                .when(modelMapper)
-//                .map(request, Passenger.class);
-//        doReturn(savedPassenger)
-//                .when(passengerRepository)
-//                .save(notSavedPassenger);
-//        doReturn(response)
-//                .when(modelMapper)
-//                .map(savedPassenger, PassengerResponse.class);
-//
-//        PassengerResponse result = passengerService.createPassenger(request);
-//
-//        assertEquals(response, result);
-//    }
+    @Given("Passenger with username {string} and phone {string} not exists")
+    public void passengerWithUsernameAndPhoneNotExists(String username, String phone) {
+        PassengerResponse response = TestUtil.getCreationPassengerResponse();
+        PassengerRequest request = TestUtil.getPassengerRequestWithParameters(username, phone);
+        OAuth2User oAuth2User = TestUtil.getOAuth2UserWithParameters(username, phone);
+        Passenger notSavedPassenger = TestUtil.getNotSavedCreationPassenger();
+        Passenger savedPassenger = TestUtil.getSavedCreationPassenger();
 
-//    @When("createPassenger method is called with PassengerRequest of username {string} and phone {string}")
-//    public void createPassengerMethodIsCalledWithPassengerRequestOfUsernameAndPhone(String username, String phone) {
-//        try {
-//            actualResponse = passengerService.createPassenger(TestUtil.getPassengerRequestWithParameters(username, phone));
-//        } catch (RuntimeException ex) {
-//            exception = ex;
-//        }
-//    }
+        doReturn(false)
+                .when(passengerRepository)
+                .existsByUsername(oAuth2User.getAttribute(SecurityUtil.USERNAME));
+        doReturn(false)
+                .when(passengerRepository)
+                .existsByPhone(oAuth2User.getAttribute(SecurityUtil.PHONE));
+        doReturn(notSavedPassenger)
+                .when(modelMapper)
+                .map(request, Passenger.class);
+        doReturn(savedPassenger)
+                .when(passengerRepository)
+                .save(notSavedPassenger);
+        doReturn(response)
+                .when(modelMapper)
+                .map(savedPassenger, PassengerResponse.class);
+
+        PassengerResponse result = passengerService.createPassenger(oAuth2User);
+
+        assertEquals(response, result);
+    }
+
+    @When("createPassenger method is called with PassengerRequest of username {string} and phone {string}")
+    public void createPassengerMethodIsCalledWithPassengerRequestOfUsernameAndPhone(String username, String phone) {
+        try {
+            actualResponse = passengerService.createPassenger(TestUtil.getOAuth2UserWithParameters(username, phone));
+        } catch (RuntimeException ex) {
+            exception = ex;
+        }
+    }
 
     @Then("PassengerResponse should contains passenger with username {string} and phone {string}")
     public void passengerResponseShouldContainsPassengerWithUsernameAndPhone(String username, String phone) {

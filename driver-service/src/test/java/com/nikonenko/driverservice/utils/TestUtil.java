@@ -24,10 +24,18 @@ import com.nikonenko.driverservice.models.feign.RideStatus;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,7 +49,7 @@ public class TestUtil {
     public final String DEFAULT_PAGE_SORT = "id";
     public final String INVALID_PAGE_SORT = "aaa";
     public final int DEFAULT_TOTAL_PAGE_SIZE = 1;
-    public final UUID DEFAULT_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    public final UUID DEFAULT_ID = UUID.fromString("39630a2e-36ab-4f04-a357-b8721df75b59");
     public final Long DEFAULT_CAR_ID = 1L;
     public final UUID SECOND_ID = UUID.fromString("22222222-2222-2222-2222-222222222222");
     public final Long SECOND_CAR_ID = 2L;
@@ -84,6 +92,7 @@ public class TestUtil {
     public final String PAGE_NUMBER_PARAMETER = "pageNumber";
     public final String PAGE_SIZE_PARAMETER = "pageSize";
     public final String SORT_FIELD_PARAMETER = "sortField";
+    public final String DRIVER_ROLE = "ROLE_DRIVER";
 
     public List<Driver> getDriverList() {
         return List.of(getDefaultDriver(), getSecondDriver());
@@ -98,6 +107,26 @@ public class TestUtil {
                 .ratingSet(getDefaultRatingSet())
                 .available(FALSE_AVAILABLE)
                 .build();
+    }
+
+    public OAuth2User getDefaultOAuth2User() {
+        Collection<? extends GrantedAuthority> authorities =
+                Collections.singleton(new SimpleGrantedAuthority(DRIVER_ROLE));
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(SecurityList.PHONE, DEFAULT_PHONE);
+        attributes.put(SecurityList.USERNAME, DEFAULT_USERNAME);
+
+        return new DefaultOAuth2User(authorities, attributes, SecurityList.USERNAME);
+    }
+
+    public OAuth2User getOAuth2UserWithParameters(String username, String phone) {
+        Collection<? extends GrantedAuthority> authorities =
+                Collections.singleton(new SimpleGrantedAuthority(DRIVER_ROLE));
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(SecurityList.PHONE, phone);
+        attributes.put(SecurityList.USERNAME, username);
+
+        return new DefaultOAuth2User(authorities, attributes, SecurityList.USERNAME);
     }
 
     public Driver getSecondDriver() {

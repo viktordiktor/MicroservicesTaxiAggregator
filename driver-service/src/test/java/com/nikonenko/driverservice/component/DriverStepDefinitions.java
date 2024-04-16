@@ -21,6 +21,7 @@ import com.nikonenko.driverservice.repositories.DriverRepository;
 import com.nikonenko.driverservice.services.CarService;
 import com.nikonenko.driverservice.services.impl.CarServiceImpl;
 import com.nikonenko.driverservice.services.impl.DriverServiceImpl;
+import com.nikonenko.driverservice.utils.SecurityList;
 import com.nikonenko.driverservice.utils.TestUtil;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -30,6 +31,8 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -108,42 +111,43 @@ public class DriverStepDefinitions {
         assertEquals(exception.getMessage(), expected.getMessage());
     }
 
-//    @Given("Driver with username {string} and phone {string} not exists")
-//    public void driverWithUsernameAndPhoneNotExists(String username, String phone) {
-//        DriverResponse response = TestUtil.getCreationDriverResponse();
-//        DriverRequest request = TestUtil.getDriverRequestWithParameters(username, phone);
-//        Driver notSavedDriver = TestUtil.getNotSavedDriver();
-//        Driver savedDriver = TestUtil.getDefaultDriver();
-//
-//        doReturn(false)
-//                .when(driverRepository)
-//                .existsByUsername(request.getUsername());
-//        doReturn(false)
-//                .when(driverRepository)
-//                .existsByPhone(request.getPhone());
-//        doReturn(notSavedDriver)
-//                .when(modelMapper)
-//                .map(request, Driver.class);
-//        doReturn(savedDriver)
-//                .when(driverRepository)
-//                .save(notSavedDriver);
-//        doReturn(response)
-//                .when(modelMapper)
-//                .map(savedDriver, DriverResponse.class);
-//
-//        DriverResponse result = driverService.createDriver(request);
-//
-//        assertEquals(response, result);
-//    }
-//
-//    @When("createDriver method is called with DriverRequest of username {string} and phone {string}")
-//    public void createDriverMethodIsCalledWithDriverRequestOfUsernameAndPhone(String username, String phone) {
-//        try {
-//            actualDriverResponse = driverService.createDriver(TestUtil.getDriverRequestWithParameters(username, phone));
-//        } catch (RuntimeException ex) {
-//            exception = ex;
-//        }
-//    }
+    @Given("Driver with username {string} and phone {string} not exists")
+    public void driverWithUsernameAndPhoneNotExists(String username, String phone) {
+        DriverResponse response = TestUtil.getCreationDriverResponse();
+        DriverRequest request = TestUtil.getDriverRequestWithParameters(username, phone);
+        OAuth2User oAuth2User = TestUtil.getOAuth2UserWithParameters(username, phone);
+        Driver notSavedDriver = TestUtil.getNotSavedDriver();
+        Driver savedDriver = TestUtil.getDefaultDriver();
+
+        doReturn(false)
+                .when(driverRepository)
+                .existsByUsername(oAuth2User.getAttribute(SecurityList.USERNAME));
+        doReturn(false)
+                .when(driverRepository)
+                .existsByPhone(oAuth2User.getAttribute(SecurityList.PHONE));
+        doReturn(notSavedDriver)
+                .when(modelMapper)
+                .map(request, Driver.class);
+        doReturn(savedDriver)
+                .when(driverRepository)
+                .save(notSavedDriver);
+        doReturn(response)
+                .when(modelMapper)
+                .map(savedDriver, DriverResponse.class);
+
+        DriverResponse result = driverService.createDriver(oAuth2User);
+
+        assertEquals(response, result);
+    }
+
+    @When("createDriver method is called with DriverRequest of username {string} and phone {string}")
+    public void createDriverMethodIsCalledWithDriverRequestOfUsernameAndPhone(String username, String phone) {
+        try {
+            actualDriverResponse = driverService.createDriver(TestUtil.getOAuth2UserWithParameters(username, phone));
+        } catch (RuntimeException ex) {
+            exception = ex;
+        }
+    }
 
     @Then("DriverResponse should contains driver with username {string} and phone {string}")
     public void driverResponseShouldContainsDriverWithUsernameAndPhone(String username, String phone) {
