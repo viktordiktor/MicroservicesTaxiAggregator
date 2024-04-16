@@ -30,10 +30,19 @@ import com.nikonenko.passengerservice.models.feign.RideStatus;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -83,6 +92,7 @@ public class TestUtil {
     public final String PAGE_NUMBER_PARAMETER = "pageNumber";
     public final String PAGE_SIZE_PARAMETER = "pageSize";
     public final String SORT_FIELD_PARAMETER = "sortField";
+    public final String PASSENGER_ROLE = "ROLE_PASSENGER";
 
     public List<Passenger> getPassengerList() {
         return List.of(getDefaultPassenger(), getSecondPassenger());
@@ -95,6 +105,26 @@ public class TestUtil {
                 .username(DEFAULT_USERNAME)
                 .ratingSet(getDefaultRatingSet())
                 .build();
+    }
+
+    public OAuth2User getDefaultOAuth2User() {
+        Collection<? extends GrantedAuthority> authorities =
+                Collections.singleton(new SimpleGrantedAuthority(PASSENGER_ROLE));
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(SecurityUtil.PHONE, DEFAULT_PHONE);
+        attributes.put(SecurityUtil.USERNAME, DEFAULT_USERNAME);
+
+        return new DefaultOAuth2User(authorities, attributes, SecurityUtil.USERNAME);
+    }
+
+    public OAuth2User getOAuth2UserWithParameters(String username, String phone) {
+        Collection<? extends GrantedAuthority> authorities =
+                Collections.singleton(new SimpleGrantedAuthority(PASSENGER_ROLE));
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(SecurityUtil.PHONE, phone);
+        attributes.put(SecurityUtil.USERNAME, username);
+
+        return new DefaultOAuth2User(authorities, attributes, SecurityUtil.USERNAME);
     }
 
     public Passenger getPassengerWithParameters(String id, String username, String phone) {
