@@ -209,6 +209,7 @@ public class RideServiceImpl implements RideService {
         Ride ride = getOrThrow(request.getRideId());
         checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setDriverId(null);
+        ride.setCar(null);
         ride.setStatus(RideStatus.OPENED);
         rideRepository.save(ride);
         log.info(LogList.LOG_REJECT_RIDE, ride.getId());
