@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.services.feign.impl;
+package com.nikonenko.passengerservice.services.communication.impl;
 
 import com.google.maps.model.LatLng;
 import com.nikonenko.passengerservice.dto.PageResponse;
@@ -11,13 +11,18 @@ import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 import com.nikonenko.passengerservice.feign.RideFeignClient;
 import com.nikonenko.passengerservice.models.feign.RidePaymentMethod;
 import com.nikonenko.passengerservice.models.feign.RideStatus;
-import com.nikonenko.passengerservice.services.feign.RideService;
+import com.nikonenko.passengerservice.services.communication.RideService;
 import com.nikonenko.passengerservice.utils.LogList;
+import com.nikonenko.passengerservice.utils.RequestInterceptUtil;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
@@ -29,16 +34,29 @@ import java.util.UUID;
 @Slf4j
 public class RideServiceImpl implements RideService {
     private final RideFeignClient rideFeignClient;
+    private final WebClient webClient;
 
     @Override
     @CircuitBreaker(name = "rideBreaker", fallbackMethod = "fallbackRideService")
     public CalculateDistanceResponse getRideDistance(CalculateDistanceRequest calculateDistanceRequest) {
-        return rideFeignClient.calculateDistance(calculateDistanceRequest);
+        return webClient.get()
+                .uri(builder -> builder.path("/api/v1/rides/distance")
+                        .queryParam("startGeo", calculateDistanceRequest.getStartGeo())
+                        .queryParam("endGeo", calculateDistanceRequest.getEndGeo())
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, RequestInterceptUtil.getAuthorizationHeader())
+                .retrieve().bodyToMono(CalculateDistanceResponse.class)
+                .block();
     }
 
     @Override
     public RideResponse createRide(CreateRideRequest createRideRequest) {
-        return rideFeignClient.createRideRequest(createRideRequest);
+        return webClient.post()
+                .uri(builder -> builder.path("/api/v1/rides").build())
+                .header(HttpHeaders.AUTHORIZATION, RequestInterceptUtil.getAuthorizationHeader())
+                .body(BodyInserters.fromValue(createRideRequest))
+                .retrieve().bodyToMono(RideResponse.class)
+                .block();
     }
 
     @Override

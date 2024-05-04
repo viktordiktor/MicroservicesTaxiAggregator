@@ -15,6 +15,7 @@ public enum ExceptionList {
     RIDE_IS_NOT_FINISHED("ride.is-not-finished"),
     WRONG_PAGEABLE_PARAMETER("wrong-pageable-parameter"),
     WRONG_SORT_FIELD("wrong-sort-field"),
+    WRONG_LAT_LNG_PARAMETER("wrong-lat-lng-parameter"),
     CHARGE_IS_NOT_SUCCESS("charge-is-not-success"),
     BAD_REQUEST_BY_RIDE("bad-request-by-ride"),
     RIDE_IS_ALREADY_STARTED("ride.is-already-started"),

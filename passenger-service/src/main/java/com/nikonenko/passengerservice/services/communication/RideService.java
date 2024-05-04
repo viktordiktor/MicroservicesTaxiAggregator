@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.services.feign;
+package com.nikonenko.passengerservice.services.communication;
 
 import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;

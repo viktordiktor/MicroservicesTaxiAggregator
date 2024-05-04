@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 
 @Component
 @Slf4j
-public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+public class JwtAuthConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
@@ -34,7 +35,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
         this.properties = properties;
     }
 
-    public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
+    public Mono<AbstractAuthenticationToken> convert(@NonNull Jwt jwt) {
         Collection<GrantedAuthority> authorities = Stream.concat(
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
                 extractResourceRoles(jwt).stream()).collect(Collectors.toSet());
@@ -45,7 +46,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
                 authorities
         );
         SecurityContextHolder.getContext().setAuthentication(authToken);
-        return authToken;
+        return Mono.just(authToken);
     }
 
     private User extractUserInfo(Jwt jwt) {

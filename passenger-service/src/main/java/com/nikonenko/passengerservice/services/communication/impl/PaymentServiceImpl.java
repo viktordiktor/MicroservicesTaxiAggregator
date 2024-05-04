@@ -1,4 +1,4 @@
-package com.nikonenko.passengerservice.services.feign.impl;
+package com.nikonenko.passengerservice.services.communication.impl;
 
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCalculateRideResponse;
@@ -8,7 +8,7 @@ import com.nikonenko.passengerservice.dto.feign.payment.CustomerCreationRequest;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerCreationResponse;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerExistsResponse;
 import com.nikonenko.passengerservice.feign.PaymentFeignClient;
-import com.nikonenko.passengerservice.services.feign.PaymentService;
+import com.nikonenko.passengerservice.services.communication.PaymentService;
 import com.nikonenko.passengerservice.utils.LogList;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;

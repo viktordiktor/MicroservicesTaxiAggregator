@@ -1,6 +1,5 @@
 package com.nikonenko.rideservice.controllers;
 
-import com.google.maps.model.LatLng;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
 import java.util.UUID;
 
 @RestController
@@ -30,15 +31,15 @@ public class RideController {
 
     @GetMapping("/distance")
     @PreAuthorize("hasRole('ROLE_PASSENGER')")
-    public CalculateDistanceResponse calculateDistance(@RequestParam(value = "startGeo") LatLng startGeo,
-                                                       @RequestParam(value = "endGeo") LatLng endGeo) {
+    public Mono<CalculateDistanceResponse> calculateDistance(@RequestParam(value = "startGeo") String startGeo,
+                                                       @RequestParam(value = "endGeo") String endGeo) {
         return rideService.calculateDistance(startGeo, endGeo);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_PASSENGER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public RideResponse createRideRequest(@Valid @RequestBody CreateRideRequest createRideRequest) {
+    public Mono<RideResponse> createRideRequest(@Valid @RequestBody CreateRideRequest createRideRequest) {
         return rideService.createRide(createRideRequest);
     }
 

@@ -26,6 +26,7 @@ import com.nikonenko.rideservice.models.RideStatus;
 import com.nikonenko.rideservice.repositories.RideRepository;
 import com.nikonenko.rideservice.services.RideService;
 import com.nikonenko.rideservice.services.feign.PaymentService;
+import com.nikonenko.rideservice.utils.LatLngConverter;
 import com.nikonenko.rideservice.utils.LogList;
 import com.nikonenko.rideservice.utils.PageUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +52,7 @@ public class RideServiceImpl implements RideService {
     private final UpdateDriverRatingRequestProducer updateDriverRatingRequestProducer;
     private final UpdatePassengerRatingRequestProducer updatePassengerRatingRequestProducer;
     private final PaymentService paymentService;
+    private final LatLngConverter latLngConverter;
 
     @Override
     public RideResponse getRideById(String rideId) {
@@ -90,22 +94,25 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public CalculateDistanceResponse calculateDistance(LatLng startGeo, LatLng endGeo) {
+    public Mono<CalculateDistanceResponse> calculateDistance(String startGeoString, String endGeoString) {
+        LatLng startGeo = latLngConverter.convert(startGeoString);
+        LatLng endGeo = latLngConverter.convert(endGeoString);
+
         GeodeticCalculator geoCalc = new GeodeticCalculator();
         geoCalc.setStartingGeographicPoint(startGeo.lng, startGeo.lat);
         geoCalc.setDestinationGeographicPoint(endGeo.lng, endGeo.lat);
 
         double distanceInKilometers = geoCalc.getOrthodromicDistance() / 1000;
 
-        return CalculateDistanceResponse.builder()
+        return Mono.just(CalculateDistanceResponse.builder()
                 .startGeo(startGeo)
                 .endGeo(endGeo)
                 .distance(distanceInKilometers)
-                .build();
+                .build());
     }
 
     @Override
-    public RideResponse createRide(CreateRideRequest createRideRequest) {
+    public Mono<RideResponse> createRide(CreateRideRequest createRideRequest) {
         Ride ride = modelMapper.map(createRideRequest, Ride.class);
 
         if (createRideRequest.getChargeId() != null && !createRideRequest.getChargeId().isEmpty()) {
@@ -118,7 +125,7 @@ public class RideServiceImpl implements RideService {
 
         Ride savedRide = rideRepository.save(ride);
         log.info(LogList.LOG_CREATE_RIDE, savedRide.getId());
-        return modelMapper.map(savedRide, RideResponse.class);
+        return Mono.just(modelMapper.map(savedRide, RideResponse.class));
     }
 
     private RidePaymentMethod getPaymentMethod(CreateRideRequest createRideRequest) {

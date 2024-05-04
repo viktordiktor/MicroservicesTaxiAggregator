@@ -106,3 +106,6 @@ jwt:
     converter:
       resource-id: taxi-realm
       principal-attribute: sub
+
+webclient:
+  ride-service: http://RIDE-SERVICE

@@ -10,6 +10,7 @@ import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideIsNotStartedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.UnknownDriverException;
+import com.nikonenko.rideservice.exceptions.WrongLatLngParameterException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class RestExceptionHandler {
             RideIsNotOpenedException.class, RideIsNotStartedException.class, RideIsNotFinishedException.class,
             RideIsNotAcceptedException.class, UnknownDriverException.class,
             ChargeIsNotSuccessException.class, WrongPageableParameterException.class,
-            BadRequestByRideException.class, WrongSortFieldException.class})
+            BadRequestByRideException.class, WrongSortFieldException.class, WrongLatLngParameterException.class})
     public ResponseEntity<ExceptionResponse> handleBadRequestsExceptions(RuntimeException ex) {
         log.error(LogList.LOG_BAD_REQUEST_ERROR, ex.getMessage());
         return ResponseEntity

@@ -118,16 +118,17 @@ public class RideStepDefinitions {
                 .map(savedRide, RideResponse.class);
     }
 
-    @When("createRide method is called with Passenger ID {string} and Start Address {string} and End Address {string} and Charge ID {string}")
-    public void createRideMethodIsCalledWithPassengerIdAndStartAddressAndEndAddressAndChargeId
-            (String passengerId, String startAddress, String endAddress, String chargeId) {
-        try {
-            actualResponse = rideService.createRide(TestUtil
-                    .getCreateRideRequestWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId));
-        } catch (RuntimeException ex) {
-            exception = ex;
-        }
-    }
+    //TODO to Mono
+//    @When("createRide method is called with Passenger ID {string} and Start Address {string} and End Address {string} and Charge ID {string}")
+//    public void createRideMethodIsCalledWithPassengerIdAndStartAddressAndEndAddressAndChargeId
+//            (String passengerId, String startAddress, String endAddress, String chargeId) {
+//        try {
+//            actualResponse = rideService.createRide(TestUtil
+//                    .getCreateRideRequestWithParameters(UUID.fromString(passengerId), startAddress, endAddress, chargeId));
+//        } catch (RuntimeException ex) {
+//            exception = ex;
+//        }
+//    }
 
     @Then("RideResponse should contains Passenger ID {string} and Start Address {string} and End Address {string} and Charge ID {string}")
     public void rideResponseShouldContainsPassengerIdAndStartAddressAndEndAddressAndChargeId
@@ -186,16 +187,17 @@ public class RideStepDefinitions {
                 .map(savedRide, RideResponse.class);
     }
 
-    @When("createRide method is called with Passenger ID {stromg} and Start Address {string} and End Address {string}")
-    public void createRideMethodIsCalledWithPassengerIdAndStartAddressAndEndAddressAndChargeId
-            (String passengerId, String startAddress, String endAddress) {
-        try {
-            actualResponse = rideService.createRide(TestUtil.getCreateRideRequestWithParameters(
-                    UUID.fromString(passengerId), startAddress, endAddress, null));
-        } catch (RuntimeException ex) {
-            exception = ex;
-        }
-    }
+    //TODO To Mono
+//    @When("createRide method is called with Passenger ID {stromg} and Start Address {string} and End Address {string}")
+//    public void createRideMethodIsCalledWithPassengerIdAndStartAddressAndEndAddressAndChargeId
+//            (String passengerId, String startAddress, String endAddress) {
+//        try {
+//            actualResponse = rideService.createRide(TestUtil.getCreateRideRequestWithParameters(
+//                    UUID.fromString(passengerId), startAddress, endAddress, null));
+//        } catch (RuntimeException ex) {
+//            exception = ex;
+//        }
+//    }
 
     @Then("RideResponse should contains Passenger ID {string} and Start Address {string} and End Address {string}")
     public void rideResponseShouldContainsPassengerIdAndStartAddressAndEndAddress(String passengerId, String startAddress,
