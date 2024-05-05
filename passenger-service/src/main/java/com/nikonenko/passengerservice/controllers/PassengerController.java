@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @RestController
@@ -50,8 +52,8 @@ public class PassengerController {
 
     @PostMapping("/{passengerId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public RideResponse createRide(@PathVariable UUID passengerId,
-                                   @RequestBody RideByPassengerRequest rideByPassengerRequest) {
+    public Mono<RideResponse> createRide(@PathVariable UUID passengerId,
+                                         @RequestBody RideByPassengerRequest rideByPassengerRequest) {
         return passengerService.createRideByPassenger(passengerId, rideByPassengerRequest);
     }
 
@@ -90,12 +92,15 @@ public class PassengerController {
     }
 
     @DeleteMapping("/close/{rideId}")
-    public CloseRideResponse closeRide(@PathVariable String rideId) {
+    public Mono<CloseRideResponse> closeRide(@PathVariable String rideId) {
         return passengerService.closeRide(rideId);
     }
 
     @GetMapping("/rides/{passengerId}")
-    public PageResponse<RideResponse> getPassengerRides(@PathVariable UUID passengerId) {
-        return passengerService.getPassengerRides(passengerId);
+    public Flux<RideResponse> getPassengerRides(@PathVariable UUID passengerId,
+                                                @RequestParam(defaultValue = "0") int pageNumber,
+                                                @RequestParam(defaultValue = "5") int pageSize,
+                                                @RequestParam(defaultValue = "id") String sortField) {
+        return passengerService.getPassengerRides(passengerId, pageNumber, pageSize, sortField);
     }
 }

@@ -45,6 +45,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -110,7 +113,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public RideResponse createRideByPassenger(UUID passengerId, RideByPassengerRequest rideByPassengerRequest) {
+    public Mono<RideResponse> createRideByPassenger(UUID passengerId, RideByPassengerRequest rideByPassengerRequest) {
         getOrThrow(passengerId);
         CalculateDistanceResponse distanceResponse = getRideDistance(rideByPassengerRequest);
 
@@ -123,7 +126,9 @@ public class PassengerServiceImpl implements PassengerService {
             checkCustomerExists(passengerId);
             chargeResponse = createCharge(passengerId, calculatePriceResponse.getPrice());
             if (!chargeResponse.isSuccess()) {
-                return RideResponse.builder().errorMessage(ExceptionList.CHARGE_IS_NOT_SUCCESS.getValue()).build();
+                return Mono.just(RideResponse.builder()
+                        .errorMessage(ExceptionList.CHARGE_IS_NOT_SUCCESS.getValue())
+                        .build());
             }
         }
 
@@ -175,7 +180,7 @@ public class PassengerServiceImpl implements PassengerService {
         return chargeResponse;
     }
 
-    private RideResponse createRide(UUID passengerId, RideByPassengerRequest rideByPassengerRequest,
+    private Mono<RideResponse> createRide(UUID passengerId, RideByPassengerRequest rideByPassengerRequest,
                                     double distance, CustomerChargeResponse chargeResponse) {
         CreateRideRequest createRideRequest = CreateRideRequest.builder()
                 .passengerId(passengerId)
@@ -184,10 +189,9 @@ public class PassengerServiceImpl implements PassengerService {
                 .endAddress(rideByPassengerRequest.getEndAddress())
                 .chargeId(chargeResponse != null ? chargeResponse.getId() : null)
                 .build();
-        RideResponse rideResponse = rideService.createRide(createRideRequest);
-        SecurityUtil.checkException(rideResponse.getErrorMessage());
-        log.info(LogList.LOG_CREATE_RIDE, rideResponse.getId());
-        return rideResponse;
+
+        return rideService.createRide(createRideRequest)
+                .doOnSuccess(rideResponse -> log.info(LogList.LOG_CREATE_RIDE, rideResponse.getId()));
     }
 
     @Override
@@ -204,13 +208,13 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public CloseRideResponse closeRide(String rideId) {
+    public Mono<CloseRideResponse> closeRide(String rideId) {
         return rideService.closeRide(rideId);
     }
 
     @Override
-    public PageResponse<RideResponse> getPassengerRides(UUID passengerId) {
-        return rideService.getRidesByPassengerId(passengerId);
+    public Flux<RideResponse> getPassengerRides(UUID passengerId, int pageNumber, int pageSize, String sortField) {
+        return rideService.getRidesByPassengerId(passengerId, pageNumber, pageSize, sortField);
     }
 
     @Override

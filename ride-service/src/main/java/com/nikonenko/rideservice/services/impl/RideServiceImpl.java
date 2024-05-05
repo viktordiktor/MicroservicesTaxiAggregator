@@ -5,7 +5,6 @@ import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
-import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.RatingToDriverRequest;
 import com.nikonenko.rideservice.dto.RatingToPassengerRequest;
 import com.nikonenko.rideservice.dto.ReviewRequest;
@@ -33,13 +32,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.referencing.GeodeticCalculator;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -55,42 +53,32 @@ public class RideServiceImpl implements RideService {
     private final LatLngConverter latLngConverter;
 
     @Override
-    public RideResponse getRideById(String rideId) {
-        return modelMapper.map(getOrThrow(rideId), RideResponse.class);
+    public Mono<RideResponse> getRideById(String rideId) {
+        return getOrThrow(rideId)
+                .flatMap(ride -> Mono.just(modelMapper.map(ride, RideResponse.class)));
     }
 
     @Override
-    public PageResponse<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField) {
+    public Flux<RideResponse> getOpenRides(int pageNumber, int pageSize, String sortField) {
         Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
-        Page<Ride> page = rideRepository.findAllByStatusIs(RideStatus.OPENED, pageable);
-        return getPageRides(page);
+        return rideRepository.findAllByStatusIs(RideStatus.OPENED, pageable)
+                .map(ride -> modelMapper.map(ride, RideResponse.class));
     }
 
     @Override
-    public PageResponse<RideResponse> getRidesByPassenger(UUID passengerId,
+    public Flux<RideResponse> getRidesByPassenger(UUID passengerId,
                                                           int pageNumber, int pageSize, String sortField) {
         Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
-        Page<Ride> page = rideRepository.findAllByPassengerIdIs(passengerId, pageable);
-        return getPageRides(page);
+        return rideRepository.findAllByPassengerIdIs(passengerId, pageable)
+                .map(ride -> modelMapper.map(ride, RideResponse.class));
     }
 
     @Override
-    public PageResponse<RideResponse> getRidesByDriver(UUID driverId,
+    public Flux<RideResponse> getRidesByDriver(UUID driverId,
                                                        int pageNumber, int pageSize, String sortField) {
         Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sortField, RideResponse.class);
-        Page<Ride> page = rideRepository.findAllByDriverIdIs(driverId, pageable);
-        return getPageRides(page);
-    }
-
-    private PageResponse<RideResponse> getPageRides(Page<Ride> page) {
-        List<RideResponse> rides = page.getContent().stream()
-                .map(car -> modelMapper.map(car, RideResponse.class))
-                .toList();
-        return PageResponse.<RideResponse>builder()
-                .objectList(rides)
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .build();
+        return rideRepository.findAllByDriverIdIs(driverId, pageable)
+                .map(ride -> modelMapper.map(ride, RideResponse.class));
     }
 
     @Override
@@ -98,17 +86,19 @@ public class RideServiceImpl implements RideService {
         LatLng startGeo = latLngConverter.convert(startGeoString);
         LatLng endGeo = latLngConverter.convert(endGeoString);
 
-        GeodeticCalculator geoCalc = new GeodeticCalculator();
-        geoCalc.setStartingGeographicPoint(startGeo.lng, startGeo.lat);
-        geoCalc.setDestinationGeographicPoint(endGeo.lng, endGeo.lat);
+        return Mono.fromCallable(() -> {
+            GeodeticCalculator geoCalc = new GeodeticCalculator();
+            geoCalc.setStartingGeographicPoint(startGeo.lng, startGeo.lat);
+            geoCalc.setDestinationGeographicPoint(endGeo.lng, endGeo.lat);
 
-        double distanceInKilometers = geoCalc.getOrthodromicDistance() / 1000;
+            double distanceInKilometers = geoCalc.getOrthodromicDistance() / 1000;
 
-        return Mono.just(CalculateDistanceResponse.builder()
-                .startGeo(startGeo)
-                .endGeo(endGeo)
-                .distance(distanceInKilometers)
-                .build());
+            return CalculateDistanceResponse.builder()
+                    .startGeo(startGeo)
+                    .endGeo(endGeo)
+                    .distance(distanceInKilometers)
+                    .build();
+        });
     }
 
     @Override
@@ -123,9 +113,9 @@ public class RideServiceImpl implements RideService {
         ride.setStatus(RideStatus.OPENED);
         ride.setPaymentMethod(getPaymentMethod(createRideRequest));
 
-        Ride savedRide = rideRepository.save(ride);
-        log.info(LogList.LOG_CREATE_RIDE, savedRide.getId());
-        return Mono.just(modelMapper.map(savedRide, RideResponse.class));
+        return rideRepository.save(ride)
+                .doOnSuccess(saved -> log.info(LogList.LOG_CREATE_RIDE, saved.getId()))
+                .map(saved -> modelMapper.map(saved, RideResponse.class));
     }
 
     private RidePaymentMethod getPaymentMethod(CreateRideRequest createRideRequest) {
@@ -141,21 +131,26 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public CloseRideResponse closeRide(String rideId) {
-        Ride ride = getOrThrow(rideId);
-        if (ride.getStatus() != RideStatus.OPENED) {
-            throw new RideIsNotOpenedException();
-        }
-        CustomerChargeReturnResponse customerChargeReturnResponse = null;
-        if (ride.getPaymentMethod() == RidePaymentMethod.BY_CARD) {
-            customerChargeReturnResponse = returnCharge(ride);
-        }
-        rideRepository.delete(ride);
-        log.info(LogList.LOG_DELETE_RIDE, rideId);
-        return CloseRideResponse.builder()
-                .ridePaymentMethod(ride.getPaymentMethod())
-                .customerChargeReturnResponse(customerChargeReturnResponse)
-                .build();
+    public Mono<CloseRideResponse> closeRide(String rideId) {
+        return getOrThrow(rideId)
+                .flatMap(ride -> {
+                    if (ride.getStatus() != RideStatus.OPENED) {
+                        return Mono.error(new RideIsNotOpenedException());
+                    }
+                    CustomerChargeReturnResponse customerChargeReturnResponse = null;
+                    if (ride.getPaymentMethod() == RidePaymentMethod.BY_CARD) {
+                        customerChargeReturnResponse = returnCharge(ride);
+                    }
+                    return Mono.just(customerChargeReturnResponse)
+                            .flatMap(chargeReturnResponse -> {
+                                rideRepository.delete(ride)
+                                        .doOnSuccess(v -> log.info(LogList.LOG_DELETE_RIDE, rideId));
+                                return Mono.just(CloseRideResponse.builder()
+                                        .ridePaymentMethod(ride.getPaymentMethod())
+                                        .customerChargeReturnResponse(chargeReturnResponse)
+                                        .build());
+                            });
+                });
     }
 
     public CustomerChargeReturnResponse returnCharge(Ride ride) {
@@ -163,81 +158,87 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void changeDriverRating(ReviewRequest request) {
-        Ride ride = getFinishedRide(request);
-        updateDriverRatingRequestProducer.sendRatingDriverRequest(RatingToDriverRequest.builder()
-                .driverId(ride.getDriverId())
-                .rating(request.getRating())
-                .comment(request.getComment())
-                .build());
+    public Mono<Void> changeDriverRating(ReviewRequest request) {
+        return getFinishedRide(request)
+                .flatMap(ride -> {
+                    updateDriverRatingRequestProducer.sendRatingDriverRequest(RatingToDriverRequest.builder()
+                            .driverId(ride.getDriverId())
+                            .rating(request.getRating())
+                            .comment(request.getComment())
+                            .build());
+                    return Mono.empty();
+                });
     }
 
     @Override
-    public void changePassengerRating(ReviewRequest request) {
-        Ride ride = getFinishedRide(request);
-        updatePassengerRatingRequestProducer.sendRatingPassengerRequest(RatingToPassengerRequest.builder()
-                .passengerId(ride.getPassengerId())
-                .rating(request.getRating())
-                .comment(request.getComment())
-                .build());
+    public Mono<Void> changePassengerRating(ReviewRequest request) {
+        return getFinishedRide(request)
+                .flatMap(ride -> {
+                    updatePassengerRatingRequestProducer.sendRatingPassengerRequest(RatingToPassengerRequest.builder()
+                            .passengerId(ride.getPassengerId())
+                            .rating(request.getRating())
+                            .comment(request.getComment())
+                            .build());
+                    return Mono.empty();
+                });
     }
 
-    private Ride getFinishedRide(ReviewRequest request) {
-        Ride ride = getOrThrow(request.getRideId());
-        if (ride.getStatus() != RideStatus.FINISHED) {
-            throw new RideIsNotFinishedException();
-        }
-        return ride;
+    private Mono<Ride> getFinishedRide(ReviewRequest request) {
+        return getOrThrow(request.getRideId())
+                .flatMap(ride -> {
+                    if (ride.getStatus() != RideStatus.FINISHED) {
+                        return Mono.error(new RideIsNotFinishedException());
+                    }
+                    return Mono.just(ride);
+                });
     }
 
     @Override
-    public void changeRideStatus(ChangeRideStatusRequest request) {
-        switch (request.getRideAction()) {
-            case ACCEPT -> acceptRide(request);
-            case REJECT -> rejectRide(request);
-            case START -> startRide(request);
-            case FINISH -> finishRide(request);
-        }
+    public Mono<Void> changeRideStatus(ChangeRideStatusRequest request) {
+        return getOrThrow(request.getRideId())
+                .flatMap(ride -> switch (request.getRideAction()) {
+                    case ACCEPT -> acceptRide(ride, request);
+                    case REJECT -> rejectRide(ride, request);
+                    case START -> startRide(ride, request);
+                    case FINISH -> finishRide(ride, request);
+                });
     }
 
-    public void acceptRide(ChangeRideStatusRequest request) {
-        Ride ride = getOrThrow(request.getRideId());
+    public Mono<Void> acceptRide(Ride ride, ChangeRideStatusRequest request) {
         if (ride.getStatus() != RideStatus.OPENED) {
-            throw new RideIsNotOpenedException();
+            return Mono.error(new RideIsNotOpenedException());
         }
         ride.setDriverId(request.getDriverId());
         ride.setStatus(RideStatus.ACCEPTED);
         ride.setCar(request.getCar());
-        rideRepository.save(ride);
-        log.info(LogList.LOG_ACCEPT_RIDE, ride.getId());
+        return saveAndLog(ride, LogList.LOG_ACCEPT_RIDE);
     }
 
-    public void rejectRide(ChangeRideStatusRequest request) {
-        Ride ride = getOrThrow(request.getRideId());
+    public Mono<Void> rejectRide(Ride ride, ChangeRideStatusRequest request) {
         checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setDriverId(null);
         ride.setCar(null);
         ride.setStatus(RideStatus.OPENED);
-        rideRepository.save(ride);
-        log.info(LogList.LOG_REJECT_RIDE, ride.getId());
+        return saveAndLog(ride, LogList.LOG_REJECT_RIDE);
     }
 
-    public void startRide(ChangeRideStatusRequest request) {
-        Ride ride = getOrThrow(request.getRideId());
+    public Mono<Void> startRide(Ride ride, ChangeRideStatusRequest request) {
         checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
         ride.setStartDate(LocalDateTime.now());
         ride.setStatus(RideStatus.STARTED);
-        rideRepository.save(ride);
-        log.info(LogList.LOG_START_RIDE, ride.getId());
+        return saveAndLog(ride, LogList.LOG_START_RIDE);
     }
 
-    public void finishRide(ChangeRideStatusRequest request) {
-        Ride ride = getOrThrow(request.getRideId());
+    public Mono<Void> finishRide(Ride ride, ChangeRideStatusRequest request) {
         checkRideAttributes(ride, request.getDriverId(), RideStatus.STARTED, new RideIsNotStartedException());
         ride.setEndDate(LocalDateTime.now());
         ride.setStatus(RideStatus.FINISHED);
-        rideRepository.save(ride);
-        log.info(LogList.LOG_FINISH_RIDE, ride.getId());
+        return saveAndLog(ride, LogList.LOG_FINISH_RIDE);
+    }
+
+    private Mono<Void> saveAndLog(Ride ride, String logStatus) {
+        return rideRepository.save(ride)
+                .then(Mono.fromRunnable(() -> log.info(logStatus, ride.getId())));
     }
 
     public void checkRideAttributes(Ride ride, UUID driverId, RideStatus rideStatus, RuntimeException ex) {
@@ -249,7 +250,8 @@ public class RideServiceImpl implements RideService {
         }
     }
 
-    public Ride getOrThrow(String rideId) {
-        return rideRepository.findById(rideId).orElseThrow(RideNotFoundException::new);
+    public Mono<Ride> getOrThrow(String rideId) {
+        return rideRepository.findById(rideId)
+                .switchIfEmpty(Mono.error(new RideNotFoundException()));
     }
 }

@@ -1,20 +1,21 @@
 package com.nikonenko.passengerservice.services.communication;
 
-import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 public interface RideService {
     CalculateDistanceResponse getRideDistance(CalculateDistanceRequest customerChargeRequest);
 
-    RideResponse createRide(CreateRideRequest createRideRequest);
+    Mono<RideResponse> createRide(CreateRideRequest createRideRequest);
 
-    CloseRideResponse closeRide(String rideId);
+    Mono<CloseRideResponse> closeRide(String rideId);
 
-    PageResponse<RideResponse> getRidesByPassengerId(UUID passengerId);
+    Flux<RideResponse> getRidesByPassengerId(UUID passengerId, int pageNumber, int pageSize, String sortField);
 }

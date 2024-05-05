@@ -59,9 +59,6 @@ feign:
       payment:
         name: PAYMENT-SERVICE
         path: /api/v1/payments
-      ride:
-        name: RIDE-SERVICE
-        path: /api/v1/rides
 
 resilience4j:
   circuitbreaker:

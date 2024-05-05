@@ -10,6 +10,8 @@ import com.nikonenko.passengerservice.dto.RatingToPassengerRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
@@ -20,13 +22,13 @@ public interface PassengerService {
 
     PassengerResponse createPassenger(OAuth2User principal);
 
-    RideResponse createRideByPassenger(UUID passengerId, RideByPassengerRequest rideByPassengerRequest);
+    Mono<RideResponse> createRideByPassenger(UUID passengerId, RideByPassengerRequest rideByPassengerRequest);
 
     PassengerResponse editPassenger(UUID id, PassengerRequest passengerRequest);
 
-    CloseRideResponse closeRide(String rideId);
+    Mono<CloseRideResponse> closeRide(String rideId);
 
-    PageResponse<RideResponse> getPassengerRides(UUID passengerId);
+    Flux<RideResponse> getPassengerRides(UUID passengerId, int pageNumber, int pageSize, String sortField);
 
     void deletePassenger(UUID id);
 

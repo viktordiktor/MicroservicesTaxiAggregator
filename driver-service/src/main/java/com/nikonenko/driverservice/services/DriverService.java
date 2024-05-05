@@ -8,6 +8,7 @@ import com.nikonenko.driverservice.dto.RatingFromDriverRequest;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
 import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import reactor.core.publisher.Flux;
 
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public interface DriverService {
 
     void sendReviewToPassenger(String rideId, RatingFromDriverRequest request);
 
-    PageResponse<RideResponse> getDriverRides(UUID driverId, int pageNumber, int pageSize, String sortField);
+    Flux<RideResponse> getDriverRides(UUID driverId, int pageNumber, int pageSize, String sortField);
 
     void deleteCar(UUID driverId);
 }

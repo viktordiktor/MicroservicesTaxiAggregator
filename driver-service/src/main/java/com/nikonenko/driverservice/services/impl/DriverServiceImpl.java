@@ -27,7 +27,7 @@ import com.nikonenko.driverservice.models.RideAction;
 import com.nikonenko.driverservice.repositories.DriverRepository;
 import com.nikonenko.driverservice.services.CarService;
 import com.nikonenko.driverservice.services.DriverService;
-import com.nikonenko.driverservice.services.feign.RideService;
+import com.nikonenko.driverservice.services.communication.RideService;
 import com.nikonenko.driverservice.utils.LogList;
 import com.nikonenko.driverservice.utils.PageUtil;
 import com.nikonenko.driverservice.utils.PatternList;
@@ -39,6 +39,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -220,7 +222,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public PageResponse<RideResponse> getDriverRides(UUID driverId, int pageNumber, int pageSize, String sortField) {
+    public Flux<RideResponse> getDriverRides(UUID driverId, int pageNumber, int pageSize, String sortField) {
         return rideService.getRidesByDriverId(driverId, pageNumber, pageSize, sortField);
     }
 

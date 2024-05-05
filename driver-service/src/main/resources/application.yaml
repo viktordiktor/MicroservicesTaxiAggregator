@@ -54,13 +54,6 @@ eureka:
 server:
   port: 8082
 
-feign:
-  client:
-    config:
-      ride:
-        name: RIDE-SERVICE
-        path: /api/v1/rides
-
 resilience4j:
   circuitbreaker:
     instances:
@@ -102,3 +95,6 @@ jwt:
     converter:
       resource-id: taxi-realm
       principal-attribute: sub
+
+webclient:
+  ride-service: http://RIDE-SERVICE

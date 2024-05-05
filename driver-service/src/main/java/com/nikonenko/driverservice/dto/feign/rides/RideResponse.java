@@ -27,4 +27,5 @@ public class RideResponse {
     private RideStatus status;
     private RidePaymentMethod paymentMethod;
     private CarResponse car;
+    private String errorMessage;
 }

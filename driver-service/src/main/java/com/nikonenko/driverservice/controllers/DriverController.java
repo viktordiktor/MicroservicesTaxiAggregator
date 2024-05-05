@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+
 import java.util.UUID;
 
 @RestController
@@ -114,10 +116,10 @@ public class DriverController {
     }
 
     @GetMapping("/rides/{driverId}")
-    public PageResponse<RideResponse> getDriverRides(@PathVariable UUID driverId,
-                                                     @RequestParam(defaultValue = "0") int pageNumber,
-                                                     @RequestParam(defaultValue = "5") int pageSize,
-                                                     @RequestParam(defaultValue = "id") String sortField) {
+    public Flux<RideResponse> getDriverRides(@PathVariable UUID driverId,
+                                             @RequestParam(defaultValue = "0") int pageNumber,
+                                             @RequestParam(defaultValue = "5") int pageSize,
+                                             @RequestParam(defaultValue = "id") String sortField) {
         return driverService.getDriverRides(driverId, pageNumber, pageSize, sortField);
     }
 }

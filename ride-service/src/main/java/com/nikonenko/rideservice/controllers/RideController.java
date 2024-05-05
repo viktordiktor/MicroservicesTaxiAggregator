@@ -3,7 +3,6 @@ package com.nikonenko.rideservice.controllers;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
-import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.services.RideService;
 import jakarta.validation.Valid;
@@ -19,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.util.UUID;
 
 @RestController
@@ -45,29 +44,29 @@ public class RideController {
 
     @GetMapping("/open")
     @PreAuthorize("hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN')")
-    public PageResponse<RideResponse> getAvailableRides(@RequestParam(defaultValue = "0") int pageNumber,
+    public Flux<RideResponse> getAvailableRides(@RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
                                                         @RequestParam(defaultValue = "id") String sortField) {
         return rideService.getOpenRides(pageNumber, pageSize, sortField);
     }
 
     @GetMapping("/{rideId}")
-    public RideResponse getRideById(@PathVariable String rideId) {
+    public Mono<RideResponse> getRideById(@PathVariable String rideId) {
         return rideService.getRideById(rideId);
     }
 
     @GetMapping("/by-passenger/{passengerId}")
     @PreAuthorize("(hasRole('ROLE_PASSENGER') && #passengerId == authentication.principal.id) || hasRole('ROLE_ADMIN')")
-    public PageResponse<RideResponse> getRidesByPassenger(@PathVariable UUID passengerId,
-                                                           @RequestParam(defaultValue = "0") int pageNumber,
-                                                           @RequestParam(defaultValue = "5") int pageSize,
-                                                           @RequestParam(defaultValue = "id") String sortField) {
+    public Flux<RideResponse> getRidesByPassenger(@PathVariable UUID passengerId,
+                                                  @RequestParam(defaultValue = "0") int pageNumber,
+                                                  @RequestParam(defaultValue = "5") int pageSize,
+                                                  @RequestParam(defaultValue = "id") String sortField) {
         return rideService.getRidesByPassenger(passengerId, pageNumber, pageSize, sortField);
     }
 
     @GetMapping("/by-driver/{driverId}")
     @PreAuthorize("(hasRole('ROLE_DRIVER') && #driverId == authentication.principal.id) || hasRole('ROLE_ADMIN')")
-    public PageResponse<RideResponse> getRidesByDriver(@PathVariable UUID driverId,
+    public Flux<RideResponse> getRidesByDriver(@PathVariable UUID driverId,
                                                         @RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "5") int pageSize,
                                                         @RequestParam(defaultValue = "id") String sortField) {
@@ -76,7 +75,7 @@ public class RideController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("(hasAnyRole('ROLE_PASSENGER', 'ROLE_ADMIN'))")
-    public CloseRideResponse closeRide(@PathVariable String id) {
+    public Mono<CloseRideResponse> closeRide(@PathVariable String id) {
         return rideService.closeRide(id);
     }
 }

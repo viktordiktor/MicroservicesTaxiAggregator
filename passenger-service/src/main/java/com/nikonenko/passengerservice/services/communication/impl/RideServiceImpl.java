@@ -1,14 +1,12 @@
 package com.nikonenko.passengerservice.services.communication.impl;
 
 import com.google.maps.model.LatLng;
-import com.nikonenko.passengerservice.dto.PageResponse;
 import com.nikonenko.passengerservice.dto.feign.payment.CustomerChargeReturnResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.CalculateDistanceResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CloseRideResponse;
 import com.nikonenko.passengerservice.dto.feign.ride.CreateRideRequest;
 import com.nikonenko.passengerservice.dto.feign.ride.RideResponse;
-import com.nikonenko.passengerservice.feign.RideFeignClient;
 import com.nikonenko.passengerservice.models.feign.RidePaymentMethod;
 import com.nikonenko.passengerservice.models.feign.RideStatus;
 import com.nikonenko.passengerservice.services.communication.RideService;
@@ -16,25 +14,26 @@ import com.nikonenko.passengerservice.utils.LogList;
 import com.nikonenko.passengerservice.utils.RequestInterceptUtil;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @CircuitBreaker(name = "rideBreaker", fallbackMethod = "fallbackRideService")
 @Retry(name = "rideRetry")
 @Slf4j
 public class RideServiceImpl implements RideService {
-    private final RideFeignClient rideFeignClient;
     private final WebClient webClient;
+
+    public RideServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
 
     @Override
     @CircuitBreaker(name = "rideBreaker", fallbackMethod = "fallbackRideService")
@@ -50,23 +49,32 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public RideResponse createRide(CreateRideRequest createRideRequest) {
+    public Mono<RideResponse> createRide(CreateRideRequest createRideRequest) {
         return webClient.post()
                 .uri(builder -> builder.path("/api/v1/rides").build())
                 .header(HttpHeaders.AUTHORIZATION, RequestInterceptUtil.getAuthorizationHeader())
                 .body(BodyInserters.fromValue(createRideRequest))
-                .retrieve().bodyToMono(RideResponse.class)
-                .block();
+                .retrieve().bodyToMono(RideResponse.class);
     }
 
     @Override
-    public CloseRideResponse closeRide(String rideId) {
-        return rideFeignClient.closeRide(rideId);
+    public Mono<CloseRideResponse> closeRide(String rideId) {
+        return webClient.delete()
+                .uri(builder -> builder.path("/api/v1/rides/{rideId}").build(rideId))
+                .header(HttpHeaders.AUTHORIZATION, RequestInterceptUtil.getAuthorizationHeader())
+                .retrieve().bodyToMono(CloseRideResponse.class);
     }
 
     @Override
-    public PageResponse<RideResponse> getRidesByPassengerId(UUID passengerId) {
-        return rideFeignClient.getRidesByPassengerId(passengerId);
+    public Flux<RideResponse> getRidesByPassengerId(UUID passengerId, int pageNumber, int pageSize, String sortField) {
+        return webClient.get()
+                .uri(builder -> builder.path("/api/v1/rides/by-passenger/{passengerId}")
+                        .queryParam("pageNumber", pageNumber)
+                        .queryParam("pageSize", pageSize)
+                        .queryParam("sortField", sortField)
+                        .build(passengerId))
+                .header(HttpHeaders.AUTHORIZATION, RequestInterceptUtil.getAuthorizationHeader())
+                .retrieve().bodyToFlux(RideResponse.class);
     }
 
     public CalculateDistanceResponse fallbackRideService(CalculateDistanceRequest calculateDistanceRequest, Exception ex) {
@@ -79,9 +87,9 @@ public class RideServiceImpl implements RideService {
                 .build();
     }
 
-    public RideResponse fallbackRideService(CreateRideRequest createRideRequest, Exception ex) {
+    public Mono<RideResponse> fallbackRideService(CreateRideRequest createRideRequest, Exception ex) {
         log.error(LogList.LOG_CREATE_RIDE_FEIGN_ERROR, createRideRequest.getPassengerId(), ex.getMessage());
-        return RideResponse.builder()
+        return Mono.just(RideResponse.builder()
                 .chargeId("")
                 .distance(0.0)
                 .passengerId(UUID.randomUUID())
@@ -91,25 +99,31 @@ public class RideServiceImpl implements RideService {
                 .paymentMethod(RidePaymentMethod.BY_CASH)
                 .status(RideStatus.FINISHED)
                 .errorMessage(ex.getMessage())
-                .build();
+                .build());
     }
 
-    public CloseRideResponse fallbackRideService(String rideId, Exception ex) {
+    public Mono<CloseRideResponse> fallbackRideService(String rideId, Exception ex) {
         log.error(LogList.LOG_CLOSE_RIDE_FEIGN_ERROR, rideId, ex.getMessage());
-        return CloseRideResponse.builder()
+        return Mono.just(CloseRideResponse.builder()
                 .customerChargeReturnResponse(new CustomerChargeReturnResponse())
                 .ridePaymentMethod(RidePaymentMethod.BY_CASH)
                 .errorMessage(ex.getMessage())
-                .build();
+                .build());
     }
 
-    public PageResponse<RideResponse> fallbackRideService(UUID passengerId, Exception ex) {
+    public Flux<RideResponse> fallbackRideService(UUID passengerId, int pageNumber, int pageSize, String sortField,
+                                                  Exception ex) {
         log.error(LogList.LOG_GET_RIDES_BY_PASSENGER_ID_FEIGN_ERROR, passengerId, ex.getMessage());
-        return PageResponse.<RideResponse>builder()
-                .objectList(Collections.emptyList())
-                .totalElements(0)
-                .totalPages(0)
+        return Flux.just(RideResponse.builder()
+                .chargeId("")
+                .distance(0.0)
+                .passengerId(UUID.randomUUID())
+                .driverId(UUID.randomUUID())
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now())
+                .paymentMethod(RidePaymentMethod.BY_CASH)
+                .status(RideStatus.FINISHED)
                 .errorMessage(ex.getMessage())
-                .build();
+                .build());
     }
 }
