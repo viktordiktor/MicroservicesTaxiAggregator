@@ -106,16 +106,25 @@ public class RideServiceImpl implements RideService {
         Ride ride = modelMapper.map(createRideRequest, Ride.class);
 
         if (createRideRequest.getChargeId() != null && !createRideRequest.getChargeId().isEmpty()) {
-            checkChargeSuccess(createRideRequest.getChargeId());
-            log.info(LogList.LOG_SUCCESS_CHARGE);
+            return Mono.just(createRideRequest.getChargeId())
+                    .flatMap(chargeId -> paymentService.getChargeById(chargeId).isSuccess()
+                            ? Mono.just(ride)
+                            : Mono.error(new ChargeIsNotSuccessException())
+                    )
+                    .map(saved -> {
+                        saved.setStatus(RideStatus.OPENED);
+                        saved.setPaymentMethod(getPaymentMethod(createRideRequest));
+                        return saved;
+                    })
+                    .flatMap(rideRepository::save)
+                    .doOnSuccess(saved -> log.info(LogList.LOG_CREATE_RIDE, saved.getId()))
+                    .map(saved -> modelMapper.map(saved, RideResponse.class));
+        } else {
+            ride.setPaymentMethod(RidePaymentMethod.BY_CASH);
+            return rideRepository.save(ride)
+                    .doOnSuccess(saved -> log.info(LogList.LOG_CREATE_RIDE, saved.getId()))
+                    .map(saved -> modelMapper.map(saved, RideResponse.class));
         }
-
-        ride.setStatus(RideStatus.OPENED);
-        ride.setPaymentMethod(getPaymentMethod(createRideRequest));
-
-        return rideRepository.save(ride)
-                .doOnSuccess(saved -> log.info(LogList.LOG_CREATE_RIDE, saved.getId()))
-                .map(saved -> modelMapper.map(saved, RideResponse.class));
     }
 
     private RidePaymentMethod getPaymentMethod(CreateRideRequest createRideRequest) {
@@ -124,35 +133,31 @@ public class RideServiceImpl implements RideService {
                 : RidePaymentMethod.BY_CARD;
     }
 
-    private void checkChargeSuccess(String chargeId) {
-        if (!paymentService.getChargeById(chargeId).isSuccess()) {
-            throw new ChargeIsNotSuccessException();
-        }
-    }
-
     @Override
     public Mono<CloseRideResponse> closeRide(String rideId) {
         return getOrThrow(rideId)
                 .flatMap(ride -> {
-                    if (ride.getStatus() != RideStatus.OPENED) {
+                    if (ride.getStatus()!= RideStatus.OPENED) {
                         return Mono.error(new RideIsNotOpenedException());
                     }
-                    CustomerChargeReturnResponse customerChargeReturnResponse = null;
+                    Mono<CustomerChargeReturnResponse> chargeReturnResponseMono;
                     if (ride.getPaymentMethod() == RidePaymentMethod.BY_CARD) {
-                        customerChargeReturnResponse = returnCharge(ride);
+                        chargeReturnResponseMono = Mono.just(returnCharge(ride));
+                    } else {
+                        chargeReturnResponseMono = Mono.empty();
                     }
-                    return Mono.just(customerChargeReturnResponse)
-                            .flatMap(chargeReturnResponse -> {
-                                rideRepository.delete(ride)
-                                        .doOnSuccess(v -> log.info(LogList.LOG_DELETE_RIDE, rideId));
-                                return Mono.just(CloseRideResponse.builder()
-                                        .ridePaymentMethod(ride.getPaymentMethod())
-                                        .customerChargeReturnResponse(chargeReturnResponse)
-                                        .build());
-                            });
+                    return rideRepository.delete(ride)
+                            .doOnSuccess(v -> log.info(LogList.LOG_DELETE_RIDE, rideId))
+                            .then(chargeReturnResponseMono
+                                    .map(chargeReturnResponse -> CloseRideResponse.builder()
+                                            .ridePaymentMethod(ride.getPaymentMethod())
+                                            .customerChargeReturnResponse(chargeReturnResponse)
+                                            .build())
+                                    .defaultIfEmpty(CloseRideResponse.builder()
+                                            .ridePaymentMethod(ride.getPaymentMethod())
+                                            .build()));
                 });
     }
-
     public CustomerChargeReturnResponse returnCharge(Ride ride) {
         return paymentService.returnCharge(ride.getChargeId());
     }
@@ -196,12 +201,17 @@ public class RideServiceImpl implements RideService {
     @Override
     public Mono<Void> changeRideStatus(ChangeRideStatusRequest request) {
         return getOrThrow(request.getRideId())
-                .flatMap(ride -> switch (request.getRideAction()) {
-                    case ACCEPT -> acceptRide(ride, request);
-                    case REJECT -> rejectRide(ride, request);
-                    case START -> startRide(ride, request);
-                    case FINISH -> finishRide(ride, request);
-                });
+                .flatMap(ride -> handleRideAction(ride, request))
+                .then();
+    }
+
+    private Mono<Void> handleRideAction(Ride ride, ChangeRideStatusRequest request) {
+        return switch (request.getRideAction()) {
+            case ACCEPT -> acceptRide(ride, request);
+            case REJECT -> rejectRide(ride, request);
+            case START -> startRide(ride, request);
+            case FINISH -> finishRide(ride, request);
+        };
     }
 
     public Mono<Void> acceptRide(Ride ride, ChangeRideStatusRequest request) {
@@ -215,25 +225,31 @@ public class RideServiceImpl implements RideService {
     }
 
     public Mono<Void> rejectRide(Ride ride, ChangeRideStatusRequest request) {
-        checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
-        ride.setDriverId(null);
-        ride.setCar(null);
-        ride.setStatus(RideStatus.OPENED);
-        return saveAndLog(ride, LogList.LOG_REJECT_RIDE);
+        return checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException())
+                .then(Mono.fromRunnable(() -> {
+                    ride.setDriverId(null);
+                    ride.setCar(null);
+                    ride.setStatus(RideStatus.OPENED);
+                }))
+                .flatMap(x -> saveAndLog(ride, LogList.LOG_REJECT_RIDE));
     }
 
     public Mono<Void> startRide(Ride ride, ChangeRideStatusRequest request) {
-        checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException());
-        ride.setStartDate(LocalDateTime.now());
-        ride.setStatus(RideStatus.STARTED);
-        return saveAndLog(ride, LogList.LOG_START_RIDE);
+        return checkRideAttributes(ride, request.getDriverId(), RideStatus.ACCEPTED, new RideIsNotAcceptedException())
+                .then(Mono.fromRunnable(() -> {
+                    ride.setStartDate(LocalDateTime.now());
+                    ride.setStatus(RideStatus.STARTED);
+                }))
+                .flatMap(x -> saveAndLog(ride, LogList.LOG_START_RIDE));
     }
 
     public Mono<Void> finishRide(Ride ride, ChangeRideStatusRequest request) {
-        checkRideAttributes(ride, request.getDriverId(), RideStatus.STARTED, new RideIsNotStartedException());
-        ride.setEndDate(LocalDateTime.now());
-        ride.setStatus(RideStatus.FINISHED);
-        return saveAndLog(ride, LogList.LOG_FINISH_RIDE);
+        return checkRideAttributes(ride, request.getDriverId(), RideStatus.STARTED, new RideIsNotStartedException())
+                .then(Mono.fromRunnable(() -> {
+                    ride.setEndDate(LocalDateTime.now());
+                    ride.setStatus(RideStatus.FINISHED);
+                }))
+                .flatMap(x -> saveAndLog(ride, LogList.LOG_FINISH_RIDE));
     }
 
     private Mono<Void> saveAndLog(Ride ride, String logStatus) {
@@ -241,13 +257,16 @@ public class RideServiceImpl implements RideService {
                 .then(Mono.fromRunnable(() -> log.info(logStatus, ride.getId())));
     }
 
-    public void checkRideAttributes(Ride ride, UUID driverId, RideStatus rideStatus, RuntimeException ex) {
-        if (ride.getStatus() != rideStatus) {
-            throw ex;
-        }
-        if (!Objects.equals(ride.getDriverId(), driverId)) {
-            throw new UnknownDriverException();
-        }
+    public Mono<Void> checkRideAttributes(Ride ride, UUID driverId, RideStatus rideStatus, RuntimeException ex) {
+        return Mono.defer(() -> {
+            if (ride.getStatus() != rideStatus) {
+                return Mono.error(ex);
+            }
+            if (!Objects.equals(ride.getDriverId(), driverId)) {
+                return Mono.error(new UnknownDriverException());
+            }
+            return Mono.empty();
+        });
     }
 
     public Mono<Ride> getOrThrow(String rideId) {

@@ -10,17 +10,17 @@ Feature: Ride Service
     Then RideNotFoundException should be thrown for Ride ID "ride999"
 
   Scenario: Create Ride by Card successful payment
-    Given CreateRideRequest by card of Passenger ID 1 and Start Address "addr1" and End Address "addr2" and success Charge ID "chrg1"
-    When createRide method is called with Passenger ID 1 and Start Address "addr1" and End Address "addr2" and Charge ID "chrg1"
-    Then RideResponse should contains Passenger ID 1 and Start Address "addr1" and End Address "addr2" and Charge ID "chrg1"
+    Given CreateRideRequest by card of Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2" and success Charge ID "chrg1"
+    When createRide method is called with Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2" and Charge ID "chrg1"
+    Then RideResponse should contains Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2" and Charge ID "chrg1"
   Scenario: Create Ride by Card unsuccessful payment
-    Given CreateRideRequest by card of Passenger ID 1 and Start Address "addr1" and End Address "addr2" and unsuccessful Charge ID "chrg999"
-    When createRide method is called with Passenger ID 1 and Start Address "addr1" and End Address "addr2" and Charge ID "chrg999"
-    Then ChargeIsNotSuccessException should be thrown for Charge ID "chrg999"
+    Given CreateRideRequest by card of Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2" and unsuccessful Charge ID "chrg999"
+    When createRide method is called with Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2" and Charge ID "chrg999"
+    Then ChargeIsNotSuccessException should be thrown for Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2" and unsuccessful Charge ID "chrg999"
   Scenario: Create Ride by Cash
-    Given CreateRideRequest by cash of Passenger ID 1 and Start Address "addr1" and End Address "addr2"
-    When createRide method is called with Passenger ID 1 and Start Address "addr1" and End Address "addr2"
-    Then RideResponse should contains Passenger ID 1 and Start Address "addr1" and End Address "addr2"
+    Given CreateRideRequest by cash of Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2"
+    When createRide method is called with Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2"
+    Then RideResponse should contains Passenger ID "11111111-1111-1111-1111-111111111111" and Start Address "addr1" and End Address "addr2"
 
   Scenario: Close Ride created by Card and return Customer's charge
     Given Ride with ID "ride1" exists and opened by card
@@ -38,16 +38,16 @@ Feature: Ride Service
     Given Ride with ID "ride999" not exists
     When closeRide method is called with Ride ID "ride999"
     Then RideNotFoundException should be thrown for Ride ID "ride999"
-    
+
   Scenario: Change Ride status with valid action and existing Ride ID
     Given ChangeRideRequest with Action "ACCEPT" and existing Ride ID "ride1"
-    When changeRideStatus is called with Action "ACCEPT" and Ride ID "ride1"
+    When changeRideStatus is called with Action "ACCEPT" and existing Ride ID "ride1" and valid action
     Then Ride with ID "ride1" should change status to ACCEPTED
   Scenario: Change Ride status with invalid action and existing Ride ID
     Given ChangeRideRequest with Action "FINISH" and existing Ride ID "ride2"
-    When changeRideStatus is called with Action "FINISH" and Ride ID "ride2"
+    When changeRideStatus is called with Action "FINISH" and existing Ride ID "ride2" and invalid action
     Then RideIsNotStartedException should be thrown for Ride ID "ride2"
   Scenario: Change Ride status with not existing Ride ID
     Given Ride with ID "ride999" not exists
-    When changeRideStatus is called with Action "ACCEPT" and Ride ID "ride999"
+    When changeRideStatus is called with Action "ACCEPT" and non-existing Ride ID "ride999"
     Then RideNotFoundException should be thrown for Ride ID "ride999"

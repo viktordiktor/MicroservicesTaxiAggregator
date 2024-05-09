@@ -16,7 +16,6 @@ import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -26,22 +25,26 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
 public class RestExceptionHandler {
+
     @ExceptionHandler(RideNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleNotFoundException(RuntimeException ex) {
+    public Mono<ServerResponse> handleNotFoundException(ServerRequest request, RideNotFoundException ex) {
         log.error(LogList.LOG_NOT_FOUND_ERROR, ex.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
+        return ServerResponse.status(HttpStatus.NOT_FOUND)
+                .bodyValue(new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public Mono<ServerResponse> handleMethodArgumentNotValidException(ServerRequest request, MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
         List<String> errorMessages = new ArrayList<>();
 
@@ -50,9 +53,8 @@ public class RestExceptionHandler {
         }
 
         log.error(LogList.LOG_METHOD_ARGUMENT_ERROR, errorMessages);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(errorMessages);
+        return ServerResponse.status(HttpStatus.BAD_REQUEST)
+                .bodyValue(errorMessages);
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, PropertyReferenceException.class,
@@ -61,17 +63,15 @@ public class RestExceptionHandler {
             RideIsNotAcceptedException.class, UnknownDriverException.class,
             ChargeIsNotSuccessException.class, WrongPageableParameterException.class,
             BadRequestByRideException.class, WrongSortFieldException.class, WrongLatLngParameterException.class})
-    public ResponseEntity<ExceptionResponse> handleBadRequestsExceptions(RuntimeException ex) {
+    public Mono<ServerResponse> handleBadRequestsExceptions(ServerRequest request, RuntimeException ex) {
         log.error(LogList.LOG_BAD_REQUEST_ERROR, ex.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
+        return ServerResponse.status(HttpStatus.BAD_REQUEST)
+                .bodyValue(new ExceptionResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
-    public ResponseEntity<ExceptionResponse> handleAccessDeniedException(Exception ex) {
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(new ExceptionResponse(ex.getMessage(), HttpStatus.FORBIDDEN));
+    public Mono<ServerResponse> handleAccessDeniedException(ServerRequest request, Exception ex) {
+        return ServerResponse.status(HttpStatus.FORBIDDEN)
+                .bodyValue(new ExceptionResponse(ex.getMessage(), HttpStatus.FORBIDDEN));
     }
 }

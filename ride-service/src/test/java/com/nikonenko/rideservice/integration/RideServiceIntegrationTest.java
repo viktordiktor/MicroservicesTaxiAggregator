@@ -1,5 +1,3 @@
-//TODO To Mono/Flux
-
 //package com.nikonenko.rideservice.integration;
 //
 //import com.google.gson.Gson;

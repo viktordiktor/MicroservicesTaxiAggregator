@@ -29,6 +29,7 @@
         <resilience4j-micrometer.version>2.2.0</resilience4j-micrometer.version>
         <feign-micrometer.version>13.2.1</feign-micrometer.version>
         <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+        <reactor-test.version>3.6.5</reactor-test.version>
     </properties>
     <repositories>
         <repository>
@@ -105,6 +106,12 @@
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
             <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <version>${reactor-test.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.maps</groupId>
