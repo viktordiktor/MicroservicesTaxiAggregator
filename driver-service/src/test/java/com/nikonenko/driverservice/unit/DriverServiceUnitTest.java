@@ -6,7 +6,6 @@ import com.nikonenko.driverservice.dto.DriverRequest;
 import com.nikonenko.driverservice.dto.DriverResponse;
 import com.nikonenko.driverservice.dto.PageResponse;
 import com.nikonenko.driverservice.dto.RatingToDriverRequest;
-import com.nikonenko.driverservice.dto.feign.rides.RideResponse;
 import com.nikonenko.driverservice.exceptions.DriverIsNotAvailableException;
 import com.nikonenko.driverservice.exceptions.DriverNoRidesException;
 import com.nikonenko.driverservice.exceptions.DriverNotAddedCarException;
@@ -703,27 +702,4 @@ class DriverServiceUnitTest {
         verify(driverRepository).findById(TestUtil.DEFAULT_ID);
         verifyNoMoreInteractions(driverRepository);
     }
-
-    //TODO To WebFlux
-//    @Test
-//    void givenExistingDriver_whenGetDriverRides_thenReturnPageResponseRideResponse() {
-//        Driver driver = TestUtil.getDefaultDriver();
-//        List<RideResponse> expectedList = TestUtil.getRideResponseList();
-//        PageResponse<RideResponse> expectedPageResponse = TestUtil.getPageRideResponse();
-//
-//        doReturn(expectedPageResponse)
-//                .when(rideService)
-//                .getRidesByDriverId(driver.getId(), TestUtil.DEFAULT_PAGE,
-//                        TestUtil.DEFAULT_PAGE_SIZE, TestUtil.DEFAULT_PAGE_SORT);
-//
-//        PageResponse<RideResponse> result =
-//                driverService.getDriverRides(driver.getId(), TestUtil.DEFAULT_PAGE,
-//                        TestUtil.DEFAULT_PAGE_SIZE, TestUtil.DEFAULT_PAGE_SORT);
-//
-//        verify(rideService).getRidesByDriverId(driver.getId(), TestUtil.DEFAULT_PAGE,
-//                TestUtil.DEFAULT_PAGE_SIZE, TestUtil.DEFAULT_PAGE_SORT);
-//        assertNotNull(result);
-//        assertEquals(result.getTotalElements(), expectedList.size());
-//        assertEquals(expectedPageResponse, result);
-//    }
 }

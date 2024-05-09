@@ -1,14 +1,11 @@
 package com.nikonenko.rideservice.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.maps.model.LatLng;
 import com.nikonenko.rideservice.dto.CalculateDistanceResponse;
 import com.nikonenko.rideservice.dto.ChangeRideStatusRequest;
 import com.nikonenko.rideservice.dto.CloseRideResponse;
 import com.nikonenko.rideservice.dto.CreateRideRequest;
 import com.nikonenko.rideservice.dto.ExceptionResponse;
-import com.nikonenko.rideservice.dto.PageResponse;
 import com.nikonenko.rideservice.dto.ReviewRequest;
 import com.nikonenko.rideservice.dto.RideResponse;
 import com.nikonenko.rideservice.dto.feign.drivers.CarResponse;
@@ -18,7 +15,6 @@ import com.nikonenko.rideservice.exceptions.RideIsNotOpenedException;
 import com.nikonenko.rideservice.exceptions.RideNotFoundException;
 import com.nikonenko.rideservice.exceptions.WrongPageableParameterException;
 import com.nikonenko.rideservice.exceptions.WrongSortFieldException;
-import com.nikonenko.rideservice.integration.config.LocalDateTimeAdapter;
 import com.nikonenko.rideservice.models.Ride;
 import com.nikonenko.rideservice.models.RideAction;
 import com.nikonenko.rideservice.models.RidePaymentMethod;
@@ -370,13 +366,6 @@ public class TestUtil {
                 .rating(DEFAULT_RATING)
                 .comment(DEFAULT_COMMENT)
                 .build();
-    }
-
-    public void assertEqualsJsonPageResponse(List<RideResponse> responses, PageResponse<RideResponse> result) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
-        assertEquals(gson.toJson(responses), gson.toJson(result.getObjectList()));
     }
 
     public void assertEqualsAllRideResponseFieldsWithoutId(RideResponse response, RideResponse result) {

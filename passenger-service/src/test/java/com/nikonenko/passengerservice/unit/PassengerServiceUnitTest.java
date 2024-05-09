@@ -41,6 +41,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -395,7 +396,7 @@ public class PassengerServiceUnitTest {
         doReturn(chargeResponse)
                 .when(paymentService)
                 .createCharge(chargeRequest);
-        doReturn(rideResponse)
+        doReturn(Mono.just(rideResponse))
                 .when(rideService)
                 .createRide(rideRequest);
 
@@ -428,7 +429,7 @@ public class PassengerServiceUnitTest {
         doReturn(calculateRideResponse)
                 .when(paymentService)
                 .calculateRidePrice(any(CustomerCalculateRideRequest.class));
-        doReturn(rideResponse)
+        doReturn(Mono.just(rideResponse))
                 .when(rideService)
                 .createRide(rideRequest);
 
