@@ -1,44 +1,137 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lrmprojectdefinition>
-    <model-version>3.1.14</model-version>
-    <project-name>SampleLRM</project-name>
-    <project-desc>Lingoport SampleLRM Project fr_FR and de_DE Java properties files</project-desc>
-    <group-name>Lingoport</group-name>
-    <top-level-dir>/var/lib/jenkins/jobs/Lingoport.SampleLRM/workspace</top-level-dir>
-    <send-unique-file-names>0</send-unique-file-names>
-    <detect-errors>
-        <missed-trans-error>0</missed-trans-error>
-        <parameter-mismatch-error>1</parameter-mismatch-error>
-    </detect-errors>
-    <track-back-locale>br</track-back-locale>
-    <pseudo-locale/>
-    <target-locales>
-        <locale>fr_FR</locale>
-        <locale>de_DE</locale>
-    </target-locales>
-    <default-locale>en_US</default-locale>
-    <resource-extensions>
-        <resource-extension>
-            <extension>properties</extension>
-            <file-name-pattern>*_l_c_v</file-name-pattern>
-            <use-pattern-on-dflt-locale>1</use-pattern-on-dflt-locale>
-            <file-location-pattern/>
-            <use-location-pattern-on-dflt-locale>0</use-location-pattern-on-dflt-locale>
-            <base-file-encoding>UTF-8</base-file-encoding>
-            <localized-file-encoding>UTF-8</localized-file-encoding>
-            <parameter-regex-pattern><![CDATA[\{\w+\}|%[ds]]]></parameter-regex-pattern>
-        </resource-extension>
-    </resource-extensions>
-    <dirset>
-        <includes>
-            <include-dir-file>**/**</include-dir-file>
-        </includes>
-        <excludes>
-            <exclude-dir-file>**/src/test/**</exclude-dir-file>
-            <exclude-dir-file>**/bin/**</exclude-dir-file>
-            <exclude-dir-file>**/target/**</exclude-dir-file>
-            <exclude-dir-file>**/catalina.properties</exclude-dir-file>
-            <exclude-dir-file>**/quartz.properties</exclude-dir-file>
-        </excludes>
-    </dirset>
+  <lrm-version>3.3.12</lrm-version>
+  <project-name>LRM-2433</project-name>
+  <project-desc></project-desc>
+  <!--group-name contains either the company name or the group name-->
+  <group-name>Queens</group-name>
+  <top-level-dir>/var/lib/jenkins/jobs/lrmprocess_ftp_basic/workspace/automatedTestScripts/tests/LRM-2433/resources</top-level-dir>
+  <detect-errors>
+    <!--If set to '0' (false), then the 'missed translation' error will not be triggered-->
+    <!--if the non-base file has the same text as the base file.-->
+    <!--Missed Translation error will still occur if the base file has a different key or if-->
+    <!--the base file has changed since it was last prepped.-->
+    <missed-trans-error>0</missed-trans-error>
+    <parameter-mismatch-error>1</parameter-mismatch-error>
+  </detect-errors>
+  <!--If you wish to create Track Back resource files, enter the Track Back locale such as `br`-->
+  <!--The track back locale is mutually exclusive of the base (default) locale, target locales and pseudo-locale-->
+  <track-back-locale>br</track-back-locale>
+  <!--If you wish to pseudo-localized your files enter a pseudo-locale such as `eo`-->
+  <!--The pseudo-locale is mutually exclusive of the base (default) locale, target locales and track back locale-->
+  <pseudo-locale>eo</pseudo-locale>
+  <instrumentation-locale>in</instrumentation-locale>
+  <!--Target locales are the locales where the corresponding resource files will be translated. -->
+  <!--These target locales are mutually exclusive of the base (default) locale-->
+  <target-locales>
+    <locale>fr_FR</locale>
+  </target-locales>
+  <!--Default locale is the base locale. This is the locale where corresponding resource files will not be translated.-->
+  <!--The base (default) locale is mutually exclusive of the target locales-->
+  <default-locale>en_US</default-locale>
+  <resource-extensions>
+    <!--The file-name-pattern and/or file-location-pattern indicate the pattern of the-->
+    <!--   localized file names (file-name-pattern) and the localized folder names (file-location-pattern).-->
+    <!--If the names contain the locale then a pattern of 1,c and v will be used.-->
+    <!--If the names contain the Locale ID then LCID will be used.-->
+    <!--Example pattern using locale-->
+    <!--  If your localized resource files use their locale in their names then the locale pattern will-->
+    <!--  be used where l stands for language; c for country; v for variant; and the characters between-->
+    <!--  are used as the separator characters.-->
+    <!--  <file-name-pattern>*_l_c_v</file-name-pattern>-->
+    <!--Example pattern using LCID (locale ID)-->
+    <!--  If your resource files are under a folder named 'resources' with an LCID suffix separated by an-->
+    <!--  underscore, then the pattern would be:-->
+    <!--  <file-location-pattern>resources_LCID</file-location-pattern>-->
+
+    <!--Parser Type values are: -->
+    <!--  html       -->
+    <!--  js         -->
+    <!--  json       -->
+    <!--  msg        -->
+    <!--  po         -->
+    <!--  properties -->
+    <!--  rc         -->
+    <!--  strings    -->
+    <!--  xml        -->
+
+    <resource-extension>
+      <extension>html</extension>
+      <parser-type>html</parser-type>
+      <file-name-pattern>*_l_c_v</file-name-pattern>
+      <!--If the base resource files use the file-name-pattern in their name -->
+      <!--then set use-pattern-on-dflt-locale to 1, if not then set to 0-->
+      <use-pattern-on-dflt-locale>1</use-pattern-on-dflt-locale>
+      <file-location-pattern></file-location-pattern>
+      <!--If the base resource files use the file-location-pattern in their name -->
+      <!--then set use-location-pattern-on-dflt-locale to 1, if not then set to 0-->
+      <use-location-pattern-on-dflt-locale>0</use-location-pattern-on-dflt-locale>
+      <base-file-encoding>UTF-8</base-file-encoding>
+      <localized-file-encoding>UTF-8</localized-file-encoding>
+      <!--parameter-regex-pattern defines the regex pattern for parameters such as formatting and messaging.-->
+      <!--<parameter-regex-pattern><![CDATA[\{\w+\}|%[ds]]]></parameter-regex-pattern>-->
+      <parameter-regex-pattern></parameter-regex-pattern>
+    </resource-extension>
+    <resource-extension>
+      <extension>xhtml</extension>
+      <parser-type>xhtml</parser-type>
+      <file-name-pattern>*_l_c_v</file-name-pattern>
+      <!--If the base resource files use the file-name-pattern in their name -->
+      <!--then set use-pattern-on-dflt-locale to 1, if not then set to 0-->
+      <use-pattern-on-dflt-locale>1</use-pattern-on-dflt-locale>
+      <file-location-pattern></file-location-pattern>
+      <!--If the base resource files use the file-location-pattern in their name -->
+      <!--then set use-location-pattern-on-dflt-locale to 1, if not then set to 0-->
+      <use-location-pattern-on-dflt-locale>0</use-location-pattern-on-dflt-locale>
+      <base-file-encoding>UTF-8</base-file-encoding>
+      <localized-file-encoding>UTF-8</localized-file-encoding>
+      <!--parameter-regex-pattern defines the regex pattern for parameters such as formatting and messaging.-->
+      <!--<parameter-regex-pattern><![CDATA[\{\w+\}|%[ds]]]></parameter-regex-pattern>-->
+      <parameter-regex-pattern></parameter-regex-pattern>
+    </resource-extension>
+    <resource-extension>
+      <extension>txt</extension>
+      <parser-type>txt</parser-type>
+      <file-name-pattern>*_l_c_v</file-name-pattern>
+      <!--If the base resource files use the file-name-pattern in their name -->
+      <!--then set use-pattern-on-dflt-locale to 1, if not then set to 0-->
+      <use-pattern-on-dflt-locale>1</use-pattern-on-dflt-locale>
+      <file-location-pattern></file-location-pattern>
+      <!--If the base resource files use the file-location-pattern in their name -->
+      <!--then set use-location-pattern-on-dflt-locale to 1, if not then set to 0-->
+      <use-location-pattern-on-dflt-locale>0</use-location-pattern-on-dflt-locale>
+      <base-file-encoding>UTF-8</base-file-encoding>
+      <localized-file-encoding>UTF-8</localized-file-encoding>
+      <!--parameter-regex-pattern defines the regex pattern for parameters such as formatting and messaging.-->
+      <!--<parameter-regex-pattern><![CDATA[\{\w+\}|%[ds]]]></parameter-regex-pattern>-->
+      <parameter-regex-pattern></parameter-regex-pattern>
+    </resource-extension>
+  </resource-extensions>
+
+  <dirset>
+    <!--Define the search patterns to include and/or exclude. (Uses Apache Ant pattern search).-->
+    <!--Examples: -->
+    <!--   A. '**/*.properties' matches all .properties files/dirs in a directory tree.-->
+    <!--   B. 'test/a??.resx' matches all files/dirs which start with an 'a', -->
+    <!--       then two more characters and then '.resx', in a directory called test.-->
+    <!--   C.  '**' matches everything in a directory tree. -->
+    <!--   D.  '**/source/**/XYZ*' matches all files/dirs which start with 'XYZ'-->
+    <!--       and where there is a parent directory called source (e.g. 'abc/source/def/ghi/XYZ123'). -->
+    <includes>
+      <!--Directories to include in the search for base resource files -->
+      <!--Examples: -->
+      <!--  <include-dir-file>**/source/**</include-dir-file>-->
+      <!--  <include-dir-file>**/strings.xml</include-dir-file>-->
+       <include-dir-file>**\**</include-dir-file>
+    </includes>
+    <excludes>
+      <!--Directories or files to exclude in the search -->
+      <!--Examples: -->
+      <!--   <exclude-dir-file>**/source/bin/**</exclude-dir-file> -->
+      <!--   <exclude-dir-file>**/fileToIgnore.*</exclude-dir-file> -->
+       <exclude-dir-file>**/LRMScans/**</exclude-dir-file>
+       <exclude-dir-file>**/GlobalyzerScans/**</exclude-dir-file>
+       <exclude-dir-file>**/sonar-project.properties</exclude-dir-file>
+    </excludes>
+  </dirset>
 </lrmprojectdefinition>
