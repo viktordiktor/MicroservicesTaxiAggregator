@@ -1,44 +1,47 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<lrmprojectdefinition>
-    <model-version>3.1.14</model-version>
-    <project-name>SampleLRM</project-name>
-    <project-desc>Lingoport SampleLRM Project fr_FR and de_DE Java properties files</project-desc>
-    <group-name>Lingoport</group-name>
-    <top-level-dir>/var/lib/jenkins/jobs/Lingoport.SampleLRM/workspace</top-level-dir>
-    <send-unique-file-names>0</send-unique-file-names>
-    <detect-errors>
-        <missed-trans-error>0</missed-trans-error>
-        <parameter-mismatch-error>1</parameter-mismatch-error>
-    </detect-errors>
-    <track-back-locale>br</track-back-locale>
-    <pseudo-locale/>
-    <target-locales>
-        <locale>fr_FR</locale>
-        <locale>de_DE</locale>
-    </target-locales>
-    <default-locale>en_US</default-locale>
-    <resource-extensions>
-        <resource-extension>
-            <extension>properties</extension>
-            <file-name-pattern>*_l_c_v</file-name-pattern>
-            <use-pattern-on-dflt-locale>1</use-pattern-on-dflt-locale>
-            <file-location-pattern/>
-            <use-location-pattern-on-dflt-locale>0</use-location-pattern-on-dflt-locale>
-            <base-file-encoding>UTF-8</base-file-encoding>
-            <localized-file-encoding>UTF-8</localized-file-encoding>
-            <parameter-regex-pattern><![CDATA[\{\w+\}|%[ds]]]></parameter-regex-pattern>
-        </resource-extension>
-    </resource-extensions>
-    <dirset>
-        <includes>
-            <include-dir-file>**/**</include-dir-file>
-        </includes>
-        <excludes>
-            <exclude-dir-file>**/src/test/**</exclude-dir-file>
-            <exclude-dir-file>**/bin/**</exclude-dir-file>
-            <exclude-dir-file>**/target/**</exclude-dir-file>
-            <exclude-dir-file>**/catalina.properties</exclude-dir-file>
-            <exclude-dir-file>**/quartz.properties</exclude-dir-file>
-        </excludes>
-    </dirset>
-</lrmprojectdefinition>
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- see  http://wiki.lingoport.com/index.php5?title=Globalyzer_Lite#The_.globalyzerrc_File -->
+<gzproject>
+  <login>
+    <username></username>
+    <password></password>
+    <server>https://www.globalyzer.com/gzserver</server>
+    <use-local-rulesets>false</use-local-rulesets>
+    <optional>
+      <proxy-user></proxy-user>
+      <proxy-password></proxy-password>
+      <proxy-host></proxy-host>
+      <proxy-port></proxy-port>
+    </optional>
+  </login>
+  <project-path>C:/Users/Olivier/git/demo-app-spa</project-path>
+  <project-name>Lingoport.badi18n</project-name>
+  <report-path>globalyzer-lite-reports</report-path>
+  <report-type>ScanDetailedXML</report-type>
+  <data-dictionary-location></data-dictionary-location>
+  <filter-with-dictionary>false</filter-with-dictionary>
+  <scan-timeout>120</scan-timeout>
+  <generate-partial-results>false</generate-partial-results>
+  <save-history>false</save-history>
+  <scans>
+    <scan>
+      <scan-name>Guest Java 2024</scan-name>
+      <ruleset-name>Guest Java 2024</ruleset-name>
+      <ruleset-owner>olibouban@lingoport.com</ruleset-owner>
+      <use-machine-learning>false</use-machine-learning>
+      <encoding>systemDefault</encoding>
+      <checks>
+        <embedded-strings>true</embedded-strings>
+        <locale-sensitive-methods>true</locale-sensitive-methods>
+        <general-patterns>true</general-patterns>
+        <static-file-references>true</static-file-references>
+      </checks>
+      <comments>
+        <todo>GLOBALYZER_TODO</todo>
+        <ignore-next-line>GLOBALYZER_IGNORE_NEXT_LINE</ignore-next-line>
+        <start-ignore>GLOBALYZER_START_IGNORE</start-ignore>
+        <end-ignore>GLOBALYZER_END_IGNORE</end-ignore>
+      </comments>
+      <scan-items/>
+    </scan>
+  </scans>
+</gzproject>
