@@ -4,8 +4,7 @@
   <login>
     <username></username>
     <password></password>
-    <server>https://www.globalyzer.com/gzserver</server>
-    <use-local-rulesets>false</use-local-rulesets>
+    <server>https://globalyzer.com/gzserver</server>
     <optional>
       <proxy-user></proxy-user>
       <proxy-password></proxy-password>
@@ -13,21 +12,18 @@
       <proxy-port></proxy-port>
     </optional>
   </login>
-  <project-path>C:/Users/Olivier/git/demo-app-spa</project-path>
-  <project-name>Lingoport.badi18n</project-name>
+  <project-path>/var/lib/jenkins/jobs/CET.NOAAWeather/workspace/NOAAWeatherWidget-master/</project-path>
+  <project-name>NOAAWeather</project-name>
   <report-path>globalyzer-lite-reports</report-path>
   <report-type>ScanDetailedXML</report-type>
-  <data-dictionary-location></data-dictionary-location>
-  <filter-with-dictionary>false</filter-with-dictionary>
+  <data-dictionary-location>/var/lib/jenkins/.globalyzer</data-dictionary-location>
+  <filter-with-dictionary>true</filter-with-dictionary>
   <scan-timeout>120</scan-timeout>
-  <generate-partial-results>false</generate-partial-results>
-  <save-history>false</save-history>
   <scans>
     <scan>
-      <scan-name>Guest Java 2024</scan-name>
-      <ruleset-name>Guest Java 2024</ruleset-name>
-      <ruleset-owner>olibouban@lingoport.com</ruleset-owner>
-      <use-machine-learning>false</use-machine-learning>
+      <scan-name>java</scan-name>
+      <ruleset-name>java</ruleset-name>
+      <ruleset-owner>rdaly@lingoport.com</ruleset-owner>
       <encoding>systemDefault</encoding>
       <checks>
         <embedded-strings>true</embedded-strings>
