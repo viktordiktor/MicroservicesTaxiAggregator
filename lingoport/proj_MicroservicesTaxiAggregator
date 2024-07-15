@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lrmconf>
+   <model-version>3.2</model-version>
+   <!--Group name must match the group name option -->
+   <group-name>CET</group-name>
+   <project-name>MicroservicesTaxiAggregator</project-name>
+	<project-desc>This is a sample LRM Project definition file, configured to support Java properties files</project-desc>
+	<!-- Example, linux -->
+	<!--<top-level-dir>/var/lib/job/workspace/acme/source</top-level-dir>-->
+	<!-- Example, windows -->
+	<top-level-dir>/var/lib/jenkins/jobs/CET.MicroservicesTaxiAggregator/workspace/MicroservicesTaxiAggregatorWidget-master/resources</top-level-dir>
+	<detect-errors>
+	    <!-- if set to '0' (false), then the 'missed translation' error will not be triggered 
+			if the non-base file has the same text as the base file. 
+			Missed Translation error will still occur if the base file has a different key or if
+			the base file has changed since it was last prepped. -->
+		<missed-trans-error>0</missed-trans-error>
+		<parameter-mismatch-error>1</parameter-mismatch-error>
+	</detect-errors>
+    <!--If you wish to create Track Back resource files, enter the Track Back locale such as `br`-->
+    <!--The track back locale is mutually exclusive of the base (default) locale, target locales and pseudo-locale-->
+    <track-back-locale>br</track-back-locale>  
+    <!--If you wish to pseudo-localized your files enter a pseudo-locale-->
+    <!--The pseudo-locale is mutually exclusive of the base (default) locale and target locales-->
+    <pseudo-locale>eo</pseudo-locale>
+	<!--Target locales are the locales where the corresponding resource files will be translated. -->
+	<!--These target locales are mutually exclusive of the default locale-->
+	<target-locales> <!-- set which locales are targeted for translation. --> 
+	   <locale>fr_FR</locale> <!-- French for France -->
+      <locale>fr_CA</locale> <!-- French Canadian -->
+      <locale>es_MX</locale>
+      <locale>de_DE</locale>		
+   </target-locales>
+	<!--Default locale is the base locale. This is the locale where corresponding resource files will not be translated.-->
+	<!--The default locale is mutually exclusive of the target locales-->
+	<default-locale>en_US</default-locale> <!-- delineates which locale to translate from -->
+   <resources-extensions> 
+	<!-- although only 1 resource extension is present in this file,
+	kits support multiple resource extensions. This necessitates both a 
+	"<resource-extensions>" and "<resource-extension>" tag -->
+	<!--The file-name-pattern and/or file-location-pattern indicate the pattern of the-->
+    <!--localized file names (file-name-pattern) and the localized folder names (file-location-pattern).-->
+    <!--If the names contain the locale then a pattern of 1,c and v will be used.-->
+    <!--If the names contain the Locale ID then LCID will be used.-->
+    <!--Example pattern using locale-->
+    <!--  If your localized resource files use their locale in their names then the locale pattern will-->
+    <!--  be used where l stands for language; c for country; v for variant; and the characters between-->
+    <!--  are used as the separator characters.-->
+    <!--  <file-name-pattern>*_l_c_v</file-name-pattern>-->
+    <!--Example pattern using LCID (locale ID)-->
+    <!--  If your resource files are under a folder named 'resources' with an LCID suffix separated by an-->
+    <!--  underscore, then the pattern would be:-->
+    <!--  <file-location-pattern>resources_LCID</file-location-pattern>-->
+      <resource-extension>
+         <extension>properties</extension>
+         <file-name-pattern>*_l_c_v</file-name-pattern>
+		   <!-- the tag below, when set to 1, will cause LRM to expect
+			the locale to be specified within the filename of res.properties files -->
+         <use-pattern-on-dflt-locale>1</use-pattern-on-dflt-locale> 				  
+         <file-location-pattern></file-location-pattern>
+		 <!-- There is no file location pattern -->
+         <use-location-pattern-on-dflt-locale>0</use-location-pattern-on-dflt-locale>			 
+		 <base-file-encoding>UTF-8</base-file-encoding> 
+		 <localized-file-encoding>UTF-8</localized-file-encoding>
+         <!--Default pattern for properties is '![CDATA[\{\d+\}|%[ds]]]'-->
+         <parameter-regex-pattern><![CDATA[\{\w+\}|%[ds]]]></parameter-regex-pattern>				
+	   </resource-extension>
+   </resources-extensions>
+   <dirset>
+       <!--Define the search patterns to include and/or exclude. (Uses Apache Ant pattern search).-->
+       <!--Examples: -->
+       <!--   A. '**/*.properties' matches all .properties files/dirs in a directory tree.-->
+       <!--   B. 'test/a??.resx' matches all files/dirs which start with an 'a', -->
+       <!--       then two more characters and then '.resx', in a directory called test.-->
+       <!--   C.  '**' matches everything in a directory tree. -->
+       <!--       '**/source/**/XYZ*' matches all files/dirs which start with 'XYZ'-->
+       <!--       and where there is a parent directory called source (e.g. 'abc/source/def/ghi/XYZ123'). -->
+      <includes>
+         <!--Directories to include in the search for base resource files -->
+         <!--Examples: -->
+         <!--  <include-dir>**/source/**</include-dir>-->
+      </includes>
+      <excludes>
+         <!--Directories or files to exclude in the search -->
+         <!--Examples: -->
+         <!--   <exclude-dir-file>**/source/bin/**</exclude-dir-file> -->
+         <!--   <exclude-dir-file>**/fileToIgnore.*</exclude-dir-file> -->
+      	<exclude-dir-file>**/src/test/**</exclude-dir-file>
+      	<exclude-dir-file>**/bin/**</exclude-dir-file>
+      	<exclude-dir-file>**/target/**</exclude-dir-file>
+      </excludes>
+   </dirset>
+</lrmconf>
