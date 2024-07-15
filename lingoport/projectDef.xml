@@ -13,8 +13,6 @@
       <proxy-port></proxy-port>
     </optional>
   </login>
-  <project-path>C:/Users/Olivier/git/demo-app-spa</project-path>
-  <project-name>Lingoport.badi18n</project-name>
   <report-path>globalyzer-lite-reports</report-path>
   <report-type>ScanDetailedXML</report-type>
   <data-dictionary-location></data-dictionary-location>
@@ -22,26 +20,4 @@
   <scan-timeout>120</scan-timeout>
   <generate-partial-results>false</generate-partial-results>
   <save-history>false</save-history>
-  <scans>
-    <scan>
-      <scan-name>Guest Java 2024</scan-name>
-      <ruleset-name>Guest Java 2024</ruleset-name>
-      <ruleset-owner>olibouban@lingoport.com</ruleset-owner>
-      <use-machine-learning>false</use-machine-learning>
-      <encoding>systemDefault</encoding>
-      <checks>
-        <embedded-strings>true</embedded-strings>
-        <locale-sensitive-methods>true</locale-sensitive-methods>
-        <general-patterns>true</general-patterns>
-        <static-file-references>true</static-file-references>
-      </checks>
-      <comments>
-        <todo>GLOBALYZER_TODO</todo>
-        <ignore-next-line>GLOBALYZER_IGNORE_NEXT_LINE</ignore-next-line>
-        <start-ignore>GLOBALYZER_START_IGNORE</start-ignore>
-        <end-ignore>GLOBALYZER_END_IGNORE</end-ignore>
-      </comments>
-      <scan-items/>
-    </scan>
-  </scans>
 </gzproject>
