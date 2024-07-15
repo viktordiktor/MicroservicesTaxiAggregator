@@ -23,7 +23,7 @@
     <scan>
       <scan-name>java</scan-name>
       <ruleset-name>java 05182016</ruleset-name>
-      <ruleset-owner>vnikanenka@lingoport.com</ruleset-owner>
+      <ruleset-owner>bob@reginaco.com</ruleset-owner>
       <encoding>systemDefault</encoding>
       <checks>
         <embedded-strings>true</embedded-strings>
