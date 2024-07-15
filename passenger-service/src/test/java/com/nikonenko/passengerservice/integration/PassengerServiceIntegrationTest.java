@@ -19,6 +19,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
+
+import javax.sql.DataSource;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -38,7 +40,8 @@ public class PassengerServiceIntegrationTest extends ContainerConfiguration {
     private ModelMapper modelMapper;
     @LocalServerPort
     private int port;
-
+    @Autowired
+    private DataSource dataSource;
     @Test
     void givenExistsPassengerId_whenFindById_thenReturnPassengerResponse() {
         Passenger passenger = passengerRepository.findById(TestUtil.DEFAULT_ID).get();

@@ -11,24 +11,24 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ContainerConfiguration {
 
-    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse(
+    private static final PostgreSQLContainer<?> postgresSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse(
             "postgres:latest"
     ));
 
     @BeforeAll
     static void beforeAll() {
-        postgreSQLContainer.start();
+        postgresSQLContainer.start();
     }
 
     @AfterAll
     static void afterAll() {
-        postgreSQLContainer.stop();
+        postgresSQLContainer.stop();
     }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.url", postgresSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgresSQLContainer::getUsername);
+        registry.add("spring.datasource.password", postgresSQLContainer::getPassword);
     }
 }

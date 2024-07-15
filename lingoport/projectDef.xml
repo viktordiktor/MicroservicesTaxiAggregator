@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<lrmprojectdefinition>
+    <model-version>3.1.14</model-version>
+    <project-name>SampleLRM</project-name>
+    <project-desc>Lingoport SampleLRM Project fr_FR and de_DE Java properties files</project-desc>
+    <group-name>Lingoport</group-name>
+    <top-level-dir>/var/lib/jenkins/jobs/Lingoport.SampleLRM/workspace</top-level-dir>
+    <send-unique-file-names>0</send-unique-file-names>
+    <detect-errors>
+        <missed-trans-error>0</missed-trans-error>
+        <parameter-mismatch-error>1</parameter-mismatch-error>
+    </detect-errors>
+    <track-back-locale>br</track-back-locale>
+    <pseudo-locale/>
+    <target-locales>
+        <locale>fr_FR</locale>
+        <locale>de_DE</locale>
+    </target-locales>
+    <default-locale>en_US</default-locale>
+    <resource-extensions>
+        <resource-extension>
+            <extension>properties</extension>
+            <file-name-pattern>*_l_c_v</file-name-pattern>
+            <use-pattern-on-dflt-locale>1</use-pattern-on-dflt-locale>
+            <file-location-pattern/>
+            <use-location-pattern-on-dflt-locale>0</use-location-pattern-on-dflt-locale>
+            <base-file-encoding>UTF-8</base-file-encoding>
+            <localized-file-encoding>UTF-8</localized-file-encoding>
+            <parameter-regex-pattern><![CDATA[\{\w+\}|%[ds]]]></parameter-regex-pattern>
+        </resource-extension>
+    </resource-extensions>
+    <dirset>
+        <includes>
+            <include-dir-file>**/**</include-dir-file>
+        </includes>
+        <excludes>
+            <exclude-dir-file>**/src/test/**</exclude-dir-file>
+            <exclude-dir-file>**/bin/**</exclude-dir-file>
+            <exclude-dir-file>**/target/**</exclude-dir-file>
+            <exclude-dir-file>**/catalina.properties</exclude-dir-file>
+            <exclude-dir-file>**/quartz.properties</exclude-dir-file>
+        </excludes>
+    </dirset>
+</lrmprojectdefinition>
