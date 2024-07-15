@@ -6,7 +6,7 @@
 - Spring Boot
 - Spring Cloud
 - Spring Security
-- Spring WebFlux (**feature/webflux* branch)
+- Spring WebFlux (**feature/webflux** branch)
 - PostgreSQL
 - MongoDB
 - WebClient, FeignClient
